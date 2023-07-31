@@ -40,6 +40,17 @@
             </ul>
         </li>
 
+        <li class="{{ strpos($_SERVER['REQUEST_URI'], "products") ? 'active' : '' }}
+            || {{ strpos($_SERVER['REQUEST_URI'], "product") ? 'active' : '' }}
+            || {{ strpos($_SERVER['REQUEST_URI'], "attributes") ? 'active' : '' }}
+            "><a href="javascript:void(0);" class="menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Products</span></a>
+            <ul class="ml-menu">
+                <li class="{{ request()->is('products/all-attributes') ? 'active' : ''}}"><a href="{{url('admin/products/all-attributes')}}">Product Attributes</a></li>
+                <li class="{{ request()->is('products/all-units') ? 'active' : ''}}"><a href="{{url('admin/products/all-units')}}">Product Units</a></li>
+                <li class="{{ request()->is('add-products') ? 'active' : ''}}"><a href="{{url('admin/add-products')}}">Add Products</a></li>
+                <li class="{{ request()->is('all-products') ? 'active' : ''}}"><a href="{{url('admin/all-products')}}">All Products</a></li>
+            </ul>
+        </li>
 {{--        <li><a href="javascript:void(0);" class="menu-toggle waves-effect waves-block">--}}
 {{--                <i class="zmdi zmdi-apps"></i>--}}
 {{--                <span>Social Impacts</span></a>--}}

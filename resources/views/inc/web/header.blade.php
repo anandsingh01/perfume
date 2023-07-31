@@ -89,12 +89,12 @@
                     <li>
                         <a href="#">Sustainability <i class="fa fa-chevron-down"></i></a>
                         <ul class="sub-menu">
-                            <li><a href="{{url('sustainability/overview')}}" class="dez-page">Overview</a></li>
-                            <li><a href="{{url('sustainability/approach')}}" class="dez-page">Approach  & Strategy</a></li>
-                            <li><a href="{{url('sustainability/stewardship')}}" class="dez-page">Responsible Stewardship </a></li>
-                            <li><a href="{{url('sustainability/strong-relation')}}" class="dez-page">Building Strong Relation </a></li>
-                            <li><a href="{{url('sustainability/sharing-value')}}" class="dez-page">Adding & Sharing Values </a></li>
-                            <li><a href="{{url('sustainability/community-impact')}}" class="dez-page">Community Impact </a></li>
+                            <li><a href="{{url('offers/overview')}}" class="dez-page">Overview</a></li>
+                            <li><a href="{{url('offers/approach')}}" class="dez-page">Approach  & Strategy</a></li>
+                            <li><a href="{{url('offers/stewardship')}}" class="dez-page">Responsible Stewardship </a></li>
+                            <li><a href="{{url('offers/strong-relation')}}" class="dez-page">Building Strong Relation </a></li>
+                            <li><a href="{{url('offers/sharing-value')}}" class="dez-page">Adding & Sharing Values </a></li>
+                            <li><a href="{{url('offers/community-impact')}}" class="dez-page">Community Impact </a></li>
 
                         </ul>
                     </li>

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->string('image')->nullable();
+            $table->string('discount_type')->nullable();
             $table->enum('status',['0','1'])->default('1');
             $table->timestamps();
         });

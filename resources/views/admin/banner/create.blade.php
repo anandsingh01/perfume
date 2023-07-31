@@ -28,7 +28,7 @@
             <div class="col-lg-7 col-md-6 col-sm-12">
                 <h2>{{$page_heading}}</h2>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{url('/')}}"><i class="zmdi zmdi-home"></i> SAB </a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/')}}"><i class="zmdi zmdi-home"></i> Admin </a></li>
                     <li class="breadcrumb-item active">{{$page_heading}}</li>
                 </ul>
                 <button class="btn btn-primary btn-icon mobile_menu" type="button"><i class="zmdi zmdi-sort-amount-desc"></i></button>
@@ -57,6 +57,16 @@
                                 <div class="col-lg-12 col-md-12 mtb-10">
                                     <label class="control-label" for="password"> Banner sub heading </label>
                                     <input type="text" class="form-control" name="banner_subheading" />
+                                </div>
+
+                                <div class="col-lg-6 col-md-6 mtb-10">
+                                    <label class="control-label" for="password"> Banner Link</label>
+                                    <input type="text" class="form-control" name="banner_link" />
+                                </div>
+
+                                <div class="col-lg-6 col-md-6 mtb-10">
+                                    <label class="control-label" for="password"> Banner Text</label>
+                                    <input type="text" class="form-control" name="banner_text" />
                                 </div>
 
                                 <div class="col-lg-12 col-md-12">

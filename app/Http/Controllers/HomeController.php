@@ -194,7 +194,7 @@ class HomeController extends Controller
 
     function sustainability_overview($url){
         $data['overview'] = \App\Models\Sustainability::where('sustainability_type',$url)->first();
-        return view('web.sustainability.overview',$data);
+        return view('web.offers.overview',$data);
     }
 
     function social_impact($url){
@@ -204,6 +204,6 @@ class HomeController extends Controller
 
     function sustainability_stewardship(){
         $data['overview'] = \App\Models\SustainabilityStewardship::first();
-        return view('web.sustainability.stewardship',$data);
+        return view('web.offers.stewardship',$data);
     }
 }

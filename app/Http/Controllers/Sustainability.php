@@ -12,7 +12,7 @@ class Sustainability extends Controller
         $data['core_comp'] = \App\Models\Sustainability::where('sustainability_type',$_GET['type'])
             ->orderBy('id','DESC')
             ->first();
-        return view('admin.sustainability.overview',$data);
+        return view('admin.offers.overview',$data);
     }
 
     function update_overview (Request $request){
@@ -66,7 +66,7 @@ class Sustainability extends Controller
     function approach(){
         $data['page_heading'] = 'Sustainability Approach';
         $data['core_comp'] = \App\Models\SustainabilityApproach::first();
-        return view('admin.sustainability.approach',$data);
+        return view('admin.offers.approach',$data);
     }
 
     function update_approach (Request $request){
@@ -119,7 +119,7 @@ class Sustainability extends Controller
     function stewardship(){
         $data['page_heading'] = 'Sustainability Approach';
         $data['core_comp'] = \App\Models\SustainabilityStewardship::first();
-        return view('admin.sustainability.stewardship',$data);
+        return view('admin.offers.stewardship',$data);
     }
 
     function update_stewardship (Request $request){

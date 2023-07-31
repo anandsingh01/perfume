@@ -53,9 +53,9 @@ Route::get('privacy-policy', function (){
 });
 
 
-Route::get('sustainability/{url}', [HomeController::class, 'sustainability_overview']);
+Route::get('offers/{url}', [HomeController::class, 'sustainability_overview']);
 Route::get('social-impact/{url}', [HomeController::class, 'social_impact']);
-//Route::get('sustainability/stewardship', [HomeController::class, 'sustainability_stewardship']);
+//Route::get('offers/stewardship', [HomeController::class, 'sustainability_stewardship']);
 Route::get('service/{url}', [HomeController::class, 'get_service']);
 
 Route::group(['prefix'=>'admin','as'=>'admin.'], function(){
@@ -212,36 +212,75 @@ Route::group(['prefix'=>'admin','as'=>'admin.'], function(){
     Route::get('/core-compentancy', [App\Http\Controllers\AboutController::class, 'core_compentancy']);
     Route::post('/update-core-compentancy', [App\Http\Controllers\AboutController::class, 'update_core_compentancy']);
 
-    Route::get('/sustainability-{url}', [App\Http\Controllers\Sustainability::class, 'overview']);
-    Route::post('/update-sustainability-{url}', [App\Http\Controllers\Sustainability::class, 'update_overview']);
+    Route::get('/offers-{url}', [App\Http\Controllers\Sustainability::class, 'overview']);
+    Route::post('/update-offers-{url}', [App\Http\Controllers\Sustainability::class, 'update_overview']);
 
     Route::get('/social-impacts', [App\Http\Controllers\SocialImpact::class, 'overview']);
     Route::post('/update-social-impacts', [App\Http\Controllers\SocialImpact::class, 'update_overview']);
 
-//    Route::get('/sustainability-approach', [App\Http\Controllers\Sustainability::class, 'approach']);
-//    Route::post('/update-sustainability-approach', [App\Http\Controllers\Sustainability::class, 'update_approach']);
+//    Route::get('/offers-approach', [App\Http\Controllers\Sustainability::class, 'approach']);
+//    Route::post('/update-offers-approach', [App\Http\Controllers\Sustainability::class, 'update_approach']);
 //
-//    Route::get('/sustainability-stewardship', [App\Http\Controllers\Sustainability::class, 'stewardship']);
-//    Route::post('/update-sustainability-stewardship', [App\Http\Controllers\Sustainability::class, 'update_stewardship']);
+//    Route::get('/offers-stewardship', [App\Http\Controllers\Sustainability::class, 'stewardship']);
+//    Route::post('/update-offers-stewardship', [App\Http\Controllers\Sustainability::class, 'update_stewardship']);
 
 
     Route::get('offers', [OfferController::class, 'index'])->name('offers.index');
-    Route::get('offers/create', [OfferController::class, 'create'])->name('offers.create');
-    Route::post('offers', [OfferController::class, 'store'])->name('offers.store');
-    Route::get('offers/{id}/edit', [OfferController::class, 'edit'])->name('offers.edit');
-    Route::put('offers/{id}', [OfferController::class, 'update'])->name('offers.update');
+    Route::post('offers/create', [OfferController::class, 'store'])->name('offers.create');
+    Route::get('edit-offer/{id}', [OfferController::class, 'edit'])->name('offers.edit');
+    Route::post('update-offer', [OfferController::class, 'update'])->name('offers.update');
     Route::delete('offers/{id}', [OfferController::class, 'destroy'])->name('offers.destroy');
+    Route::get('change-offer-status',[App\Http\Controllers\OfferController::class,'change_status']);
+       Route::get('/delete/offer/{id}', [App\Http\Controllers\OfferController::class, 'destroy']);
 
 
+//    Products Attributes
+    Route::get('products/all-attributes', [App\Http\Controllers\AttributesController::class,'index']);
+    Route::get('products/add-attributes', [App\Http\Controllers\AttributesController::class,'create']);
+    Route::post('products/save-attributes', [App\Http\Controllers\AttributesController::class,'store']);
+    Route::get('products/edit-attributes/{id}', [App\Http\Controllers\AttributesController::class,'edit']);
+    Route::post('products/update-attributes/{id}', [App\Http\Controllers\AttributesController::class,'update']);
+    Route::get('products/update-attributes-Status', [App\Http\Controllers\AttributesController::class,'changeAttributesstatus']);
+    Route::get('products/delete-attributes/{id}', [App\Http\Controllers\AttributesController::class,'destroy']);
+    Route::get('products/delete-attributes-values/{id}', [App\Http\Controllers\AttributesController::class,'destroyAttrValue']);
 
-//    Route::get('/all-annual-reports', [App\Http\Controllers\AnnualReportController::class, 'index']);
-//    Route::get('/add-annual-reports', [App\Http\Controllers\AnnualReportController::class, 'add']);
-//    Route::post('/save-annual-reports', [App\Http\Controllers\AnnualReportController::class, 'save']);
-//    Route::get('/update-annual-reports-Status', [App\Http\Controllers\AnnualReportController::class, 'status']);
-//    Route::get('/delete-annual-reports/{id}', [App\Http\Controllers\AnnualReportController::class, 'destroy']);
-//    Route::get('/edit-annual-reports/{id}', [App\Http\Controllers\AnnualReportController::class, 'edit']);
-//    Route::post('/update-annual-reports/', [App\Http\Controllers\AnnualReportController::class, 'update']);
-//    Route::get('change-annual-reports-status',[App\Http\Controllers\AnnualReportController::class,'change_status']);
-//    Route::get('change-annual-reports-show_on_homet',[App\Http\Controllers\AnnualReportController::class,'show_on_homet_status']);
+    Route::get('products/attributes/options/{id}', [App\Http\Controllers\AttributesController::class,'viewOptionsValues']);
+    Route::get('products/add-attributes-values', [App\Http\Controllers\AttributesController::class,'addOptionsValues']);
+    Route::post('products/attributes/save-attributes-values/{id}', [App\Http\Controllers\AttributesController::class,'saveAttributesValues']);
+    Route::get('products/attributes/edit-attribute-value/{id}', [App\Http\Controllers\AttributesController::class,'editAttributesValues']);
+    Route::post('products/attributes/update-attributes-values/{id}', [App\Http\Controllers\AttributesController::class,'updateAttributesValues']);
+
+// Products Units
+    Route::get('products/all-units', [App\Http\Controllers\UnitsController::class,'index']);
+    Route::get('products/add-units', [App\Http\Controllers\UnitsController::class,'create']);
+    Route::post('products/save-units', [App\Http\Controllers\UnitsController::class,'store']);
+    Route::get('products/edit-units/{id}', [App\Http\Controllers\UnitsController::class,'edit']);
+    Route::post('products/update-units/{id}', [App\Http\Controllers\UnitsController::class,'update']);
+    Route::get('products/update-units-Status', [App\Http\Controllers\UnitsController::class,'changeuUnitstatus']);
+    Route::get('products/delete-units/{id}', [App\Http\Controllers\UnitsController::class,'destroy']);
+
+    // Products # ADD, UPDATE ,DELETE...
+    Route::get('/all-products', [App\Http\Controllers\ProductsController::class,'index']);
+    Route::get('/add-products', [App\Http\Controllers\ProductsController::class,'create']);
+    Route::post('/save-products', [App\Http\Controllers\ProductsController::class,'storee']);
+    Route::get('/edit-products/{id}', [App\Http\Controllers\ProductsController::class,'edit']);
+    Route::post('/update-products/{id}', [App\Http\Controllers\ProductsController::class,'update']);
+    Route::get('/update-products-Status', [App\Http\Controllers\ProductsController::class,'changeProductstatus']);
+    Route::get('/delete-products/{id}', [App\Http\Controllers\ProductsController::class,'destroy']);
+    Route::get('/update-products-Status', [App\Http\Controllers\ProductsController::class,'changeProductStatus']);
+    Route::get('/getcategoriesBySectionOnProduct', [App\Http\Controllers\ProductsController::class,'getcategoriesBySectionOnProduct']);
+    Route::get('/getSubcategoriesByCategoriesOnProduct', [App\Http\Controllers\ProductsController::class,'getSubcategoriesByCategoriesOnProduct']);
+
+    Route::get('/products/add/attribute/display/{id}', [App\Http\Controllers\ProductsController::class,'addProductAttrOptions']);
+    Route::get('/products/all/attribute/display/{id}', [App\Http\Controllers\ProductsController::class,'getAllProductAttrOptions']);
+    Route::post('/products/save/productSizeAttribute/{id}', [App\Http\Controllers\ProductsController::class,'productSizeAttribute']);
+    Route::post('/products/save/productAttribute/{id}', [App\Http\Controllers\ProductsController::class,'saveProductAdditionalAttributes']);
+    Route::get('/products/getAttrValueFromOptions', [App\Http\Controllers\ProductsController::class,'getAttrValueFromOptions']);
+    Route::get('product/attribute/default-edit-value/{id}', [App\Http\Controllers\ProductsController::class,'editProductSizeAttrValue']);
+    Route::post('/products/update/productSizeAttribute/{id}', [App\Http\Controllers\ProductsController::class,'updateproductSizeAttribute']);
+    Route::get('product/attribute/additional-edit-value/{id}', [App\Http\Controllers\ProductsController::class,'editAdditionalProductAttrValue']);
+
+    Route::post('/products/update/productSizeAttribute/{id}', [App\Http\Controllers\ProductsController::class,'updateproductSizeAttribute']);
+    Route::get('product/attribute/additional-edit-value/{id}', [App\Http\Controllers\ProductsController::class,'editAdditionalProductAttrValue']);
 
 });

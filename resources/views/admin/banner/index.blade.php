@@ -28,7 +28,7 @@
             <div class="col-lg-7 col-md-6 col-sm-12">
                 <h2>{{$page_heading}}</h2>
                 <ul class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{url('/')}}"><i class="zmdi zmdi-home"></i> SAB </a></li>
+                    <li class="breadcrumb-item"><a href="{{url('/')}}"><i class="zmdi zmdi-home"></i> Admin </a></li>
                     <li class="breadcrumb-item active">{{$page_heading}}</li>
                 </ul>
                 <button class="btn btn-primary btn-icon mobile_menu" type="button"><i class="zmdi zmdi-sort-amount-desc"></i></button>

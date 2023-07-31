@@ -63,7 +63,7 @@
         </div>
     </div>
     <div class="container-fluid">
-        <form class="form" action="{{url('admin/update-sustainability-stewardship')}}" method="post" enctype="multipart/form-data">
+        <form class="form" action="{{url('admin/update-offers-stewardship')}}" method="post" enctype="multipart/form-data">
 
             <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12">

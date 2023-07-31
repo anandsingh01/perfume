@@ -45,7 +45,9 @@
             border: 1px solid;
             padding: 0 15px;
         }
-
+        .header .header-middle .container::after{
+            background-color:unset;
+        }
     </style>
 
     <script>
