@@ -2,9 +2,13 @@
 
 use Carbon\Carbon;
 
-function get_services(){
-    $data = \App\Models\ServiceModel::where('service_category','none')->where('status','1')->get();
-//    print_r($data);die;
+function getCommonSetting(){
+    $commonSetting = \App\Models\CommonModel::first();
+    return $commonSetting;
+}
+
+function get_hero_banner(){
+    $data = \App\Models\BannerModel::where('display_area','1')->where('status','1')->get();
     return $data;
 }
 
@@ -92,9 +96,6 @@ function get_popular_posts($date_type, $lang_id)
     return $popular_posts;
 }
 
-function getCommonSetting(){
-    $commonSetting = \App\Models\CommonModel::first();
-    return $commonSetting;
-}
+
 
 ?>

@@ -39,7 +39,8 @@
 {{--                </form>--}}
 
                 <div class="body">
-                    <form method="post" action="{{url('admin/create-category')}}" class="category_form">
+                    <form method="post" action="{{url('admin/create-category')}}" class="category_form"
+                    enctype="multipart/form-data">
                         @csrf
 
                         <input type="hidden" value="{{$_GET['type']}}" name="category_type">
@@ -54,13 +55,19 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="meta_description"><b>Description (Meta Tag) </b></label>
+                            <label for="meta_description"><b>Description </b></label>
 
                             <input name="description" type="text" id="meta_description"
                                    class="form-control" placeholder="Enter Meta Description">
                         </div>
 
-{{--                        <div class="form-group">--}}
+                        <div class="form-group">
+                            <label for="slug"><b>Image</b></label>
+                            <input name="image" type="file" id="image" class="form-control" placeholder="">
+                        </div>
+
+
+                        {{--                        <div class="form-group">--}}
 {{--                            <label for="meta_keywords"><b>Keywords (Meta Tag)</b></label>--}}
 
 {{--                            <input name="keywords" type="text" id="meta_keywords" class="form-control"--}}

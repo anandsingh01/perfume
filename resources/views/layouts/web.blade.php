@@ -33,7 +33,15 @@
     <link rel="stylesheet" href="{{asset('assets/web/')}}/assets/css/skins/skin-demo-29.css">
     <link rel="stylesheet" href="{{asset('assets/web/')}}/assets/css/demos/demo-29.css">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <style>
+        .container {
+            max-width: 1416px;
+            width: 90%;
+        }
         .header .header-top{
             color: #fff;
             font-size: 16px;
@@ -48,19 +56,28 @@
         .header .header-middle .container::after{
             background-color:unset;
         }
+        .banner-group-1 .banner:hover .banner-content{
+            outline:unset;
+        }
+        .banner-overlay > a:after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-color: rgba(51, 51, 51, 0.25);
+            z-index: 1;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
     </style>
 
-    <script>
-        WebFontConfig = {
-            google: { families: [ 'Poppins:300,400,500,600,700','Modak:400','Sedgwick Ave:400','Carter+One:400'] }
-        };
-        (function(d) {
-            var wf = d.createElement('script'), s = d.scripts[0];
-            wf.src = '{{asset('assets/web/')}}/assets/js/webfont.js';
-            wf.async = true;
-            s.parentNode.insertBefore(wf, s);
-        })(document);
-    </script>
+
+
+    @yield('css')
 </head>
 
 <body>
@@ -107,7 +124,8 @@
 
                 <div class="header-center">
                     <a href="{{url('/')}}" class="logo">
-                        <img src="{{asset(''.$getCommonSetting->logo_header)}}" alt="{{$getCommonSetting->site_title}}" width="200">
+                        <img src="{{asset(''.$getCommonSetting->logo_header)}}"
+                             alt="{{$getCommonSetting->site_title}}" width="300">
                     </a><!--End .logo-->
                 </div><!-- End .header-left -->
 
@@ -705,4 +723,6 @@
 <!-- Main JS File -->
 <script src="{{asset('assets/web/')}}/assets/js/demos/demo-29.js"></script>
 <script src="{{asset('assets/web/')}}/assets/js/main.js"></script>
+@yield('js')
+</body>
 </html>

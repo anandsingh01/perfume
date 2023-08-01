@@ -21,6 +21,7 @@ class CommonController extends Controller
     public function update_common(Request $request)
     {
         $post = $request->all();
+//        print_r($post);die;
         $updateCommon = CommonModel::find($request->id);
         $updateCommon->site_title = $request->site_title;
         $updateCommon->about_footer = $request->about_footer;
@@ -32,6 +33,13 @@ class CommonController extends Controller
         $updateCommon->twitter_url = $request->twitter_url;
         $updateCommon->instagram_url = $request->instagram_url;
         $updateCommon->linkedin_url = $request->linkedin_url;
+
+        $updateCommon->block_text_1 = $request->block_text_1;
+        $updateCommon->block_heading_1 = $request->block_heading_1;
+        $updateCommon->block_text_2 = $request->block_text_2;
+        $updateCommon->block_heading_2 = $request->block_heading_2;
+        $updateCommon->block_text_3 = $request->block_text_3;
+        $updateCommon->block_heading_3 = $request->block_heading_3;
 
         if (!empty($request->logo_header)) {
             $file =$request->file('logo_header');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Intervention\Image\Facades\Image;
 
 class CategoryController extends Controller
 {
@@ -15,7 +16,6 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-//        print_r($request->all());die;
         $data['page_heading'] = 'Category';
         $data['categories'] = Category::where('parent_id',0)
             ->where('category_type',$request->type)
@@ -23,11 +23,6 @@ class CategoryController extends Controller
         return view('admin.category.index',$data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create(Request $request)
     {
 
@@ -56,6 +51,31 @@ class CategoryController extends Controller
         $savecategory->meta_tag_keywords = $request->keywords;
         $savecategory->show_on_menu = $request->show_on_menu;
         $savecategory->show_on_homepage = $request->show_at_homepage;
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            // Define the path where you want to store the uploaded image
+            $path = 'images';
+
+            // Generate a unique name for the image to avoid overwriting
+            $imageName = time() . '_' . $image->getClientOriginalName();
+
+            // Move the uploaded image to the specified path
+            $image->move($path, $imageName);
+
+            // Convert the image to WebP format and save it with a new name
+            $webpImagePath = 'images/webp/' .rand(1111,9999).time(). '.webp';
+            Image::make($path . '/' . $imageName)->encode('webp')->save($webpImagePath, 80);
+
+            // Save the image name or path to your database as needed
+            // For example, you can store the image name in a 'image' column of the offers table
+            $savecategory->image = $webpImagePath;
+
+            // Optionally, you can also save the original image path if needed
+            // $offer->image = 'images/' . $imageName;
+        }
+
         $savecategory->status = '1';
         if($savecategory->save()){
             return redirect()->back()->with('success','Category Saved');
@@ -68,7 +88,7 @@ class CategoryController extends Controller
         $data['category'] = Category::find($id);
         return view('admin.category.edit',$data);
     }
-    public function update(Request $request,)
+    public function update(Request $request)
     {
 
         if(isset($request->slug)){
@@ -95,8 +115,32 @@ class CategoryController extends Controller
         $savecategory->meta_tag_keywords = $request->keywords;
         $savecategory->show_on_menu = $request->show_on_menu;
         $savecategory->show_on_homepage = $request->show_at_homepage;
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            // Define the path where you want to store the uploaded image
+            $path = 'images';
+
+            // Generate a unique name for the image to avoid overwriting
+            $imageName = time() . '_' . $image->getClientOriginalName();
+
+            // Move the uploaded image to the specified path
+            $image->move($path, $imageName);
+
+            // Convert the image to WebP format and save it with a new name
+            $webpImagePath = 'images/webp/' .rand(1111,9999).time(). '.webp';
+            Image::make($path . '/' . $imageName)->encode('webp')->save($webpImagePath, 80);
+
+
+            // Save the image name or path to your database as needed
+            // For example, you can store the image name in a 'image' column of the offers table
+            $savecategory->image = $webpImagePath;
+
+            // Optionally, you can also save the original image path if needed
+            // $offer->image = 'images/' . $imageName;
+        }
         if($savecategory->save()){
-            return redirect(url('admin/categories'));
+            return redirect(url('admin/categories?type='.$request->category_type));
         }
     }
 

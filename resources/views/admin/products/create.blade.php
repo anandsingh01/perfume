@@ -91,6 +91,10 @@
         input#product-gallery {
             height: 200px;
         }
+        img.img-thumbnail.m-1 {
+            width: 100px;
+            height: 100px;
+        }
     </style>
 @stop
 @section('body')
@@ -236,8 +240,8 @@
 
                                     <input type="file" id="product-gallery" name="productgallery[]" class="form-control" multiple>
                                 </div>
-                                <div class="preview-images-zone">
-
+                                <div id="imagePreview">
+                                    <!-- Preview images will be displayed here -->
                                 </div>
                             </div>
                             <div class="form-group mtb-10">
@@ -444,59 +448,6 @@
                                                     <input type="text" class="form-control tags_border" data-role="tagsinput" name="meta_keywords" value="Amsterdam,Sydney,Cairo">
                                                 </div>
 
-                                                <hr>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">FB OG Type </label>
-                                                    <input type="text" name="fb_og_type" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">FB OG URL </label>
-                                                    <input type="text" name="fb_og_url" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">FB OG Title </label>
-                                                    <input type="text" name="fb_og_title" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">FB OG Description </label>
-                                                    <input type="text" name="fb_og_desc" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">FB OG Image </label>
-                                                    <input type="file" name="fb_og_image" class="form-control">
-                                                </div>
-
-                                                <hr>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">Twitter Type </label>
-                                                    <input type="text" name="twitter_og_type" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">Twitter OG URL </label>
-                                                    <input type="text" name="twitter_og_url" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">Twitter OG Title </label>
-                                                    <input type="text" name="twitter_og_title" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">Twitter OG Description </label>
-                                                    <input type="text" name="twitter_og_desc" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">Twitter OG Image </label>
-                                                    <input type="file" name="twitter_og_img" class="form-control">
-                                                </div>
 
                                             </div>
                                         </div>
@@ -605,6 +556,45 @@
                     alert('Error');
                 }
             });
+        });
+    </script>
+    <script>
+        // Function to handle the file input change event
+        document.getElementById('product-gallery').addEventListener('change', function () {
+            // Get the file input element
+            const input = this;
+
+            // Get the image preview container
+            const imagePreviewContainer = document.getElementById('imagePreview');
+
+            // Clear any previous previews
+            imagePreviewContainer.innerHTML = '';
+
+            // Loop through selected files
+            for (let i = 0; i < input.files.length; i++) {
+                const file = input.files[i];
+
+                // Create a new image element
+                const img = document.createElement('img');
+                img.classList.add('img-thumbnail', 'm-1'); // Add any CSS classes for styling
+
+                // Set the image source to the selected file
+                img.src = URL.createObjectURL(file);
+
+                // Create a remove button for each image
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Remove';
+                removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-1');
+                removeBtn.addEventListener('click', function () {
+                    // Remove the corresponding preview image and button
+                    img.remove();
+                    removeBtn.remove();
+                });
+
+                // Append the image and remove button to the preview container
+                imagePreviewContainer.appendChild(img);
+                imagePreviewContainer.appendChild(removeBtn);
+            }
         });
     </script>
 @stop

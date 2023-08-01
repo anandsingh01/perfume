@@ -31,15 +31,18 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $data['who_we_are'] = AboutModels::first();
-        $data['our_mission'] = MissionModel::orderBy('id','DESC')->first();
-        $data['collaboration'] = CollaborationModel::orderBy('id','DESC')->where('collab_type','collaboration')->get();
-        $data['certificate'] = CollaborationModel::orderBy('id','DESC')->where('collab_type','certificate')->get();
-        $data['metals'] = MetalModel::orderBy('id','DESC')->get();
-        $data['metal_of_month'] = MetalModel::where('show_on_home','1')->orderBy('created_at','DESC')->first();
-        $data['banners'] = BannerModel::where('status','1')->get();
-        $data['blogs'] = Blog::where('status','1')->get();
-//        print_r($data['metal_of_month']);die;
+        $data['get_hero_banner'] = BannerModel::where('display_area','1')->where('status','1')->get();
+        $data['category_on_home'] = Category::where([
+            'status'=>'1',
+            'show_on_homepage'=>'1',
+            'category_type' => 'product'
+            ])->get();
+        $data['brand_on_home'] = Category::where([
+            'status'=>'1',
+            'show_on_homepage'=>'1',
+            'category_type' => 'brands'
+        ])->get();
+//        print_r($data['category_on_home']);die;
         return view('web.index',$data);
     }
 

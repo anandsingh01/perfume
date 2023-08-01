@@ -25,9 +25,11 @@
         <div class="col-lg-5 col-md-5 col-sm-12">
             <div class="card">
                 <div class="body">
-                    <form method="post" action="{{url('admin/update-category')}}" class="category_form">
+                    <form method="post" action="{{url('admin/update-category')}}" class="category_form"
+                    enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="id" value="{{$category->id}}">
+                        <input type="hidden" name="category_type" value="{{$category->category_type}}">
 
                         <div class="form-group">
                             <label for="category_name"><b>Category Name</b></label>
@@ -39,12 +41,20 @@
                             <input name="slug" value="{{$category->slug}}" type="text" id="name_slug" class="form-control" placeholder="">
                         </div>
 
-{{--                        <div class="form-group">--}}
-{{--                            <label for="meta_description"><b>Description (Meta Tag) </b></label>--}}
+                        <div class="form-group">
+                            <label for="slug"><b>Image</b></label>
+                            <input name="image" type="file" id="image" class="form-control" placeholder="">
+                            @if(!empty($category->image))
+                                <img src="{{asset($category->image)}}" width="100">
+                            @endif
+                        </div>
 
-{{--                            <input name="description" value="{{$category->meta_tag_description}}"  type="text" id="meta_description"--}}
-{{--                                   class="form-control" placeholder="Enter Meta Description">--}}
-{{--                        </div>--}}
+                        <div class="form-group">
+                            <label for="meta_description"><b>Description </b></label>
+
+                            <input name="description" value="{{$category->meta_tag_description}}"  type="text" id="meta_description"
+                                   class="form-control" placeholder="Enter Meta Description">
+                        </div>
 
 {{--                        <div class="form-group">--}}
 {{--                            <label for="meta_keywords"><b>Keywords (Meta Keyword)</b></label>--}}
@@ -54,35 +64,38 @@
 {{--                        </div>--}}
 
 
-                        <div class="form-group">
-                            <label for="show_on_menu">
-                                <label><b>Show on Menu</b></label>
-                            </label>
-                            <div class="radio radio-inline">
-                                <input name="show_on_menu" class="" type="radio" id="radio1" value="1"
-                                    {{$category->show_on_menu == 1 ? 'checked' : ''}}>
-                                <label for="radio1">Yes</label>
-                            </div>
+{{--                        <div class="form-group">--}}
+{{--                            <label for="show_on_menu">--}}
+{{--                                <label><b>Show on Menu</b></label>--}}
+{{--                            </label>--}}
+{{--                            <div class="radio radio-inline">--}}
+{{--                                <input name="show_on_menu" class="" type="radio" id="radio1" value="1"--}}
+{{--                                    {{$category->show_on_menu == 1 ? 'checked' : ''}}>--}}
+{{--                                <label for="radio1">Yes</label>--}}
+{{--                            </div>--}}
 
-                            <div class="radio radio-inline">
-                                <input name="show_on_menu" class="" type="radio"  id="radio2" value="0"
-                                    {{$category->show_on_menu == 0 ? 'checked' : ''}}>
-                                <label for="radio2">No</label>
-                            </div>
-                        </div>
+{{--                            <div class="radio radio-inline">--}}
+{{--                                <input name="show_on_menu" class="" type="radio"  id="radio2" value="0"--}}
+{{--                                    {{$category->show_on_menu == 0 ? 'checked' : ''}}>--}}
+{{--                                <label for="radio2">No</label>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
 
+                        <?php
+//                            print_r($category);
+                        ?>
                         <div class="form-group">
                             <label for="show_at_homepage"><b>Show on Homepage</b></label>
 
                             <div class="radio radio-inline">
                                 <input name="show_at_homepage" class="" type="radio" id="radio3" value="1"
-                                    {{$category->show_at_homepage == 1 ? 'checked' : ''}}>
+                                    {{$category->show_on_homepage == '1' ? 'checked' : ''}}>
                                 <label for="radio3">Yes</label>
                             </div>
 
                             <div class="radio radio-inline">
                                 <input name="show_at_homepage" class="" type="radio"  id="radio4" value="0"
-                                    {{$category->show_at_homepage == 0 ? 'checked' : ''}}>
+                                    {{$category->show_on_homepage == '0' ? 'checked' : ''}}>
                                 <label for="radio4">No</label>
                             </div>
                         </div>

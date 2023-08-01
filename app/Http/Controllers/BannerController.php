@@ -61,6 +61,7 @@ class BannerController extends Controller
         $banner->banner_subheading = $request->banner_subheading;
         $banner->banner_link = $request->banner_link;
         $banner->banner_text = $request->banner_text;
+        $banner->display_area = $request->display_area;
         $banner->status = '1';
 
         if ($request->hasFile('banner')) {
@@ -148,6 +149,7 @@ class BannerController extends Controller
         $banner->banner_subheading = $request->banner_subheading;
         $banner->banner_link = $request->banner_link;
         $banner->banner_text = $request->banner_text;
+        $banner->display_area = $request->display_area;
         $banner->status = '1';
 
 // Check if the image file was uploaded

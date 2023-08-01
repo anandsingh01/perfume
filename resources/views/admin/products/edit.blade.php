@@ -91,6 +91,10 @@
         input#product-gallery {
             height: 200px;
         }
+        img.img-thumbnail.m-1 {
+            width: 100px;
+            height: 100px;
+        }
     </style>
 @stop
 @section('body')
@@ -245,26 +249,30 @@
                     <div class="card">
                         <div class="body">
                             <div class="container">
-                                <div class="form-group  mtb-10">
-                                    <label class="control-label " for="password">Product Photo (Drag & Drop into the box)</label>
-
+                                <div class="form-group mtb-10">
+                                    <label class="control-label" for="password">Product Photo (Drag & Drop into the box)</label>
                                     <input type="file" id="product-gallery" name="productgallery[]" class="form-control" multiple>
                                 </div>
                                 <div class="preview-images-zone">
+                                    <div class="preview-image-container">
                                     @if(!empty($product_details->productgallery))
-                                        <?php
-                                        $product_gallery = explode(',',$product_details->productgallery);
-                                        ?>
+                                            <?php
+                                            $product_gallery = json_decode($product_details->productgallery);
+                                            ?>
                                         @foreach($product_gallery as $productGallery)
-                                        <img src="{{asset('/public/admin/products/'.$productGallery)}}" style="width:100px;">
+
+                                                <img src="{{ asset($productGallery) }}" style="width: 80px;" class="img-thumbnail m-1">
+                                                <button type="button" class="btn btn-danger btn-sm m-1 remove-preview-btn">Remove</button>
+
                                         @endforeach
-                                        @endif
+                                    @endif
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
+
 
                 <div class="col-md-12">
                     <div class="card">
@@ -487,60 +495,6 @@
                                                     <input type="text" class="form-control tags_border" data-role="tagsinput" name="meta_keywords" value="Amsterdam,Sydney,Cairo">
                                                 </div>
 
-                                                <hr>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">FB OG Type </label>
-                                                    <input type="text" name="fb_og_type" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">FB OG URL </label>
-                                                    <input type="text" name="fb_og_url" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">FB OG Title </label>
-                                                    <input type="text" name="fb_og_title" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">FB OG Description </label>
-                                                    <input type="text" name="fb_og_desc" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">FB OG Image </label>
-                                                    <input type="file" name="fb_og_image" class="form-control">
-                                                </div>
-
-                                                <hr>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">Twitter Type </label>
-                                                    <input type="text" name="twitter_og_type" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">Twitter OG URL </label>
-                                                    <input type="text" name="twitter_og_url" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">Twitter OG Title </label>
-                                                    <input type="text" name="twitter_og_title" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">Twitter OG Description </label>
-                                                    <input type="text" name="twitter_og_desc" class="form-control">
-                                                </div>
-
-                                                <div class="col-lg-12 col-md-12 mtb-10">
-                                                    <label class="control-label " for="password">Twitter OG Image </label>
-                                                    <input type="file" name="twitter_og_img" class="form-control">
-                                                </div>
-
                                             </div>
                                         </div>
                                     </div>
@@ -551,7 +505,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12">
@@ -733,48 +686,97 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+
     <script>
-        $(document).ready(function() {
-            document.getElementById('product-gallery').addEventListener('change', readImage, false);
-            $( ".preview-images-zone" ).sortable();
-            $(document).on('click', '.image-cancel', function() {
-                let no = $(this).data('no');
-                $(".preview-image.preview-show-"+no).remove();
+        // Function to handle the file input change event
+        document.getElementById('product-gallery').addEventListener('change', function () {
+            // Get the file input element
+            const input = this;
+
+            // Get the image preview container
+            const imagePreviewContainer = document.querySelector('.preview-images-zone');
+
+            // Clear any previous previews
+            imagePreviewContainer.innerHTML = '';
+
+            // Loop through selected files
+            for (let i = 0; i < input.files.length; i++) {
+                const file = input.files[i];
+
+                // Create a new image element
+                const img = document.createElement('img');
+                img.classList.add('img-thumbnail', 'm-1'); // Add any CSS classes for styling
+
+                // Set the image source to the selected file
+                img.src = URL.createObjectURL(file);
+
+                // Create a remove button for each image
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Remove';
+                removeBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'm-1', 'remove-preview-btn');
+                removeBtn.addEventListener('click', function () {
+                    // Remove the corresponding preview image and button
+                    img.remove();
+                    removeBtn.remove();
+                });
+
+                // Create a div to hold both the image and the remove button
+                const previewContainer = document.createElement('div');
+                previewContainer.classList.add('preview-image-container');
+                previewContainer.appendChild(img);
+                previewContainer.appendChild(removeBtn);
+
+                // Append the image and remove button to the preview container
+                imagePreviewContainer.appendChild(previewContainer);
+            }
+        });
+    </script>
+
+    <script>
+        // Function to handle the file input change event
+        document.getElementById('product-gallery').addEventListener('change', function () {
+            // ... your existing code to display the preview images ...
+
+            // Function to remove the image URL from the database using jQuery AJAX
+            function removeImage(imageUrl, productId, previewContainer) {
+                $.ajax({
+                    url: `/remove-image`,
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // Assuming you're using Laravel's CSRF protection
+                        product_id: productId,
+                        image_url: imageUrl
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.success) {
+                            // Image URL removed from the database successfully, remove the preview container
+                            previewContainer.remove();
+                        } else {
+                            // Failed to remove the image URL from the database, handle the error if needed
+                            console.error('Failed to remove the image URL from the database');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error while removing the image URL from the database:', error);
+                    },
+                });
+            }
+
+            // Attach click event listener to the document and check for remove button clicks
+            $(document).on('click', '.remove-preview-btn', function () {
+                // ... your existing code to get the URL of the image to be removed, the parent preview container, and the product ID ...
+
+                // Call the removeImage function with the image URL, product ID, and preview container
+                removeImage(imageUrl, productId, previewContainer);
             });
         });
-
-        var num = 4;
-        function readImage() {
-            if (window.File && window.FileList && window.FileReader) {
-                var files = event.target.files; //FileList object
-                var output = $(".preview-images-zone");
-
-                for (let i = 0; i < files.length; i++) {
-                    var file = files[i];
-                    if (!file.type.match('image')) continue;
-
-                    var picReader = new FileReader();
-
-                    picReader.addEventListener('load', function (event) {
-                        var picFile = event.target;
-                        var html =  '<div class="preview-image preview-show-' + num + '">' +
-                            '<div class="image-cancel" data-no="' + num + '">x</div>' +
-                            '<div class="image-zone"><img id="pro-img-' + num + '" src="' + picFile.result + '"></div>' +
-                            '<div class="tools-edit-image"><a href="javascript:void(0)" data-no="' + num + '" class="btn btn-light btn-edit-image">edit</a></div>' +
-                            '</div>';
-
-                        output.append(html);
-                        num = num + 1;
-                    });
-
-                    picReader.readAsDataURL(file);
-                }
-                // $("#product-gallery").val('');
-            } else {
-                console.log('Browser not support');
-            }
-        }
-
-
     </script>
+
+
+
+
+
+
+
 @stop

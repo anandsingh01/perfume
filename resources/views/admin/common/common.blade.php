@@ -26,27 +26,15 @@
                     <div class="card">
                         <div class="header">
                             <h2><strong>Common</strong> Setting</h2>
-                            <ul class="header-dropdown">
-                                <li class="dropdown"> <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <i class="zmdi zmdi-more"></i> </a>
-                                    <ul class="dropdown-menu dropdown-menu-right">
-                                        <li><a href="javascript:void(0);">Action</a></li>
-                                        <li><a href="javascript:void(0);">Another action</a></li>
-                                        <li><a href="javascript:void(0);">Something else</a></li>
-                                    </ul>
-                                </li>
-                                <li class="remove">
-                                    <a role="button" class="boxs-close"><i class="zmdi zmdi-close"></i></a>
-                                </li>
-                            </ul>
                         </div>
                         <div class="body">
                             <form action="{{url('admin/update-common')}}" method="post" enctype="multipart/form-data">
                                 <!-- Nav tabs -->
                                 <ul class="nav nav-tabs p-0 mb-3">
                                     <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#home">General Setting</a></li>
-                                    <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#profile">PROFILE</a></li>
+                                    <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#profile">Profile</a></li>
                                     <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#messages">Social Media </a></li>
-                                    <!-- <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#settings">SETTINGS</a></li> -->
+                                    <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Blocks">Blocks</a></li>
                                 </ul>
                                 <!-- Tab panes -->
                                 <div class="tab-content">
@@ -104,27 +92,63 @@
                                             <input type="text" class="form-control" name="contact_email" placeholder="Email" value="{{$common->contact_email}}">
                                         </div>
                                         <div class="form-group">
-                        <label class="control-label">Phone</label>
-                        <input type="text" class="form-control" name="contact_phone" placeholder="Phone" value="{{$common->contact_phone}}">
-                    </div>
-                    </div>
+                                            <label class="control-label">Phone</label>
+                                            <input type="text" class="form-control" name="contact_phone" placeholder="Phone" value="{{$common->contact_phone}}">
+                                        </div>
+                                    </div>
+
                                     <div role="tabpanel" class="tab-pane" id="messages">
                                         <div class="form-group">
-                        <label class="control-label">Facebook URL</label>
-                        <input type="text" class="form-control" name="facebook_url" placeholder="Facebook URL" value="{{$common->facebook_url}}">
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">Twitter URL</label>
-                        <input type="text" class="form-control" name="twitter_url" placeholder="Twitter URL" value="{{$common->twitter_url}}">
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">Instagram URL</label>
-                        <input type="text" class="form-control" name="instagram_url" placeholder="Instagram URL" value="{{$common->instagram_url}}">
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label">LinkedIn URL</label>
-                        <input type="text" class="form-control" name="linkedin_url" placeholder="LinkedIn URL" value="{{$common->linkedin_url}}">
-                    </div>
+                                            <label class="control-label"></label>
+                                            <input type="text" class="form-control" name="facebook_url" placeholder="" value="{{$common->facebook_url}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">Twitter URL</label>
+                                            <input type="text" class="form-control" name="twitter_url" placeholder="Twitter URL" value="{{$common->twitter_url}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">Instagram URL</label>
+                                            <input type="text" class="form-control" name="instagram_url" placeholder="Instagram URL" value="{{$common->instagram_url}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">LinkedIn URL</label>
+                                            <input type="text" class="form-control" name="linkedin_url" placeholder="LinkedIn URL" value="{{$common->linkedin_url}}">
+                                        </div>
+                                    </div>
+
+                                    <div role="tabpanel" class="tab-pane" id="Blocks">
+                                        <div class="form-group">
+                                            <label class="control-label">Block Heading 1</label>
+                                            <input type="text" class="form-control" name="block_heading_1"
+                                                   placeholder="" value="{{$common->block_heading_1}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">Block Text 1</label>
+                                            <input type="text" class="form-control" name="block_text_1"
+                                                   placeholder="" value="{{$common->block_text_1}}">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label">Block Heading 2</label>
+                                            <input type="text" class="form-control" name="block_heading_2"
+                                                   placeholder="" value="{{$common->block_heading_2}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">Block Text 2</label>
+                                            <input type="text" class="form-control" name="block_text_2"
+                                                   placeholder="" value="{{$common->block_text_2}}">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label">Block Heading 3</label>
+                                            <input type="text" class="form-control" name="block_heading_3"
+                                                   placeholder="" value="{{$common->block_heading_3}}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">Block Text 3</label>
+                                            <input type="text" class="form-control" name="block_text_3"
+                                                   placeholder="" value="{{$common->block_text_3}}">
+                                        </div>
                                     </div>
 
                                 </div>
