@@ -5,6 +5,7 @@ use App\Models\Category;
 use App\Models\User;
 use Bavix\Wallet\Models\Transaction;
 use DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Intervention\Image\Point;
 use Razorpay\Api\Order;
@@ -25,9 +26,9 @@ use App\Models\SaveAppliedDiscount;
 use Razorpay\Api\Api;
 use Exception;
 
-use Stripe\Stripe;
-use Stripe\Customer;
-use Stripe\Charge;
+use Stripe;
+
+use Stripe\Error\Card;
 class CheckoutController extends Controller
 {
     function getUserIP()
@@ -303,29 +304,6 @@ class CheckoutController extends Controller
             return response()->json(['code'=>200]);
         }
     }
-
-//    function checkout_submit(Request $request){
-//
-//        print_r($request->all());
-//        die;
-//        if(Auth::check()){
-////            print_r($request->all());die;
-//            $userid = Auth::user()->id;
-//            $data['totalAmount'] = $request->totalamount;
-//            $data['getaddress'] = $request->getaddress;
-//            $data['discount_on_mrp'] = $request->discount_on_mrp;
-//            $data['coupon_discount_amount'] = $request->coupon_discount_amount;
-//            $data['couponDiscountType'] = $request->couponDiscountType;
-//            $data['coupon_code'] = $request->coupon_code;
-//            $data['getpointsValue'] = $request->getpointsValue;
-//            $data['deliveryAddress'] = DeliverAddress::where('addedby',Auth::user()->id)->where('id' , $request->getaddress)->first();
-//            $data['totalOrders'] = OrdersModel::where('user_id',Auth::user()->id)->count();
-//            return view('web.checkout',$data);
-//        }else{
-//            return redirect(route("frontendlogin"));
-//        }
-//
-//    }
 
     function paymentGatewayFunction(Request $request){
         $input = $request->all();
@@ -603,7 +581,7 @@ class CheckoutController extends Controller
 
     public function checkout_submit(Request $request)
     {
-        print_r($request->all());die;
+//        print_r($request->all());die;
         $order_id = uniqid();
 
         $order = \App\Models\Order::create([
@@ -620,6 +598,7 @@ class CheckoutController extends Controller
             'email' => $request->input('email'),
             'final_amount' => $request->input('final_amount'),
             'coupon_code' => $request->input('coupon_code'),
+            'status' => '0',
         ]);
 
         Session::put('order_details',$order);
@@ -662,15 +641,18 @@ class CheckoutController extends Controller
     }
 
     function stripe_integrate(){
-        return view('web.payment');
+        $getOrderSession = Session::get('order_details');
+        $data['order_id'] = $getOrderSession->order_id;
+        $data['order_primary_key'] = $getOrderSession->id;
+        return view('web.payment',$data);
     }
 
 
     function stripe_submit(Request $request){
-        Stripe::setApiKey('sk_test_51IC66sKDGzpYlWQ2lmnGC7G9G5YFfRXe6oAWJf6mY54ho57zyixhSZV6kteU0148DrLS2wQR7spWezca0byNk7js00UC4sZleI');
+
+        Stripe\Stripe::setApiKey('sk_test_51IC66sKDGzpYlWQ2lmnGC7G9G5YFfRXe6oAWJf6mY54ho57zyixhSZV6kteU0148DrLS2wQR7spWezca0byNk7js00UC4sZleI');
 
         $stripe = new \Stripe\StripeClient('sk_test_51IC66sKDGzpYlWQ2lmnGC7G9G5YFfRXe6oAWJf6mY54ho57zyixhSZV6kteU0148DrLS2wQR7spWezca0byNk7js00UC4sZleI');
-
 
         $method = \Stripe\PaymentMethod::create([
             'type' => 'card',
@@ -681,19 +663,119 @@ class CheckoutController extends Controller
                 'cvc' => $request->cvc,
             ],
         ]);
-//        print_r($method);die;
 
         $data = $stripe->paymentIntents->create(
             [
-                'amount' =>1000 * 100,
+                'amount' => 100 * 100,
                 'currency' => 'INR',
-                'description' => 'Mumbai moments payment',
+                'description' => 'Lifragrances',
                 'payment_method_types' => ['card'],
                 'payment_method' => $method->id,
                 'confirm'=> true
             ]
         );
+
+//        print_r($data);die;
+
+        if($data['status'] == 'succeeded') {
+
+            $orderData = \App\Models\Order::find($request->order_primary_key);
+//            print_r($orderData);die;
+            $orderData->payment_intent_id = $data['id'];
+            $orderData->payment_method = $data['payment_method'];
+            $orderData->transaction_status = $data['status'];
+            $orderData->status = '1';
+            $orderData->save();
+
+//            $getTourName = \App\Models\Tour::find($orderData->tour_id);
+//            $Category = \App\Models\Category::find($getTourName->category);
+//
+//
+//            $useremail = $orderData->email;
+//
+//            // $subject='Hooray! Your'. $orderData->first_name.' '.$orderData->last_name .'tour booking is confirmed.';
+//
+//            $subject = 'Hooray! Your'.$orderData->first_name.' '.$orderData->last_name. 'tour booking is confirmed. ';
+//
+//            $fromSend = 'info@mumbaimoments.com';
+//            $email = 'anandsingh678970@gmail.com';
+//
+//            $data2['tourname'] = $getTourName->title;
+//            $data2['meetinglocation'] = $getTourName->service_tour_meeting_point;
+//
+//            $data2['order_id'] = $orderData->order_id;
+//            $data2['members'] = $orderData->members;
+//            $data2['email'] = 'info@mumbaimoments.com';
+//            $data2['date'] = date('d M Y, D', strtotime($orderData->date));
+//            $data2['phone'] = $orderData->mobile_no;
+//            $data2['name'] = $orderData->first_name.' '.$orderData->last_name;
+//            $data2['tourtime'] = $orderData->tourtime;
+//            $data2['tour_max_price'] = $orderData->tour_max_price;
+//
+//            $data2['category'] = $Category->category;
+//
+//            \Mail::send("frontend.booking_confirmation", $data2, function ($message) use ($fromSend, $useremail, $subject) {
+//                $message->from($fromSend);
+//                $message->subject($subject);
+//                $message->to(['info@mumbaimoments.com',$useremail]);
+//                // $message->cc(['anandsingh678970@gmail.com']);
+//            });
+
+//              die;
+
+            return Redirect::to('/payment/success')->with('order_placed','Order has been placed. We will notify your Tracking Id on email');
+
+        }
+
         print_r($data);die;
+
+
+//        Stripe\Stripe::setApiKey('sk_test_51NbLEHSBT80Q619Yk3Ojz79ZNA9zeckWUTHNPkTxtG445HKz997fne0nTD9oYSC3ULVIVa0YZmDBXNCzFRObNR0A000phwGcVp');
+//
+//        $stripe = new \Stripe\StripeClient('sk_test_51NbLEHSBT80Q619Yk3Ojz79ZNA9zeckWUTHNPkTxtG445HKz997fne0nTD9oYSC3ULVIVa0YZmDBXNCzFRObNR0A000phwGcVp');
+//
+//        $method = $stripe->paymentMethods->create([
+//            'type' => 'card',
+//            'card' => [
+//                'token' => $request->stripeToken, // Use the token received from the client
+//            ],
+//        ]);
+//
+//
+//        // Create a PaymentIntent using the PaymentMethod
+//        $data = $stripe->paymentIntents->create([
+//            'amount' => 1000, // Adjust to the correct amount in the smallest currency unit
+//            'currency' => 'INR',
+//            'description' => 'Mumbai moments payment',
+//            'payment_method_types' => ['card'],
+//            'payment_method' => $method->id,
+//            'confirm' => true,
+//        ]);
+//
+//        // Check if 3D Secure authentication is required
+//        if ($data->status === 'requires_action' && $data->next_action->type === 'use_stripe_sdk') {
+//            // Redirect the user to the 3D Secure authentication page
+//            return redirect($data->next_action->use_stripe_sdk->stripe_js);
+//        }
+//
+//        // Handle other payment statuses (succeeded, etc.)
+//        if ($data->status === 'succeeded') {
+//            // Payment is successful, capture it and handle further actions
+//            $paymentIntentId = $data->id;
+//            $res = $stripe->paymentIntents->capture($paymentIntentId);
+//            print_r($res);
+//
+//            // Handle successful payment, update your database, send confirmation emails, etc.
+//            // ...
+//        } else {
+//            // Handle other payment status (e.g., failed)
+//            // ...
+//        }
+//        print_r($data);die;
+
     }
 
+    function payment_success(){
+        return view('web.thankyou');
+    }
 }

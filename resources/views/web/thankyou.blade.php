@@ -26,11 +26,7 @@ session_start();
     $getAllCart = getCartProducts();
     ?>
     <main class="main">
-        <div class="page-header text-center" style="background-image: url('assets/images/page-header-bg.jpg')">
-            <div class="container">
-                <h1 class="page-title">Checkout <span></span></h1>
-            </div><!-- End .container -->
-        </div><!-- End .page-header -->
+
         <nav aria-label="breadcrumb" class="breadcrumb-nav">
             <div class="container">
                 <ol class="breadcrumb">
@@ -42,55 +38,42 @@ session_start();
         </nav><!-- End .breadcrumb-nav -->
 
         <div class="page-content">
-            <div class="cart">
-                <div class="container">
-                    <div class="row">
-                        <form role="form" action="{{ route('stripe.post') }}" method="post" class="require-validation"
-                              data-cc-on-file="false"
-                              data-stripe-publishable-key="pk_test_51NbLEHSBT80Q619YMYXCKzMcYcpPySG48uBI0yTCY7o7tAQso8QKMgq662suEl0f5rOYy5RsobAUiWfkoWfRvX6k00b6E9N1ui"
-                              id="payment-form">
-                            @csrf
+            <div class="container">
+                @if(Session::has('order_placed'))
+                <h2 class="title text-center mb-5">Order Placed</h2><!-- End .title -->
 
-                            <input type="hidden" name="order_id" value="{{$order_id}}"/>
-                            <input type="hidden" name="order_primary_key" value="{{$order_primary_key}}"/>
-                            <div class='form-row row'>
-                                <div class='col-md-6 form-group required'>
-                                    <label class='control-label'>Name on Card</label>
-                                    <input class='form-control' size='4' name="name_on_card" type='text'>
-                                </div>
+                <div class="cta bg-image pt-6 pb-7 mb-5" style="background-image: url(assets/images/backgrounds/cta/bg-2.jpg);background-position: center right;">
+                    <div class="row justify-content-center">
+                        <div class="col-sm-10 col-md-8 col-lg-6">
+                            <div class="cta-text text-center">
+                                <h3 class="cta-title">
+                                    {{Session::get('order_placed')}}
+                                </h3><!-- End .cta-title -->
 
-                                <div class='col-md-6 form-group required'>
-                                    <label class='control-label'>Card Number</label>
-                                    <input autocomplete='off' name="card_no"  class='form-control card-number' size='20' type='text'>
-                                </div>
-
-                                <div class='col-xs-6 col-md-4 form-group cvc required'>
-                                    <label class='control-label'>CVC</label>
-                                    <input autocomplete='off' name="cvc"  class='form-control card-cvc' placeholder='ex. 311' size='4' type='text'>
-                                </div>
-
-                                <div class='col-xs-12 col-md-4 form-group expiration required'>
-                                    <label class='control-label'>Expiration Month</label>
-                                    <input class='form-control card-expiry-month' name="exp_month"  placeholder='MM' size='2' type='text'>
-                                </div>
-                                <div class='col-xs-12 col-md-4 form-group expiration required'>
-                                    <label class='control-label'>Expiration Year</label>
-                                    <input class='form-control card-expiry-year' name="exp_year"  placeholder='YYYY' size='4' type='text'>
-                                </div>
-                            </div>
-
-                            *We do not save your data.
-
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <button class="btn btn-lg btn-success pb-2 pt-2" style="background: #bd0131;color:#fff" type="submit">Pay Now</button>
-                                </div>
-                            </div>
-
-                        </form>
+                            </div><!-- End .cta-text -->
+                        </div><!-- End .col-sm-10 col-md-8 col-lg-6 -->
                     </div><!-- End .row -->
-                </div><!-- End .container -->
-            </div><!-- End .cart -->
+                </div><!-- End .cta -->
+                @else
+
+                    <h2 class="title text-center mb-5">Something Went Wrong</h2><!-- End .title -->
+
+                    <div class="cta bg-image pt-6 pb-7 mb-5" style="background-image: url(assets/images/backgrounds/cta/bg-2.jpg);background-position: center right;">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-10 col-md-8 col-lg-6">
+                                <div class="cta-text text-center">
+                                    <h3 class="cta-title">
+
+                                        <a href="{{url('/')}}" class="btn btn-lg btn-success">Go To Homepage</a>
+                                    </h3><!-- End .cta-title -->
+
+                                </div><!-- End .cta-text -->
+                            </div><!-- End .col-sm-10 col-md-8 col-lg-6 -->
+                        </div><!-- End .row -->
+                    </div><!-- End .cta -->
+
+                @endif
+            </div>
         </div><!-- End .page-content -->
     </main>
 @stop

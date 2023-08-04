@@ -153,12 +153,12 @@ session_start();
                                             </span><!--End .cart-product-info-->
                                                 </td>
                                             </tr>
-                                                <input type="text" name="product_name[]" value="{{$getAllCarts->getProducts->title}}"/>
-                                                <input type="text" name="product_id[]" value="{{$getAllCarts->getProducts->id}}"/>
-                                                <input type="text" name="attribute_id[]" value="{{$getAllCarts->attribute_id}}"/>
-                                                <input type="text" name="qty[]" value="{{$getAllCarts->cartqty}}"/>
-                                                <input type="text" name="price[]" value="{{$getAllCarts->price}}"/>
-                                                <input type="text" name="size[]" value="{{$getAllCarts->size}}"/>
+                                                <input type="hidden" name="product_name[]" value="{{$getAllCarts->getProducts->title}}"/>
+                                                <input type="hidden" name="product_id[]" value="{{$getAllCarts->getProducts->id}}"/>
+                                                <input type="hidden" name="attribute_id[]" value="{{$getAllCarts->attribute_id}}"/>
+                                                <input type="hidden" name="qty[]" value="{{$getAllCarts->cartqty}}"/>
+                                                <input type="hidden" name="price[]" value="{{$getAllCarts->price}}"/>
+                                                <input type="hidden" name="size[]" value="{{$getAllCarts->size}}"/>
                                             @empty
                                             @endforelse
                                             <tr class="summary-subtotal">
@@ -172,13 +172,13 @@ session_start();
                                                         </p>
 
                                                         $  {{number_format(Session::get('discounted_total'),2) ?? '0'}}
-                                                        <input type="text" name="final_amount" value="{{Session::get('discounted_total')}}"/>
-                                                        <input type="text" name="coupon_code" value="{{Session::get('applied_coupon')}}"/>
+                                                        <input type="hidden" name="final_amount" value="{{Session::get('discounted_total')}}"/>
+                                                        <input type="hidden" name="coupon_code" value="{{Session::get('applied_coupon')}}"/>
 
 
                                                     @else
                                                         {{number_format($get_count->cartTotal,2) ?? '0'}}
-                                                        <input type="text" name="final_amount" value="{{$get_count->cartTotal}}"/>
+                                                        <input type="hidden" name="final_amount" value="{{$get_count->cartTotal}}"/>
 
                                                     @endif
                                                 </td>

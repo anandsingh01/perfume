@@ -1,11 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.web')
 
-@section('content')
+@section('body')
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Verify Your Email Address') }}</div>
+                <div class="card-header">
+                    <h3 class="text-center mt-3">
+                        {{ __('Verify Your Email Address') }}
+                    </h3></div>
 
                 <div class="card-body">
                     @if (session('resent'))
@@ -16,9 +19,11 @@
 
                     {{ __('Before proceeding, please check your email for a verification link.') }}
                     {{ __('If you did not receive the email') }},
-                    <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
+                    <form class="d-inline" method="POST" action="{{ url('/email/verify/resend') }}">
                         @csrf
-                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('click here to request another') }}</button>.
+                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline">
+                            {{ __('click here to request another') }}
+                        </button>.
                     </form>
                 </div>
             </div>

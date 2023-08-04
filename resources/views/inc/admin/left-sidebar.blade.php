@@ -71,6 +71,15 @@
             </ul>
         </li>
 
+        <li><a href="javascript:void(0);" class="menu-toggle waves-effect waves-block">
+                <i class="zmdi zmdi-apps"></i><span>Orders</span></a>
+            <ul class="ml-menu">
+                <li><a href="{{url('admin/all-orders')}}" class=" waves-effect waves-block"><span>All Orders</span></a></li>
+{{--                <li><a href="{{url('admin/all-post?type=all-posts')}}" class=" waves-effect waves-block"><span>Posts</span></a></li>--}}
+
+            </ul>
+        </li>
+
 {{--        --}}{{--    Previously Projects Menu    --}}
 {{--        <li><a href="javascript:void(0);" class="menu-toggle waves-effect waves-block">--}}
 {{--                <i class="zmdi zmdi-apps"></i><span>Metals</span></a>--}}

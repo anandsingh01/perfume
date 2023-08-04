@@ -60,21 +60,39 @@ class HomeController extends Controller
             'display_area'=> '4',
             'status'=> '1',
         ])->orderBy('id','DESC')->first();
-
-//        print_r($data['get_footer_banner']);die;
         return view('web.index',$data);
     }
 
-    function get_service($url){
-        $service = ServiceModel::where('url_slug',$url)->first();
-        return view('web.service',compact('service'));
+    function product_by_category($slug){
+        $category = Category::where('slug',$slug)->first();
+        if(!empty($category)){
+            $data['get_products'] = Product::where([
+                'section_id' => $category->id,
+                'status' => 'active',
+                ]
+            )
+                ->with('get_brands','section')
+                ->orderBy('id','DESC')
+                ->get();
+            $data['category'] = $category;
+        }
+        return view('web.category',$data);
     }
 
-
-    function who_we_are(){
-        $data['who_we_are'] = AboutModels::first();
-//        print_r($data);die;
-        return view('web.about',$data);
+    function product_by_brands($slug){
+        $brands = Category::where('slug',$slug)->first();
+        if(!empty($brands)){
+            $data['get_products'] = Product::where([
+                'brands_id' => $brands->id,
+                'status' => 'active',
+                ]
+            )
+                ->with('get_brands','section')
+                ->orderBy('id','DESC')
+                ->get();
+            $data['category'] = $brands;
+        }
+        return view('web.category',$data);
     }
 
     function ourmissionvision(){

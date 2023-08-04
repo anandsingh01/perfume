@@ -24,31 +24,33 @@ use App\Http\Controllers\Auth\LoginController;
 
 
 
+Route::get('login', [LoginController::class, 'login_page']);
+Route::post('check-login', [LoginController::class, 'check_login']);
 Route::get('login/google', [LoginController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback']);
 
+
 Route::get('login/facebook', [LoginController::class, 'redirectToFacebook'])->name('login.facebook');
 Route::get('login/facebook/callback', [LoginController::class, 'handleFacebookCallback']);
-Auth::routes();
+
+
+Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('register');
+Route::get('email/verify', function () {
+    return view('auth.verify');
+})->name('verification.notice');
+
+Route::post('/email/verify/resend',  [\App\Http\Controllers\Auth\VerificationController::class, 'resend']);
+
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
-//Route::get('/who-we-are', [App\Http\Controllers\HomeController::class, 'who_we_are']);
-Route::get('/about-sab', [App\Http\Controllers\HomeController::class, 'who_we_are']);
-Route::get('/our-mission-vision', [App\Http\Controllers\HomeController::class, 'ourmissionvision']);
-Route::get('our-work/projects', [App\Http\Controllers\HomeController::class, 'projects']);
-Route::get('projects/{url}', [App\Http\Controllers\HomeController::class, 'projects_details']);
-Route::get('blogs/{url}', [App\Http\Controllers\HomeController::class, 'blogs_details']);
-Route::get('metals/{url}', [App\Http\Controllers\HomeController::class, 'metal_details']);
-Route::get('our-work/collaborations', [App\Http\Controllers\HomeController::class, 'collaborations']);
-Route::get('annual-report', [App\Http\Controllers\HomeController::class, 'annual_report']);
-Route::get('leadership-and-board', [App\Http\Controllers\HomeController::class, 'ourteam']);
-Route::get('/pay', [HomeController::class, 'pay']);
+Route::get('for/{slug}', [App\Http\Controllers\HomeController::class, 'product_by_category']);
+Route::get('brands/{slug}', [App\Http\Controllers\HomeController::class, 'product_by_brands']);
+
+
 Route::get('support-us', [App\Http\Controllers\HomeController::class, 'supportus']);
 Route::get('contact-us', [App\Http\Controllers\HomeController::class, 'contactus']);
 Route::post('save-contact-us', [App\Http\Controllers\HomeController::class, 'savecontactus']);
-Route::post('support-us/pay', [App\Http\Controllers\HomeController::class, 'razorpay']);
-Route::post('payment', [HomeController::class, 'payment']);
-Route::get('payment-response', [HomeController::class, 'payment_response']);
+
 Route::get('privacy-policy', function (){
     return view('web.privacy-policy');
 });
@@ -71,6 +73,7 @@ Route::post('/checkout/submit', [CheckoutController::class, 'checkout_submit'])-
 Route::get('/checkout/payment', [CheckoutController::class, 'stripe_integrate'])
     ->name('checkout.payment');
 Route::post('/stripe/submit', [CheckoutController::class, 'stripe_submit'])->name('stripe.post');
+Route::get('/payment/success', [CheckoutController::class, 'payment_success']);
 
 Route::post('updateCart', [App\Http\Controllers\CartController::class,'updateCart']);
 //Route::post('checkCoupon', [App\Http\Controllers\CartController::class,'checkCoupon']);
@@ -78,9 +81,16 @@ Route::post('/apply-coupon', [App\Http\Controllers\CartController::class,'checkC
 
 Route::get('/delete-from-cart/{id}', [App\Http\Controllers\CartController::class,'deleteFromCart']);
 
+Route::get('user/dashboard', [App\Http\Controllers\UserController::class,'dashboard']);
 
-Route::group(['prefix'=>'admin','as'=>'admin.'], function(){
+
+
+Route::group(['prefix'=>'admin'], function(){
+
+    Auth::routes();
     Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
+    Route::post('/logout', [App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+
     Route::get('/', [App\Http\Controllers\AdminController::class, 'index']);
     Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/my-profile', [App\Http\Controllers\AdminController::class, 'my_profile'])->name('admin.myprofile');
@@ -304,5 +314,20 @@ Route::group(['prefix'=>'admin','as'=>'admin.'], function(){
     Route::post('/products/update/productSizeAttribute/{id}', [App\Http\Controllers\ProductsController::class,'updateproductSizeAttribute']);
     Route::get('product/attribute/additional-edit-value/{id}', [App\Http\Controllers\ProductsController::class,'editAdditionalProductAttrValue']);
     Route::get('remove_image', [App\Http\Controllers\ProductsController::class,'remove_image']);
+
+
+    // Products # ADD, UPDATE ,DELETE...
+    Route::get('/all-orders', [App\Http\Controllers\OrderController::class,'index']);
+    Route::get('/view-orders', [App\Http\Controllers\OrderController::class,'view_order'])->name('admin.view-orders');
+    Route::get('/add-products', [App\Http\Controllers\ProductsController::class,'create']);
+    Route::post('/save-products', [App\Http\Controllers\ProductsController::class,'storee']);
+    Route::get('/edit-products/{id}', [App\Http\Controllers\ProductsController::class,'edit']);
+    Route::post('/update-products/{id}', [App\Http\Controllers\ProductsController::class,'update']);
+    Route::get('/update-products-Status', [App\Http\Controllers\ProductsController::class,'changeProductstatus']);
+    Route::get('/delete-products/{id}', [App\Http\Controllers\ProductsController::class,'destroy']);
+    Route::get('/update-products-Status', [App\Http\Controllers\ProductsController::class,'changeProductStatus']);
+    Route::get('/getcategoriesBySectionOnProduct', [App\Http\Controllers\ProductsController::class,'getcategoriesBySectionOnProduct']);
+    Route::get('/getSubcategoriesByCategoriesOnProduct', [App\Http\Controllers\ProductsController::class,'getSubcategoriesByCategoriesOnProduct']);
+
 
 });

@@ -103,15 +103,25 @@ class LoginController extends Controller
                 break;
 
             default:
-                return '/home';
+                return '/';
                 break;
+        }
+    }
+
+    function login_page(){
+        if(Auth::check()){
+            if(Auth::user()->role == '1'){
+                return view('web.login_page');
+            }
+        }else{
+            return view('web.login_page');
         }
     }
 
     public function login(Request $request)
     {
-//        print_r($request->all());die;
-        $username = $request->username; //the input field has name='username' in form
+        print_r($request->all());die;
+        $username = $request->email; //the input field has name='username' in form
         $password = $request->password;
 
         if(filter_var($username, FILTER_VALIDATE_EMAIL)) {
@@ -120,15 +130,36 @@ class LoginController extends Controller
             Auth::attempt(['email' => $username, 'password' => $password]);
         } else {
             echo 'n';
+            die;
             //they sent their username instead
             Auth::attempt(['username' => $username, 'password' => $password]);
         }
-
-
-//        die;
-        //was any of those correct ?
         if ( Auth::check() ) {
             return redirect(url('admin/dashboard'));
+        }else{
+            return redirect(url('login'));
+        }
+
+    }
+
+    public function check_login(Request $request)
+    {
+
+        $username = $request->email;
+        $password = $request->password;
+
+        if(filter_var($username, FILTER_VALIDATE_EMAIL)) {
+            Auth::attempt(['email' => $username, 'password' => $password]);
+        } else {
+            Auth::attempt(['username' => $username, 'password' => $password]);
+        }
+        if ( Auth::check() ) {
+            if(Auth::user()->role == 2){
+                return redirect(url('user/dashboard'));
+            }else{
+                return redirect(url('/'));
+            }
+
         }else{
             return redirect(url('login'));
         }

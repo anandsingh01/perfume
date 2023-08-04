@@ -1,4 +1,9 @@
-<?php $getCommonSetting = getCommonSetting();?>
+<?php
+$getCommonSetting = getCommonSetting();
+$get_category = get_category();
+$get_brands = get_brands();
+//print_r($get_category);die;
+?>
     <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,14 +102,18 @@
                     </div><!--End .social-icons-->
                 </div><!-- End .header-right -->
 
+                @if(!Auth::check())
                 <ul class="top-menu top-link-menu">
                     <li>
                         <a href="#">Links<i class="icon-angle-down"></i></a>
                         <ul>
-                            <li class="login"><a href="#signin-modal" data-toggle="modal"><i class="icon-user"></i>Login</a></li>
+
+                                <li class="login"><a href="#signin-modal" data-toggle="modal"><i class="icon-user"></i>Login</a></li>
+
                         </ul><!--End ul-->
                     </li>
                 </ul>
+                @endif
             </div><!--End .container-->
         </div><!--End .header-top-->
 
@@ -198,62 +207,71 @@
                                 <a href="{{url('/')}}">Home</a>
                             </li>
 
+                            @forelse($get_category as $get_categories)
                             <li>
-                                <a href="{{url('/')}}" class="sf-with-ul">Shop</a>
+                                <a href="{{url('for/'.$get_categories->slug)}}">{{$get_categories->category_name}}</a>
+                            </li>
+                            @empty
+                            @endforelse
+
+                            <li>
+                                <a href="{{url('/')}}" class="sf-with-ul">Brands</a>
 
                                 <div class="megamenu megamenu-md">
                                     <div class="row no-gutters">
-                                        <div class="col-md-8">
+                                        <div class="col-md-12">
                                             <div class="menu-col">
                                                 <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="menu-title">Collections</div><!-- End .menu-title -->
-                                                        <ul>
-                                                            <li><a href="{{url('/')}}">Men</a></li>
-                                                            <li><a href="{{url('/')}}">Women</a></li>
-                                                            <li><a href="{{url('/')}}">Unisex</a></li>
-                                                        </ul>
-
-                                                        <div class="menu-title">Shop no sidebar</div><!-- End .menu-title -->
-                                                        <ul>
-                                                            <li><a href="{{url('/')}}"><span>Shop Boxed No Sidebar<span class="tip tip-hot">Hot</span></span></a></li>
-                                                            <li><a href="category-fullwidth.html">Shop Fullwidth No Sidebar</a></li>
-                                                        </ul>
-                                                    </div><!-- End .col-md-6 -->
-
-                                                    <div class="col-md-6">
-                                                        <div class="menu-title">Brands</div><!-- End .menu-title -->
-                                                        <ul>
-                                                            <li><a href="product-{{url('/')}}">Product Category Boxed</a></li>
-                                                            <li><a href="{{url('/')}}"><span>Product Category Fullwidth<span class="tip tip-new">New</span></span></a></li>
-                                                        </ul>
-                                                        <div class="menu-title">Shop Pages</div><!-- End .menu-title -->
-                                                        <ul>
-                                                            <li><a href="{{url('/')}}">Cart</a></li>
-                                                            <li><a href="{{url('/')}}">Checkout</a></li>
-                                                            <li><a href="{{url('/')}}">Wishlist</a></li>
-                                                            <li><a href="{{url('/')}}">My Account</a></li>
-                                                            <li><a href="#">Lookbook</a></li>
-                                                        </ul>
-                                                    </div><!-- End .col-md-6 -->
+                                                    @forelse($get_brands as $index => $get_brand)
+                                                        @if($index % 4 == 0)
+                                                            <div class="col-md-3"> <!-- Adjust col-md-* class based on your layout -->
+                                                                <!-- End .menu-title -->
+                                                                <ul>
+                                                                    @endif
+                                                                    <li><a href="{{url('brands/'.$get_brand->slug)}}">{{$get_brand->category_name}}</a></li>
+                                                                    @if(($index + 1) % 4 == 0 || $loop->last)
+                                                                </ul>
+                                                            </div>
+                                                        @endif
+                                                    @empty
+                                                        <!-- Handle no brands case -->
+                                                    @endforelse
                                                 </div><!-- End .row -->
+
+
+
+
+
+
                                             </div><!-- End .menu-col -->
                                         </div><!-- End .col-md-8 -->
-
-                                        <div class="col-md-4">
-                                            <div class="banner banner-overlay">
-                                                <a href="{{url('/')}}" class="banner banner-menu">
-                                                    <img src="{{asset('assets/web/')}}/assets/images/menu/banner-1.jpg" alt="Banner">
-
-                                                    <div class="banner-content banner-content-top">
-                                                        <div class="banner-title text-white">Last <br>Chance<br><span><strong>Sale</strong></span></div><!-- End .banner-title -->
-                                                    </div><!-- End .banner-content -->
-                                                </a><!--End .banner banner-menu-->
-                                            </div><!-- End .banner banner-overlay -->
-                                        </div><!-- End .col-md-4 -->
                                     </div><!-- End .row -->
                                 </div><!-- End .megamenu megamenu-md -->
                             </li>
+
+                            @if(Auth::check() && Auth::user()->role == 2)
+                                <li class="">
+                                    <a href="#" class="sf-with-ul">My Account</a>
+
+                                    <ul style="display: none;">
+                                        <li><a href="{{url('my-orders')}}">My Order</a></li>
+                                        <li><a href="{{url('my-orders')}}">Change email</a></li>
+                                        <li><a href="{{url('change-password')}}">Change password</a></li>
+
+                                        <li>
+
+                                            <a href="{{ route('logout') }}"  onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();"
+                                               class="" title="Sign Out">
+                                                Logout
+                                            </a>
+                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                                @csrf
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endif
                         </ul><!-- End .menu -->
                     </nav><!-- End .main-nav -->
 
@@ -570,16 +588,19 @@
                         </ul>
                         <div class="tab-content" id="tab-content-5">
                             <div class="tab-pane fade show active" id="signin" role="tabpanel" aria-labelledby="signin-tab">
-                                <form action="#">
+                                <form action="{{url('check-login')}}" method="post">
+                                    @csrf
                                     <div class="form-group">
                                         <label for="singin-email">Username or email address *</label>
-                                        <input type="text" class="form-control" id="singin-email" name="singin-email" required>
-                                    </div><!-- End .form-group -->
+                                        <input type="text" class="form-control" id="singin-email"
+                                               name="email" required>
+                                    </div>
 
                                     <div class="form-group">
                                         <label for="singin-password">Password *</label>
-                                        <input type="password" class="form-control" id="singin-password" name="singin-password" required>
-                                    </div><!-- End .form-group -->
+                                        <input type="password" class="form-control" id="singin-password"
+                                               name="password" required>
+                                    </div>
 
                                     <div class="form-footer">
                                         <button type="submit" class="btn btn-outline-primary-2">
@@ -615,16 +636,25 @@
 
                             </div><!-- .End .tab-pane -->
                             <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-                                <form action="#">
+                                <form action="{{ route('register') }}" method="post">
+                                    @csrf
+
+                                    <div class="form-group">
+                                        <label for="register-name">Name  *</label>
+                                        <input type="text" class="form-control" id="register-name"
+                                               name="register-name" required>
+                                    </div>
+
                                     <div class="form-group">
                                         <label for="register-email">Your email address *</label>
                                         <input type="email" class="form-control" id="register-email" name="register-email" required>
-                                    </div><!-- End .form-group -->
+                                    </div>
+
 
                                     <div class="form-group">
                                         <label for="register-password">Password *</label>
                                         <input type="password" class="form-control" id="register-password" name="register-password" required>
-                                    </div><!-- End .form-group -->
+                                    </div>
 
                                     <div class="form-footer">
                                         <button type="submit" class="btn btn-outline-primary-2">
@@ -635,20 +665,21 @@
                                         <div class="custom-control custom-checkbox">
                                             <input type="checkbox" class="custom-control-input" id="register-policy" required>
                                             <label class="custom-control-label" for="register-policy">I agree to the <a href="#">privacy policy</a> *</label>
-                                        </div><!-- End .custom-checkbox -->
-                                    </div><!-- End .form-footer -->
+                                        </div>
+                                    </div>
                                 </form>
+
                                 <div class="form-choice">
                                     <p class="text-center">or sign in with</p>
                                     <div class="row">
                                         <div class="col-sm-6">
-                                            <a href="#" class="btn btn-login btn-g">
+                                            <a href="{{ route('login.google') }}" class="btn btn-login btn-g">
                                                 <i class="icon-google"></i>
                                                 Login With Google
                                             </a>
                                         </div><!-- End .col-6 -->
                                         <div class="col-sm-6">
-                                            <a href="#" class="btn btn-login  btn-f">
+                                            <a href="{{ route('login.facebook') }}" class="btn btn-login btn-f">
                                                 <i class="icon-facebook-f"></i>
                                                 Login With Facebook
                                             </a>

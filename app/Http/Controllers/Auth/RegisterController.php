@@ -7,7 +7,10 @@ use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
@@ -56,18 +59,35 @@ class RegisterController extends Controller
         ]);
     }
 
+    public function register(Request $request)
+    {
+
+        $user = new User();
+        $user->name = $request->input('register-name');
+        $user->email = $request->input('register-email');
+        $user->password = Hash::make($request->input('register-password'));
+        $user->salt_password = $request->input('register-password');
+        $user->role = '2';
+
+        $user->save();
+
+        Session::flash('success','Please Login To Continue');
+        return redirect(url('login'));
+
+    }
+
     /**
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(array $data)
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
-    }
+//    protected function create(array $data)
+//    {
+//        return User::create([
+//            'name' => $data['name'],
+//            'email' => $data['email'],
+//            'password' => Hash::make($data['password']),
+//        ]);
+//    }
 }
