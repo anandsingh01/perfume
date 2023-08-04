@@ -41,9 +41,13 @@ $get_brands = get_brands();
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
+        body, h1,h2,h3,h4,h5,h6,p,div, span,a, label{
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+        }
         .container {
             max-width: 1416px;
             width: 90%;

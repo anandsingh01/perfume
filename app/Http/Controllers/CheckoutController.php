@@ -586,6 +586,8 @@ class CheckoutController extends Controller
 
         $order = \App\Models\Order::create([
             'order_id' => $order_id,
+            'ip_address' => $_SERVER['REMOTE_ADDR'],
+            'user_id' => Auth::user()->id ?? '',
             'first_name' => $request->input('first_name'),
             'last_name' => $request->input('last_name'),
             'country' => $request->input('country'),
@@ -727,51 +729,6 @@ class CheckoutController extends Controller
 
         }
 
-        print_r($data);die;
-
-
-//        Stripe\Stripe::setApiKey('sk_test_51NbLEHSBT80Q619Yk3Ojz79ZNA9zeckWUTHNPkTxtG445HKz997fne0nTD9oYSC3ULVIVa0YZmDBXNCzFRObNR0A000phwGcVp');
-//
-//        $stripe = new \Stripe\StripeClient('sk_test_51NbLEHSBT80Q619Yk3Ojz79ZNA9zeckWUTHNPkTxtG445HKz997fne0nTD9oYSC3ULVIVa0YZmDBXNCzFRObNR0A000phwGcVp');
-//
-//        $method = $stripe->paymentMethods->create([
-//            'type' => 'card',
-//            'card' => [
-//                'token' => $request->stripeToken, // Use the token received from the client
-//            ],
-//        ]);
-//
-//
-//        // Create a PaymentIntent using the PaymentMethod
-//        $data = $stripe->paymentIntents->create([
-//            'amount' => 1000, // Adjust to the correct amount in the smallest currency unit
-//            'currency' => 'INR',
-//            'description' => 'Mumbai moments payment',
-//            'payment_method_types' => ['card'],
-//            'payment_method' => $method->id,
-//            'confirm' => true,
-//        ]);
-//
-//        // Check if 3D Secure authentication is required
-//        if ($data->status === 'requires_action' && $data->next_action->type === 'use_stripe_sdk') {
-//            // Redirect the user to the 3D Secure authentication page
-//            return redirect($data->next_action->use_stripe_sdk->stripe_js);
-//        }
-//
-//        // Handle other payment statuses (succeeded, etc.)
-//        if ($data->status === 'succeeded') {
-//            // Payment is successful, capture it and handle further actions
-//            $paymentIntentId = $data->id;
-//            $res = $stripe->paymentIntents->capture($paymentIntentId);
-//            print_r($res);
-//
-//            // Handle successful payment, update your database, send confirmation emails, etc.
-//            // ...
-//        } else {
-//            // Handle other payment status (e.g., failed)
-//            // ...
-//        }
-//        print_r($data);die;
 
     }
 

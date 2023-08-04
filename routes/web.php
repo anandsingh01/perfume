@@ -82,6 +82,7 @@ Route::post('/apply-coupon', [App\Http\Controllers\CartController::class,'checkC
 Route::get('/delete-from-cart/{id}', [App\Http\Controllers\CartController::class,'deleteFromCart']);
 
 Route::get('user/dashboard', [App\Http\Controllers\UserController::class,'dashboard']);
+Route::post('/update-profile', [App\Http\Controllers\UserController::class,'update'])->name('update-profile');
 
 
 

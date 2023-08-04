@@ -156,67 +156,6 @@ class HomeController extends Controller
         return view('web.amounts',$data);
     }
 
-    public function payment(Request $request)
-    {
-
-        $input = $request->all();
-        $api = new Api('rzp_test_ZB8GMwDqEm40nX', 'lI2c1QX2hJWWXYERboK8IQL7');
-
-        $payment = $api->payment->fetch($input['razorpay_payment_id']);
-        $payment_session = Session::get('payment_session');
-
-        $donatefund = new Payment;
-        $donatefund->order_id = $payment_session['order_id'];
-        $donatefund->amount = $payment_session['amount'];
-        $donatefund->name = $payment_session['name'];
-        $donatefund->email = $payment_session['email'];
-        $donatefund->phone = $payment_session['number'];
-        $donatefund->plantNumber = $payment_session['plantNumber'];
-        $donatefund->pan = $payment_session['pan'];
-        $donatefund->payment_status = $payment['status'];
-        $donatefund->payment_reference = $payment['method'];
-        $donatefund->razorpay_order_id = $payment['id'];
-        $donatefund->payment_method = $payment['method'];
-        $donatefund->card_id = $payment['card_id'];
-        $donatefund->bank = $payment['bank'];
-        $donatefund->wallet = $payment['wallet'];
-        $donatefund->vpa = $payment['vpa'];
-        $donatefund->customer_ip = \Request::ip();
-        if($donatefund->save()){
-
-            \Session::put('recent_payment_details',$donatefund);
-            \Session::put('success', 'Payment successful, your order will be despatched in the next 48 hours.');
-            return redirect(url('/payment-response'));
-        }else{
-            \Session::put('danger', 'Payment successful, your order will be despatched in the next 48 hours.');
-            return redirect(url('/payment-response'));
-        }
-        die;
-
-        \Session::put('success', 'Payment successful, your order will be despatched in the next 48 hours.');
-        return redirect()->back();
-    }
-
-    function payment_response(Request $request){
-        if(Session::has('recent_payment_details')){
-            $getPaymentDetails = Session::get('recent_payment_details');
-//            print_r($getPaymentDetails);die;
-            return view('web.payment_response',compact('getPaymentDetails'));
-        }else{
-            $somethingWentWrong = 'Something went wrong';
-            return view('web.payment_response',compact('somethingWentWrong'));
-        }
-//        print_r($request->all());
-    }
-
-    function projects_details($url){
-        $data['project'] = ProjectDetail::where('slug',$url)->first();
-        return view('web.projects-details',$data);
-    }
-    function blogs_details($url){
-        $data['blog'] = Blog::where('title_slug',$url)->first();
-        return view('web.blog-details',$data);
-    }
 
     function metal_details($url){
         $data['all_metals'] = MetalModel::get();
