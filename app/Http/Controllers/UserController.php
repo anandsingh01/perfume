@@ -34,12 +34,12 @@ class UserController extends Controller
 {
     function dashboard(){
         if(Auth::check() && Auth::user()->role == '2'){
-            $data['order'] = $data['orders'] = Order::orderBy('id','DESC')
+            $data['orders'] = Order::orderBy('id','DESC')
                 ->where('user_id',Auth::user()->id)
                 ->orWhere('ip_address',$_SERVER['REMOTE_ADDR'])
                 ->get();
 //            print_r($data);die;
-            return view('web.users.dashboard');
+            return view('web.users.dashboard',$data);
         }else{
             return redirect(url('login'));
         }

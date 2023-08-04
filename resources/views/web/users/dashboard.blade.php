@@ -21,6 +21,12 @@ session_start();
         div#tab-content-7 {
             width: 75%;
         }
+        .table th, .table thead th, .table td {
+            border-top: none;
+            border-bottom: 0.1rem solid #ebebeb;
+            text-align: center;
+            padding: 15px;
+        }
     </style>
 @stop
 @section('body')
@@ -115,25 +121,53 @@ session_start();
                                 </div><!-- .End .tab-pane -->
                                 <div class="tab-pane fade" id="tab-26" role="tabpanel" aria-labelledby="tab-26-tab">
 
-                                    <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                    <table id="example" class="table table-bordered" cellspacing="0" width="100%">
                                         <thead>
                                         <tr>
-                                            <th>Order</th>
-                                            <th>Description</th>
-                                            <th>Deadline</th>
+                                            <th>No.</th>
+                                            <th>Order Id</th>
+                                            <th>User</th>
                                             <th>Status</th>
-                                            <th>Amount</th>
+                                            <th>Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
 
-                                        <tr>
-                                            <td>30</td>
-                                            <td>TV carton</td>
-                                            <td>2019/02/08</td>
-                                            <td>Offer</td>
-                                            <td data-order="1369">€1.369,00</td>
-                                        </tr>
+                                        @if(!empty($orders))
+                                            @foreach($orders as $key =>  $order)
+                                                <tr>
+                                                    <td>{{$key+1}}</td>
+                                                    <td>Order Id -  {{$order->order_id}}</td>
+                                                    <td>
+                                                        Name - {{$order->first_name}}, {{$order->last_name}} <br>
+                                                        Address - {{$order->address_1}}, {{$order->address_2}},
+                                                        {{$order->city}}, {{$order->state}}, {{$order->pincode}},<br>
+                                                        Phone - {{$order->phone}}<br>
+                                                        Email - {{$order->email}}
+                                                    </td>
+                                                    <td>
+                                                        @if($order->status == 0)
+                                                            <span class="badge badge-warning">New </span>
+                                                        @endif
+
+
+                                                        @if($order->status == 1)
+                                                            <p class="badge badge-success">Paid </p>
+                                                        @endif
+
+
+                                                        @if($order->status == 2)
+                                                            <span class="badge badge-danger">Cancelled </span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="" style="">
+                                                        <a href="{{url('view-orders/'.$order->id)}}"
+                                                           class="btn btn-primary waves-effect waves-float btn-sm waves-green">
+                                                            View</a> <br>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
                                         </tbody>
                                     </table>
 
