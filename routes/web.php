@@ -53,10 +53,27 @@ Route::get('privacy-policy', function (){
 });
 
 
+Route::post('/addToCart', [App\Http\Controllers\CartController::class,'addToCart'])->name('addToCart');
+
+Route::get('products/{url}', [HomeController::class, 'products_details']);
 Route::get('offers/{url}', [HomeController::class, 'sustainability_overview']);
 Route::get('social-impact/{url}', [HomeController::class, 'social_impact']);
 //Route::get('offers/stewardship', [HomeController::class, 'sustainability_stewardship']);
 Route::get('service/{url}', [HomeController::class, 'get_service']);
+Route::get('/checkout/cart', [App\Http\Controllers\CartController::class,'getAllCartsProducts'])->name('checkout.cart');
+
+Route::post('/addToWishlist', [App\Http\Controllers\WishlistController::class,'addToWishlist'])->name('addToWishlist');
+Route::post('/addToCart', [App\Http\Controllers\CartsController::class,'addToCart'])->name('addToCart');
+Route::post('/updateSizeCart', [App\Http\Controllers\CartsController::class,'updateSizeCart'])->name('updateSizeCart');
+Route::post('/updateQtyCart', [App\Http\Controllers\CartsController::class,'updateQtyCart'])->name('updateQtyCart');
+
+
+Route::post('updateCart', [App\Http\Controllers\CartController::class,'updateCart']);
+//Route::post('checkCoupon', [App\Http\Controllers\CartController::class,'checkCoupon']);
+Route::post('/apply-coupon', [App\Http\Controllers\CartController::class,'checkCoupon'])->name('cart.apply_coupon');
+
+Route::get('/delete-from-cart/{id}', [App\Http\Controllers\CartController::class,'deleteFromCart']);
+
 
 Route::group(['prefix'=>'admin','as'=>'admin.'], function(){
     Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'login']);
@@ -282,5 +299,6 @@ Route::group(['prefix'=>'admin','as'=>'admin.'], function(){
 
     Route::post('/products/update/productSizeAttribute/{id}', [App\Http\Controllers\ProductsController::class,'updateproductSizeAttribute']);
     Route::get('product/attribute/additional-edit-value/{id}', [App\Http\Controllers\ProductsController::class,'editAdditionalProductAttrValue']);
+    Route::get('remove_image', [App\Http\Controllers\ProductsController::class,'remove_image']);
 
 });

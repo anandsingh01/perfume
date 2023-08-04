@@ -75,9 +75,8 @@
                                 <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>Sku</th>
-{{--                                    <th>Size</th>--}}
-                                    <th>Max Price</th>
+                                    <th>Image</th>
+                                    <th>Size</th>
                                     <th>Price</th>
                                     <th>Qty</th>
                                     <th>Action</th>
@@ -86,9 +85,8 @@
                                 <tfoot>
                                 <tr>
                                     <th>No.</th>
-                                    <th>Sku</th>
-{{--                                    <th>Size</th>--}}
-                                    <th>Max Price</th>
+                                    <th>Image</th>
+                                    <th>Size</th>
                                     <th>Price</th>
                                     <th>Qty</th>
                                     <th>Action</th>
@@ -100,9 +98,8 @@
                                     @foreach($productsize as $key =>  $productsizes)
                                         <tr>
                                             <td>{{$key+1}}</td>
-                                            <td>{{$productsizes->sku}}</td>
-{{--                                            <td>{{$productsizes->size}}</td>--}}
-                                            <td>{{$productsizes->msp}}</td>
+                                            <td><img src="{{asset($productsizes->image)}}" width="100"/></td>
+                                            <td>{{$productsizes->size}}</td>
                                             <td>{{$productsizes->price}}</td>
                                             <td>{{$productsizes->qty}}</td>
                                             <td class="" style="">
@@ -198,32 +195,39 @@
                     <h4 class="title" id="defaultModalLabel">Add Size, Qty Attribute</h4>
                 </div>
                 <div class="modal-body">
-                    <form action="{{url("admin/products/save/productSizeAttribute/".$product_details->id)}}" method="post">
+                    <form action="{{url("admin/products/save/productSizeAttribute/".$product_details->id)}}"
+                          method="post" enctype="multipart/form-data">
                         <div class="row">
                             @csrf
                             <input type="hidden" name="product_id" value="{{$product_details->id}}"/>
                             <input type="hidden" name="is_default" value="yes"/>
 
-                            <div class="col-lg-6 col-md-4 mtb-10">
-                                <label class="">SKU</label>
-                                <input type="text" name="sku" placeholder="eg. PRODUCT001-SM, PRODUCT002-L, " class="form-control"/>
-                            </div>
-{{--                            <div class="col-lg-6 col-md-12 mtb-10">--}}
-{{--                                <label class="control-label" for="Status">Size</label>--}}
-{{--                                <input type="text" name="size" placeholder="eg. S,M,L,XL OR 28,30,32" class="form-control"/>--}}
+{{--                            <div class="col-lg-6 col-md-4 mtb-10">--}}
+{{--                                <label class="">SKU</label>--}}
+{{--                                <input type="text" name="sku" placeholder="eg. PRODUCT001-SM, PRODUCT002-L, " class="form-control"/>--}}
 {{--                            </div>--}}
+                            <div class="col-lg-6 col-md-12 mtb-10">
+                                <label class="control-label" for="Status">Size</label>
+                                <input type="text" name="size" placeholder="eg. 5ML, 10ML " class="form-control"/>
+                            </div>
                             <div class="col-lg-6 col-md-4 mtb-10">
-                                <label class="">Qty</label>
-                                <input type="text" name="qty" placeholder="eg. 10ML, 20ML, 30ML" class="form-control"/>
+                                <label class="">Qty (in pcs)</label>
+                                <input type="text" name="qty" placeholder="eg.10,20" class="form-control"/>
                             </div>
 
                             <div class="col-lg-6 col-md-4 mtb-10">
                                 <label class="">Price</label>
                                 <input type="text" name="price" placeholder="eg. 1000, 1200 , 1500" class="form-control"/>
                             </div>
+{{--                            <div class="col-lg-6 col-md-4 mtb-10">--}}
+{{--                                <label class="">Max Selling Price</label>--}}
+{{--                                <input type="text" name="msp" placeholder="eg. 1000, 1200 , 1500" class="form-control"/>--}}
+{{--                            </div>--}}
+
+
                             <div class="col-lg-6 col-md-4 mtb-10">
-                                <label class="">Max Selling Price</label>
-                                <input type="text" name="msp" placeholder="eg. 1000, 1200 , 1500" class="form-control"/>
+                                <label class="">Product Image</label>
+                                <input type="file" name="image" placeholder="" class="form-control"/>
                             </div>
 
 
@@ -285,13 +289,13 @@
 {{--    </div>--}}
 @endsection
 @section('js')
-    <script src="{{asset('/')}}assets/bundles/datatablescripts.bundle.js"></script>
-    <script src="{{asset('/')}}assets/plugins/dropify/js/dropify.min.js"></script>
-    <script src="{{asset('/')}}assets/js/pages/forms/dropify.js"></script>
-    <script src="{{asset('/')}}assets/plugins/summernote/dist/summernote.js"></script>
-    <script src="{{asset('/')}}assets/plugins/select2/select2.min.js"></script> <!-- Select2 Js -->
-    <script src="{{asset('/')}}assets/js/pages/forms/advanced-form-elements.js"></script>
-    <script src="{{asset('/')}}assets/dist/imageuploadify.min.js"></script>
+{{--    <script src="{{asset('/')}}assets/bundles/datatablescripts.bundle.js"></script>--}}
+{{--    <script src="{{asset('/')}}assets/plugins/dropify/js/dropify.min.js"></script>--}}
+{{--    <script src="{{asset('/')}}assets/js/pages/forms/dropify.js"></script>--}}
+{{--    <script src="{{asset('/')}}assets/plugins/summernote/dist/summernote.js"></script>--}}
+{{--    <script src="{{asset('/')}}assets/plugins/select2/select2.min.js"></script> <!-- Select2 Js -->--}}
+{{--    <script src="{{asset('/')}}assets/js/pages/forms/advanced-form-elements.js"></script>--}}
+{{--    <script src="{{asset('/')}}assets/dist/imageuploadify.min.js"></script>--}}
 
     <script>
         $(document).ready(function(){

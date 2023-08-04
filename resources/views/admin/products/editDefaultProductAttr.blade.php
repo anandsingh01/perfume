@@ -61,32 +61,44 @@
                             <h2><strong>Update</strong> Size, Qty Attributes </h2>
 
                         </div>
-                        <form action="{{url("admin/products/update/productSizeAttribute/".$attr_id)}}" method="post">
+                        <form action="{{url("admin/products/update/productSizeAttribute/".$attr_id)}}"
+                              method="post"
+                              enctype="multipart/form-data"
+                        >
                             <div class="row">
                                 @csrf
                                 <input type="hidden" name="product_id" value="{{$product_details->id}}"/>
 
                                 <input type="hidden" name="is_default" value="yes"/>
 
-                                <div class="col-lg-6 col-md-4 mtb-10">
-                                    <label class="">SKU</label>
-                                    <input type="text" value="{{$attr_details->sku}}" name="sku" placeholder="eg. PRODUCT001-SM, PRODUCT002-L, " class="form-control"/>
-                                </div>
-{{--                                <div class="col-lg-6 col-md-12 mtb-10">--}}
-{{--                                    <label class="control-label" for="Status">Size</label>--}}
-{{--                                    <input type="text" value="{{$attr_details->size}}" name="size" placeholder="eg. S,M,L,XL OR 28,30,32" class="form-control"/>--}}
+{{--                                <div class="col-lg-6 col-md-4 mtb-10">--}}
+{{--                                    <label class="">SKU</label>--}}
+{{--                                    <input type="text" value="{{$attr_details->sku}}" name="sku" placeholder="eg. PRODUCT001-SM, PRODUCT002-L, " class="form-control"/>--}}
 {{--                                </div>--}}
+                                <div class="col-lg-6 col-md-12 mtb-10">
+                                    <label class="control-label" for="Status">Size</label>
+                                    <input type="text" value="{{$attr_details->size}}" name="size" placeholder="eg.10Ml , 20ML" class="form-control"/>
+                                </div>
                                 <div class="col-lg-6 col-md-4 mtb-10">
-                                    <label class="">Qty</label>
+                                    <label class="">Qty (in pcs)</label>
                                     <input type="text" value="{{$attr_details->qty}}" name="qty" placeholder="eg. 10, 20 , 30" class="form-control"/>
                                 </div>
-                                <div class="col-lg-6 col-md-4 mtb-10">
-                                    <label class="">Max Selling Price</label>
-                                    <input type="text" value="{{$attr_details->msp}}" name="msp" placeholder="eg. 1000, 1200 , 1500" class="form-control"/>
-                                </div>
+{{--                                <div class="col-lg-6 col-md-4 mtb-10">--}}
+{{--                                    <label class="">Max Selling Price</label>--}}
+{{--                                    <input type="text" value="{{$attr_details->msp}}" name="msp" placeholder="eg. 1000, 1200 , 1500" class="form-control"/>--}}
+{{--                                </div>--}}
                                 <div class="col-lg-6 col-md-4 mtb-10">
                                     <label class="">Price</label>
                                     <input type="text" value="{{$attr_details->price}}" name="price" placeholder="eg. 1000, 1200 , 1500" class="form-control"/>
+                                </div>
+
+
+                                <div class="col-lg-6 col-md-4 mtb-10">
+                                    <label class="">Product Image</label>
+                                    <input type="file" name="image" placeholder="" class="form-control"/>
+                                    @if(!empty($attr_details->image))
+                                        <img src="{{asset($attr_details->image)}}" width="100">
+                                        @endif
                                 </div>
 
                             </div>
@@ -104,13 +116,13 @@
 
 @endsection
 @section('js')
-    <script src="{{asset('/')}}assets/bundles/datatablescripts.bundle.js"></script>
-    <script src="{{asset('/')}}/assets/plugins/dropify/js/dropify.min.js"></script>
-    <script src="{{asset('/')}}/assets/js/pages/forms/dropify.js"></script>
-    <script src="{{asset('/')}}/assets/plugins/summernote/dist/summernote.js"></script>
-    <script src="{{asset('/')}}/assets/plugins/select2/select2.min.js"></script> <!-- Select2 Js -->
-    <script src="{{asset('/')}}/assets/js/pages/forms/advanced-form-elements.js"></script>
-    <script src="{{asset('/')}}/assets/dist/imageuploadify.min.js"></script>
+{{--    <script src="{{asset('/')}}assets/bundles/datatablescripts.bundle.js"></script>--}}
+{{--    <script src="{{asset('/')}}/assets/plugins/dropify/js/dropify.min.js"></script>--}}
+{{--    <script src="{{asset('/')}}/assets/js/pages/forms/dropify.js"></script>--}}
+{{--    <script src="{{asset('/')}}/assets/plugins/summernote/dist/summernote.js"></script>--}}
+{{--    <script src="{{asset('/')}}/assets/plugins/select2/select2.min.js"></script> <!-- Select2 Js -->--}}
+{{--    <script src="{{asset('/')}}/assets/js/pages/forms/advanced-form-elements.js"></script>--}}
+{{--    <script src="{{asset('/')}}/assets/dist/imageuploadify.min.js"></script>--}}
 
     <script>
         $('.attribute_id').change(function(){

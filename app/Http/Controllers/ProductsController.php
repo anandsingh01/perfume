@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\Cart;
+use App\Models\Gallery;
 use App\Models\ProductAttribut;
 use App\Models\Product_size;
 use Illuminate\Support\Facades\File;
@@ -95,6 +96,7 @@ class ProductsController extends Controller
     }
 
     function productSizeAttribute(Request $request, $id){
+//        print_r($request->all());die;
         $sql = new Product_size;
         $sql->product_id = $request->id;
         $sql->sku = strtoupper($request->sku);
@@ -105,6 +107,30 @@ class ProductsController extends Controller
         $discountPrcnt = '';
         if(!empty($request->msp)){
             $discountPrcnt = (ceil(($request->msp - $request->price)/$request->msp*100));
+        }
+        // Check if the image file was uploaded
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            // Define the path where you want to store the uploaded image
+            $path = 'images';
+
+            // Generate a unique name for the image to avoid overwriting
+            $imageName = time() . '_' . $image->getClientOriginalName();
+
+            // Move the uploaded image to the specified path
+            $image->move($path, $imageName);
+
+            // Convert the image to WebP format and save it with a new name
+            $webpImagePath = 'images/webp/' .rand(1111,9999).time(). '.webp';
+            Image::make($path . '/' . $imageName)->encode('webp')->save($webpImagePath, 80);
+
+            // Save the image name or path to your database as needed
+            // For example, you can store the image name in a 'image' column of the offers table
+            $sql->image = $webpImagePath;
+
+            // Optionally, you can also save the original image path if needed
+            // $offer->image = 'images/' . $imageName;
         }
         $sql->discount_pecent = $discountPrcnt;
         if($sql->save()){
@@ -148,6 +174,31 @@ class ProductsController extends Controller
         $sql->size = $request->size;
         $sql->price = $request->price;
         $sql->msp = $request->msp;
+
+        // Check if the image file was uploaded
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+
+            // Define the path where you want to store the uploaded image
+            $path = 'images';
+
+            // Generate a unique name for the image to avoid overwriting
+            $imageName = time() . '_' . $image->getClientOriginalName();
+
+            // Move the uploaded image to the specified path
+            $image->move($path, $imageName);
+
+            // Convert the image to WebP format and save it with a new name
+            $webpImagePath = 'images/webp/' .rand(1111,9999).time(). '.webp';
+            Image::make($path . '/' . $imageName)->encode('webp')->save($webpImagePath, 80);
+
+            // Save the image name or path to your database as needed
+            // For example, you can store the image name in a 'image' column of the offers table
+            $sql->image = $webpImagePath;
+
+            // Optionally, you can also save the original image path if needed
+            // $offer->image = 'images/' . $imageName;
+        }
         $discountPrcnt = '';
         if(!empty($request->msp)){
             $discountPrcnt = (ceil(($request->msp - $request->price)/$request->msp*100));
@@ -535,16 +586,16 @@ class ProductsController extends Controller
             $sql->photo = $realPath;
         }
         $sql->img_alt = $request->img_alt;
-        if ($request->hasfile('productgallery')) {
-            foreach ($request->file('productgallery') as $file) {
-                $name = time().'-'.$file->getClientOriginalName();
-                $path = 'admin/';
-                $gallerypath = $file->storeAs('/products',$name);
-                $data[] = $path.$gallerypath;
-                $galleryImage = implode(',' ,$data);
-            }
-            $sql->productgallery = $galleryImage;
-        }
+//        if ($request->hasfile('productgallery')) {
+//            foreach ($request->file('productgallery') as $file) {
+//                $name = time().'-'.$file->getClientOriginalName();
+//                $path = 'admin/';
+//                $gallerypath = $file->storeAs('/products',$name);
+//                $data[] = $path.$gallerypath;
+//                $galleryImage = implode(',' ,$data);
+//            }
+//            $sql->productgallery = $galleryImage;
+//        }
 
         $sql->gallery_img_alt = $request->gallery_img_alt;
         $sql->video_type = $request->video_type;
@@ -700,62 +751,7 @@ class ProductsController extends Controller
         }else{
             $sql->meta_keywords = NULL;
         }
-        if(isset($request->fb_og_type)){
-            $sql->fb_og_type = $request->fb_og_type;
-        }else{
-            $sql->fb_og_type = NULL;
-        }
-        if(isset($request->fb_og_url	)){
-            $sql->fb_og_url	 = $request->fb_og_url	;
-        }else{
-            $sql->fb_og_url	 = NULL;
-        }
-        if(isset($request->fb_og_title)){
-            $sql->fb_og_title = $request->fb_og_title;
-        }else{
-            $sql->fb_og_title = NULL;
-        }
-        if(isset($request->fb_og_desc)){
-            $sql->fb_og_desc = $request->fb_og_desc;
-        }else{
-            $sql->fb_og_desc = NULL;
-        }
-        if(isset($request->twitter_og_type)){
-            $sql->twitter_og_type = $request->twitter_og_type;
-        }else{
-            $sql->twitter_og_type = NULL;
-        }
-        if(isset($request->twitter_og_url)){
-            $sql->twitter_og_url = $request->twitter_og_url;
-        }else{
-            $sql->twitter_og_url = NULL;
-        }
-        if(isset($request->twitter_og_title)){
-            $sql->twitter_og_title = $request->twitter_og_title;
-        }else{
-            $sql->twitter_og_title = NULL;
-        }
-        if(isset($request->twitter_og_desc)){
-            $sql->twitter_og_desc = $request->twitter_og_desc;
-        }else{
-            $sql->twitter_og_desc = NULL;
-        }
 
-        if($request->hasFile('fb_og_image')){
-            $fbImgName = time().'.'.$request->fb_og_image->extension();
-            $path = 'admin/';
-            $fbimgpath = $request->file('fb_og_image')->storeAs('seo/product',$fbImgName);
-            $realfbImgPath = $path.$fbimgpath;
-            $sql->fb_og_image = $realfbImgPath;
-        }
-
-        if($request->hasFile('twitter_og_img')){
-            $twitterImgName = time().'.'.$request->twitter_og_img->extension();
-            $path = 'admin/';
-            $twitterimgpath = $request->file('twitter_og_img')->storeAs('seo/product',$twitterImgName);
-            $realTwiiterImgPath = $path.$twitterimgpath;
-            $sql->twitter_og_img = $realTwiiterImgPath;
-        }
 
         if(isset($request->slug)){
             $sql->slug = $request->slug;
@@ -770,6 +766,39 @@ class ProductsController extends Controller
 
 
         if($sql->save()){
+            // Check if the image files were uploaded
+            if ($request->hasFile('productgallery')) {
+                $images = $request->file('productgallery');
+                $webpImagePaths = [];
+
+                // Define the path where you want to store the uploaded images
+                $path = 'images';
+
+                foreach ($images as $image) {
+                    // Generate a unique name for the image to avoid overwriting
+                    $imageName = time() . '_' . $image->getClientOriginalName();
+
+                    // Move the uploaded image to the specified path
+                    $image->move($path, $imageName);
+
+                    // Convert the image to WebP format and save it with a new name
+                    $webpImagePath = 'images/webp/' . rand(1111, 9999) . time() . '.webp';
+                    Image::make($path . '/' . $imageName)->encode('webp')->save($webpImagePath, 80);
+
+                    // Store the WebP image path for each image in an array
+                    $webpImagePaths[] = $webpImagePath;
+
+                    $gallery = new \App\Models\Gallery;
+                    // For example, you can store them in a JSON format in a 'productgallery' column of the products table
+                    $gallery->product_id = $sql->id;
+                    $gallery->image = $webpImagePath;
+                    $gallery->type = 'gallery';
+                    $gallery->save();
+                }
+
+                // Save the image paths to your database as needed
+
+            }
             $products_id = $sql->id;
             return redirect('admin/products/add/attribute/display/' . $products_id);
         }
@@ -790,5 +819,18 @@ class ProductsController extends Controller
             'success' => $success,
             'message' => $message,
         ]);
+    }
+
+    function remove_image(Request $request){
+        $imageId = $request->input('image_id');
+
+        // Delete the image from the database
+        $image = Gallery::find($imageId);
+        if ($image) {
+            $image->delete();
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
     }
 }

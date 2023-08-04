@@ -14,15 +14,19 @@ class Cart extends Model
     }
 
     public function getBrands(){
-        return $this->belongsTo('App\Models\Brand','brands_id');
+        return $this->belongsTo('App\Models\Category','brands_id')
+            ->where('category_type','brands');
     }
-    public function getSections(){
-        return $this->belongsTo('App\Models\Section','section_id');
+
+    public function getSection(){
+        return $this->belongsTo('App\Models\Category','section_id');
     }
 
     function getSize(){
         return $this->belongsTo('App\Models\Product_size','id');
     }
+
+
 
     function getVendorDetails(){
         return $this->belongsTo('App\Models\User','product_added_by');

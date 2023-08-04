@@ -11,6 +11,7 @@ use App\Models\CollaborationModel;
 use App\Models\FounderModel;
 use App\Models\MetalModel;
 use App\Models\MissionModel;
+use App\Models\Product;
 use App\Models\ProjectDetail;
 use App\Models\ProjectModel;
 use App\Models\ServiceModel;
@@ -31,7 +32,10 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $data['get_hero_banner'] = BannerModel::where('display_area','1')->where('status','1')->get();
+        $data['get_hero_banner'] = BannerModel::where([
+            'display_area'=> '1',
+            'status'=> '1',
+        ])->get();
         $data['category_on_home'] = Category::where([
             'status'=>'1',
             'show_on_homepage'=>'1',
@@ -42,7 +46,22 @@ class HomeController extends Controller
             'show_on_homepage'=>'1',
             'category_type' => 'brands'
         ])->get();
-//        print_r($data['category_on_home']);die;
+        $data['get_product_favorites'] = Product::where([
+            'status'=> 'active',
+        ])
+            ->with('get_brands','section')
+            ->get();
+        $data['get_middle_banner'] = BannerModel::where([
+            'display_area'=> '3',
+            'status'=> '1',
+        ])->orderBy('id','DESC')->first();
+
+        $data['get_footer_banner'] = BannerModel::where([
+            'display_area'=> '4',
+            'status'=> '1',
+        ])->orderBy('id','DESC')->first();
+
+//        print_r($data['get_footer_banner']);die;
         return view('web.index',$data);
     }
 
@@ -208,5 +227,22 @@ class HomeController extends Controller
     function sustainability_stewardship(){
         $data['overview'] = \App\Models\SustainabilityStewardship::first();
         return view('web.offers.stewardship',$data);
+    }
+
+    function products_details($url){
+        $data['get_middle_banner'] = BannerModel::where([
+            'display_area'=> '3',
+            'status'=> '1',
+        ])->orderBy('id','DESC')->first();
+
+        $data['product'] = Product::where('slug',$url)
+            ->with(
+                'getPrices',
+                'getGallery',
+                'get_brands',
+                'section'
+            )
+            ->first();
+        return view('web.product-details',$data);
     }
 }

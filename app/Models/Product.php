@@ -13,21 +13,20 @@ class Product extends Model
 
     public function section()
     {
-        // Assuming 'section_id' is the foreign key in the 'products' table that references the 'id' in the 'categories' table
         return $this->belongsTo(Category::class, 'section_id', 'id')
             ->where('category_type', 'product');
     }
 
     function category(){
-        return $this->belongsTo('\App\Models\Category','parent_id');
+        return $this->belongsTo('\App\Models\Category','parent_id')->where('category_type','brands');;
     }
 
     function subcategory(){
         return $this->belongsTo('\App\Models\Category','subparent_id');
     }
 
-    function getbrands(){
-        return $this->belongsTo('\App\Models\Brand','brands_id');
+    function get_brands(){
+        return $this->belongsTo('\App\Models\Category','brands_id')->where('category_type','brands');
     }
 
     function getProductAttr(){
@@ -48,6 +47,10 @@ class Product extends Model
 
     function getPrices(){
         return $this->hasMany('\App\Models\Product_size','product_id');
+    }
+
+    function getGallery(){
+        return $this->hasMany('\App\Models\Gallery','product_id');
     }
 
 //    function getShopDetails(){

@@ -213,6 +213,28 @@
                     <div class="card">
                         <div class="body">
                             <div class="row">
+                                <div class="col-md-6">
+                                    <label class="">Product Acutal Price</label>
+                                    <input type="number" class="form-control" name="product_actual_price"
+                                           value="{{$product_details->product_actual_price}}"/>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="">Max Selling Price</label>
+                                    <input type="number" class="form-control" name="product_max_selling_price"
+                                           value="{{$product_details->product_max_selling_price}}"/>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="row clearfix">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="body">
+                            <div class="row">
 
                                 <div class="col-md-6">
                                     <label class="">Min Order</label>
@@ -255,17 +277,14 @@
                                 </div>
                                 <div class="preview-images-zone">
                                     <div class="preview-image-container">
-                                    @if(!empty($product_details->productgallery))
-                                            <?php
-                                            $product_gallery = json_decode($product_details->productgallery);
-                                            ?>
+                                        <?php
+                                        $product_gallery = \App\Models\Gallery::where('product_id',$product_details->id)->get();
+                                        ?>
                                         @foreach($product_gallery as $productGallery)
-
-                                                <img src="{{ asset($productGallery) }}" style="width: 80px;" class="img-thumbnail m-1">
-                                                <button type="button" class="btn btn-danger btn-sm m-1 remove-preview-btn">Remove</button>
-
+                                            <img src="{{ asset($productGallery->image) }}" style="width: 80px;" class="img-thumbnail m-1">
+                                            <button type="button" class="btn btn-danger btn-sm m-1 remove-preview-btn"
+                                                    data-id="{{$productGallery->id}}">Remove</button>
                                         @endforeach
-                                    @endif
                                     </div>
                                 </div>
                             </div>
@@ -274,10 +293,10 @@
                 </div>
 
 
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="body">
-                            <div class="row">
+{{--                <div class="col-md-12">--}}
+{{--                    <div class="card">--}}
+{{--                        <div class="body">--}}
+{{--                            <div class="row">--}}
 {{--                                <div class="col-md-6">--}}
 {{--                                    <div class="form-group form-group mtb-10 ">--}}
 {{--                                        <label class="control-label ">Video Type :</label>--}}
@@ -297,69 +316,68 @@
 {{--                                    </div>--}}
 {{--                                </div>--}}
 
-                                <div class="col-md-6">
-                                    <div class="form-group form-group mtb-10 ">
-                                        <label class="control-label ">Is Featured ?</label>
-                                        <select name="is_featured" id="is_featured">
-                                            <option value="no" {{$product_details->is_featured == 'no' ? 'selected' : ''}}>No</option>
-                                            <option value="yes" {{$product_details->is_featured == 'yes' ? 'selected' : ''}}>Yes</option>
-                                        </select>
-                                    </div>
-                                </div>
+{{--                                <div class="col-md-6">--}}
+{{--                                    <div class="form-group form-group mtb-10 ">--}}
+{{--                                        <label class="control-label ">Is Featured ?</label>--}}
+{{--                                        <select name="is_featured" id="is_featured">--}}
+{{--                                            <option value="no" {{$product_details->is_featured == 'no' ? 'selected' : ''}}>No</option>--}}
+{{--                                            <option value="yes" {{$product_details->is_featured == 'yes' ? 'selected' : ''}}>Yes</option>--}}
+{{--                                        </select>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
 
-                            </div>
+{{--                            </div>--}}
 
-                        </div>
-                    </div>
-                </div>
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="control-label ">Flash Sale ?</label>
-                                    <select name="flash_sale" id="flash_sale" class="form-control">
-                                        <option value="no" {{$product_details->flash_sale == 'no' ? 'selected' : ''}}>No</option>
-                                        <option value="yes" {{$product_details->flash_sale == 'yes' ? 'selected' : ''}}>Yes</option>
-                                    </select>
-                                    <div class="form-group mtb-10 flash_sale" id="is_flash_sale"  style="display: none;">
-                                        <div class="col-lg-12 col-md-12 mtb-10">
-                                            <label class="control-label" for="password">Flash Price</label>
-                                            <input type="text" class="form-control" value="@if(!empty($product_details->flash_price)) {{$product_details->flash_price}}@endif" name="flash_price" placeholder="Enter Flash Price"/>
-                                        </div>
-                                        <div class="col-lg-12 col-md-12 mtb-10">
-                                            <label class="control-label" for="password">Flash Sale Start : </label>
-                                            <b><?php $start_date = date('m/d/Y',strtotime($product_details->flash_price_start_date)); print_r($start_date);?>
-                                            </b><input type="date" class="form-control" value="@if(!empty($product_details->flash_price_start_date))
-                                            <?php echo $start_date = date('m/d/Y',strtotime($product_details->flash_price_start_date));?>@endif" name="flash_price_start_date"  placeholder="Enter Start"/>
-                                        </div>
-                                        <div class="col-lg-12 col-md-12 mtb-10">
-                                            <label class="control-label" for="password">Flash Sale End : </label>
-                                            <b><?php $start_date = date('m/d/Y',strtotime($product_details->flash_price_end_date)); print_r($start_date);?>
-                                            </b> <input type="date" class="form-control" value="@if(!empty($product_details->flash_price_end_date))
-                                            <?php echo $start_date = date('m/d/Y',strtotime($product_details->flash_price_end_date));?>@endif" name="flash_price_end_date" placeholder="Enter End Date"/>
-                                        </div>
+{{--                <div class="col-md-12">--}}
+{{--                    <div class="card">--}}
+{{--                        <div class="body">--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-md-6">--}}
+{{--                                    <label class="control-label ">Flash Sale ?</label>--}}
+{{--                                    <select name="flash_sale" id="flash_sale" class="form-control">--}}
+{{--                                        <option value="no" {{$product_details->flash_sale == 'no' ? 'selected' : ''}}>No</option>--}}
+{{--                                        <option value="yes" {{$product_details->flash_sale == 'yes' ? 'selected' : ''}}>Yes</option>--}}
+{{--                                    </select>--}}
+{{--                                    <div class="form-group mtb-10 flash_sale" id="is_flash_sale"  style="display: none;">--}}
+{{--                                        <div class="col-lg-12 col-md-12 mtb-10">--}}
+{{--                                            <label class="control-label" for="password">Flash Price</label>--}}
+{{--                                            <input type="text" class="form-control" value="@if(!empty($product_details->flash_price)) {{$product_details->flash_price}}@endif" name="flash_price" placeholder="Enter Flash Price"/>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="col-lg-12 col-md-12 mtb-10">--}}
+{{--                                            <label class="control-label" for="password">Flash Sale Start : </label>--}}
+{{--                                            <b><?php $start_date = date('m/d/Y',strtotime($product_details->flash_price_start_date)); print_r($start_date);?>--}}
+{{--                                            </b><input type="date" class="form-control" value="@if(!empty($product_details->flash_price_start_date))--}}
+{{--                                            <?php echo $start_date = date('m/d/Y',strtotime($product_details->flash_price_start_date));?>@endif" name="flash_price_start_date"  placeholder="Enter Start"/>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="col-lg-12 col-md-12 mtb-10">--}}
+{{--                                            <label class="control-label" for="password">Flash Sale End : </label>--}}
+{{--                                            <b><?php $start_date = date('m/d/Y',strtotime($product_details->flash_price_end_date)); print_r($start_date);?>--}}
+{{--                                            </b> <input type="date" class="form-control" value="@if(!empty($product_details->flash_price_end_date))--}}
+{{--                                            <?php echo $start_date = date('m/d/Y',strtotime($product_details->flash_price_end_date));?>@endif" name="flash_price_end_date" placeholder="Enter End Date"/>--}}
+{{--                                        </div>--}}
 
-                                        <div class="col-lg-12 col-md-12 mtb-10">
-                                            <label class="control-label" for="password">Status</label>
-                                            <select name="flash_product_status" class="form-control">
-                                                <option value="active" {{$product_details->flash_product_status == 'active' ? 'selected':''}}>Active</option>
-                                                <option value="inactive" {{$product_details->flash_product_status == 'inactive' ? 'selected':''}}>Inactive</option>
-                                            </select>
-                                        </div>
+{{--                                        <div class="col-lg-12 col-md-12 mtb-10">--}}
+{{--                                            <label class="control-label" for="password">Status</label>--}}
+{{--                                            <select name="flash_product_status" class="form-control">--}}
+{{--                                                <option value="active" {{$product_details->flash_product_status == 'active' ? 'selected':''}}>Active</option>--}}
+{{--                                                <option value="inactive" {{$product_details->flash_product_status == 'inactive' ? 'selected':''}}>Inactive</option>--}}
+{{--                                            </select>--}}
+{{--                                        </div>--}}
 
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-md-6 ">
-                                    <label class="control-label " for="password">Slug</label>
-                                    <input type="text" name="slug" value="{{$product_details->slug}}" class="form-control">
-                                </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                                <div class="col-lg-6 col-md-6 ">--}}
+{{--                                    <label class="control-label " for="password">Slug</label>--}}
+{{--                                    <input type="text" name="slug" value="{{$product_details->slug}}" class="form-control">--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
             </div>
 
             <div class="row clearfix">
@@ -733,43 +751,35 @@
     </script>
 
     <script>
-        // Function to handle the file input change event
-        document.getElementById('product-gallery').addEventListener('change', function () {
-            // ... your existing code to display the preview images ...
-
-            // Function to remove the image URL from the database using jQuery AJAX
-            function removeImage(imageUrl, productId, previewContainer) {
-                $.ajax({
-                    url: `/remove-image`,
-                    type: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}', // Assuming you're using Laravel's CSRF protection
-                        product_id: productId,
-                        image_url: imageUrl
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data.success) {
-                            // Image URL removed from the database successfully, remove the preview container
-                            previewContainer.remove();
-                        } else {
-                            // Failed to remove the image URL from the database, handle the error if needed
-                            console.error('Failed to remove the image URL from the database');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error while removing the image URL from the database:', error);
-                    },
-                });
-            }
-
-            // Attach click event listener to the document and check for remove button clicks
-            $(document).on('click', '.remove-preview-btn', function () {
-                // ... your existing code to get the URL of the image to be removed, the parent preview container, and the product ID ...
-
-                // Call the removeImage function with the image URL, product ID, and preview container
-                removeImage(imageUrl, productId, previewContainer);
+        // Function to remove the image using AJAX
+        function removeImage(imageId, previewContainer) {
+            // Make an AJAX request to remove the image
+            $.ajax({
+                url: '{{url('admin/remove_image')}}', // Replace this with the actual URL of your PHP script to handle the image removal
+                type: 'GET',
+                data: {image_id: imageId},
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        // Image removed successfully, remove the image container from the preview zone
+                        $('#' + previewContainer).remove();
+                    } else {
+                        alert('Failed to remove image. Please try again.');
+                    }
+                },
+                error: function() {
+                    alert('Error occurred while removing image. Please try again.');
+                }
             });
+        }
+
+        // Add click event listener to all the "Remove" buttons
+        $('.remove-preview-btn').on('click', function() {
+            var imageId = $(this).data('id');
+            var previewContainer = $(this).closest('.preview-image-container').attr('id');
+
+            // Call the removeImage function
+            removeImage(imageId, previewContainer);
         });
     </script>
 

@@ -252,69 +252,69 @@
                     </div>
                 </div>
 
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group form-group mtb-10 ">
-                                        <label class="control-label ">Is Featured ?</label>
-                                        <select name="is_featured" id="is_featured">
-                                            <option value="no">No</option>
-                                            <option value="yes">Yes</option>
-                                        </select>
-                                    </div>
-                                </div>
+{{--                <div class="col-md-12">--}}
+{{--                    <div class="card">--}}
+{{--                        <div class="body">--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-md-6">--}}
+{{--                                    <div class="form-group form-group mtb-10 ">--}}
+{{--                                        <label class="control-label ">Is Featured ?</label>--}}
+{{--                                        <select name="is_featured" id="is_featured">--}}
+{{--                                            <option value="no">No</option>--}}
+{{--                                            <option value="yes">Yes</option>--}}
+{{--                                        </select>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
 
-                            </div>
+{{--                            </div>--}}
 
-                        </div>
-                    </div>
-                </div>
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                        <label class="control-label ">Flash Sale ?</label>
-                                        <select name="flash_sale" id="flash_sale" class="form-control">
-                                            <option value="no">No</option>
-                                            <option value="yes">Yes</option>
-                                        </select>
-                                    <div class="form-group mtb-10 flash_sale" id="is_flash_sale"  style="display: none;">
-                                        <div class="col-lg-12 col-md-12 mtb-10">
-                                            <label class="control-label" for="password">Flash Price</label>
-                                            <input type="text" class="form-control" name="flash_price" placeholder="Enter Flash Price"/>
-                                        </div>
-                                        <div class="col-lg-12 col-md-12 mtb-10">
-                                            <label class="control-label" for="password">Flash Sale Start</label>
-                                            <input type="date" class="form-control" name="flash_price_start_date" placeholder="Enter Start"/>
-                                        </div>
-                                        <div class="col-lg-12 col-md-12 mtb-10">
-                                            <label class="control-label" for="password">Flash Sale End</label>
-                                            <input type="date" class="form-control" name="flash_price_end_date" placeholder="Enter End Date"/>
-                                        </div>
+{{--                <div class="col-md-12">--}}
+{{--                    <div class="card">--}}
+{{--                        <div class="body">--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-md-6">--}}
+{{--                                        <label class="control-label ">Flash Sale ?</label>--}}
+{{--                                        <select name="flash_sale" id="flash_sale" class="form-control">--}}
+{{--                                            <option value="no">No</option>--}}
+{{--                                            <option value="yes">Yes</option>--}}
+{{--                                        </select>--}}
+{{--                                    <div class="form-group mtb-10 flash_sale" id="is_flash_sale"  style="display: none;">--}}
+{{--                                        <div class="col-lg-12 col-md-12 mtb-10">--}}
+{{--                                            <label class="control-label" for="password">Flash Price</label>--}}
+{{--                                            <input type="text" class="form-control" name="flash_price" placeholder="Enter Flash Price"/>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="col-lg-12 col-md-12 mtb-10">--}}
+{{--                                            <label class="control-label" for="password">Flash Sale Start</label>--}}
+{{--                                            <input type="date" class="form-control" name="flash_price_start_date" placeholder="Enter Start"/>--}}
+{{--                                        </div>--}}
+{{--                                        <div class="col-lg-12 col-md-12 mtb-10">--}}
+{{--                                            <label class="control-label" for="password">Flash Sale End</label>--}}
+{{--                                            <input type="date" class="form-control" name="flash_price_end_date" placeholder="Enter End Date"/>--}}
+{{--                                        </div>--}}
 
-                                        <div class="col-lg-12 col-md-12 mtb-10">
-                                            <label class="control-label" for="password">Status</label>
-                                            <select name="flash_product_status" class="form-control">
-                                                <option value="active">Active</option>
-                                                <option value="inactive">Inactive</option>
-                                            </select>
-                                        </div>
+{{--                                        <div class="col-lg-12 col-md-12 mtb-10">--}}
+{{--                                            <label class="control-label" for="password">Status</label>--}}
+{{--                                            <select name="flash_product_status" class="form-control">--}}
+{{--                                                <option value="active">Active</option>--}}
+{{--                                                <option value="inactive">Inactive</option>--}}
+{{--                                            </select>--}}
+{{--                                        </div>--}}
 
-                                    </div>
-                                </div>
+{{--                                    </div>--}}
+{{--                                </div>--}}
 
-                                <div class="col-lg-6 col-md-6">
-                                    <label class="control-label " for="password">Slug</label>
-                                    <input type="text" name="slug" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+{{--                                <div class="col-lg-6 col-md-6">--}}
+{{--                                    <label class="control-label " for="password">Slug</label>--}}
+{{--                                    <input type="text" name="slug" class="form-control">--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
             </div>
 

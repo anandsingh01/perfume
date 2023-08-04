@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="{{asset('assets/web/')}}/assets/css/style.css">
     <link rel="stylesheet" href="{{asset('assets/web/')}}/assets/css/skins/skin-demo-29.css">
     <link rel="stylesheet" href="{{asset('assets/web/')}}/assets/css/demos/demo-29.css">
+    <link rel="stylesheet" href="{{asset('assets/web/')}}/assets/css/plugins/nouislider/nouislider.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -130,72 +131,57 @@
                 </div><!-- End .header-left -->
 
                 <div class="header-right">
-                    <a href="{{url('/')}}" class="wishlist-link">
-                        <i class="icon-heart-o"></i>
-                        <span class="wishlist-count">3</span>
-                        <span class="wishlist-txt">My Wishlist</span>
-                    </a><!--End .wishlist-link-->
 
+                    <?php
+                    $get_cart = get_cart();
+                    $get_count = json_decode($get_cart);
+                    $getAllCart = getCartProducts();
+                    ?>
                     <div class="dropdown cart-dropdown">
                         <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                             <i class="icon-shopping-cart"></i>
-                            <span class="cart-count">2</span>
-                            <span class="cart-txt font-weight-semibold">$ 164,00</span>
+                            <span class="cart-count">{{$get_count->count ?? '0'}}</span>
+                            <span class="cart-txt font-weight-semibold">$ {{number_format($get_count->cartTotal,2) ?? '0'}}</span>
                         </a><!--End .dropdown-toggle-->
 
                         <div class="dropdown-menu dropdown-menu-right">
                             <div class="dropdown-cart-products">
+                                @forelse($getAllCart as $key => $getAllCarts)
                                 <div class="product">
                                     <div class="product-cart-details">
                                         <h4 class="product-title">
-                                            <a href="product.html">Long Hooded T-shirt</a>
+                                            <a href="{{url('products/'.$getAllCarts->getProducts->slug ?? '')}}">
+                                                {{$getAllCarts->getProducts->title ?? ''}}</a>
                                         </h4><!--End .product-title-->
 
                                         <span class="cart-product-info">
-                                                <span class="cart-product-qty">1</span>
-                                                x $17.99
+                                                <span class="cart-product-qty">{{$getAllCarts->cartqty}}</span>
+                                                x ${{$getAllCarts->price}}
                                             </span><!--End .cart-product-info-->
                                     </div><!-- End .product-cart-details -->
 
                                     <figure class="product-image-container">
-                                        <a href="product.html" class="product-image">
-                                            <img src="{{asset('assets/web/')}}/assets/images/demos/demo-29/products/5-1.jpg" alt="product" width="60" height="60">
+                                        <a href="{{url('products/'.$getAllCarts->getProducts->slug)}}" class="product-image">
+                                            <img src="{{asset($getAllCarts->getProducts->photo)}}"
+                                                 alt="{{$getAllCarts->getProducts->title ?? ''}}" width="60" height="60">
                                         </a>
                                     </figure><!--End .product-image-container-->
 
                                     <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
                                 </div><!-- End .product -->
-
-                                <div class="product">
-                                    <div class="product-cart-details">
-                                        <h4 class="product-title">
-                                            <a href="product.html">Raw-dege T-shirt</a>
-                                        </h4><!--End .product-title-->
-
-                                        <span class="cart-product-info">
-                                                <span class="cart-product-qty">1</span>
-                                                x $12.99
-                                            </span><!--End .cart-product-info-->
-                                    </div><!-- End .product-cart-details -->
-
-                                    <figure class="product-image-container">
-                                        <a href="product.html" class="product-image">
-                                            <img src="{{asset('assets/web/')}}/assets/images/demos/demo-29/products/10-1.jpg" alt="product" width="60" height="60">
-                                        </a>
-                                    </figure><!--End .product-image-container-->
-
-                                    <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
-                                </div><!-- End .product -->
+                                @empty
+                                @endforelse
                             </div><!-- End .dropdown-cart-product -->
+
 
                             <div class="dropdown-cart-total">
                                 <span>Total</span>
-                                <span class="cart-total-price">$30.98</span>
+                                <span class="cart-total-price">${{number_format($get_count->cartTotal,2) ?? '0'}}</span>
                             </div><!-- End .dropdown-cart-total -->
 
                             <div class="dropdown-cart-action">
-                                <a href="{{url('/')}}" class="btn btn-primary">View Cart</a>
-                                <a href="{{url('/')}}" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
+                                <a href="{{route('checkout.cart')}}" class="btn btn-primary">View Cart</a>
+                                <a href="{{url('/checkout')}}" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
                             </div><!-- End .dropdown-cart-action -->
                         </div><!-- End .dropdown-menu -->
                     </div><!-- End .cart-dropdown -->
@@ -720,9 +706,13 @@
 <script src="{{asset('assets/web/')}}/assets/js/jquery.plugin.min.js"></script>
 <script src="{{asset('assets/web/')}}/assets/js/jquery.magnific-popup.min.js"></script>
 <script src="{{asset('assets/web/')}}/assets/js/jquery.countdown.min.js"></script>
+
+<script src="{{asset('assets/web/')}}/assets/js/bootstrap-input-spinner.js"></script>
+<script src="{{asset('assets/web/')}}/assets/js/jquery.elevateZoom.min.js"></script>
 <!-- Main JS File -->
 <script src="{{asset('assets/web/')}}/assets/js/demos/demo-29.js"></script>
 <script src="{{asset('assets/web/')}}/assets/js/main.js"></script>
 @yield('js')
+@yield('script')
 </body>
 </html>
