@@ -40,6 +40,7 @@ class CartController extends Controller
                 $sql->sumofmsp = $request->msp * $request->cartqty;
                 $sql->size = $request->size;
                 $sql->cartqty = $request->quantity;
+                $sql->attribute_id = $request->attribute_id;
                 $sql->status = 'yes';
 
                 $sql->save();
@@ -74,6 +75,7 @@ class CartController extends Controller
                 $sql->sumofmsp = $request->msp * $request->cartqty;
                 $sql->size = $request->size;
                 $sql->cartqty = $request->quantity;
+                $sql->attribute_id = $request->attribute_id;
 
                 $sql->save();
 
@@ -201,7 +203,6 @@ class CartController extends Controller
                 'getProducts','getBrands','getSection'
             ])
             ->get();
-//        print_r($data);die;
         return view('web.cart',$data);
     }
 
@@ -369,6 +370,16 @@ class CartController extends Controller
     return response()->json(['discounted_total' => $discountedTotal]);
     }
 
+
+    function checkout(){
+        $data['page_heading'] = 'Checkout';
+        $data['getAllCart'] = \App\Models\Cart::where('ip_address',$_SERVER['REMOTE_ADDR'])
+            ->with([
+                'getProducts','getBrands','getSection'
+            ])
+            ->get();
+        return view('web.checkout',$data);
+    }
 
 
 

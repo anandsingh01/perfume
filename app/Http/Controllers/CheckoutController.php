@@ -5,6 +5,7 @@ use App\Models\Category;
 use App\Models\User;
 use Bavix\Wallet\Models\Transaction;
 use DB;
+use Illuminate\Support\Str;
 use Intervention\Image\Point;
 use Razorpay\Api\Order;
 use Session;
@@ -24,8 +25,9 @@ use App\Models\SaveAppliedDiscount;
 use Razorpay\Api\Api;
 use Exception;
 
-
-
+use Stripe\Stripe;
+use Stripe\Customer;
+use Stripe\Charge;
 class CheckoutController extends Controller
 {
     function getUserIP()
@@ -302,25 +304,28 @@ class CheckoutController extends Controller
         }
     }
 
-    function checkout(Request $request){
-        if(Auth::check()){
-//            print_r($request->all());die;
-            $userid = Auth::user()->id;
-            $data['totalAmount'] = $request->totalamount;
-            $data['getaddress'] = $request->getaddress;
-            $data['discount_on_mrp'] = $request->discount_on_mrp;
-            $data['coupon_discount_amount'] = $request->coupon_discount_amount;
-            $data['couponDiscountType'] = $request->couponDiscountType;
-            $data['coupon_code'] = $request->coupon_code;
-            $data['getpointsValue'] = $request->getpointsValue;
-            $data['deliveryAddress'] = DeliverAddress::where('addedby',Auth::user()->id)->where('id' , $request->getaddress)->first();
-            $data['totalOrders'] = OrdersModel::where('user_id',Auth::user()->id)->count();
-            return view('web.checkout',$data);
-        }else{
-            return redirect(route("frontendlogin"));
-        }
-
-    }
+//    function checkout_submit(Request $request){
+//
+//        print_r($request->all());
+//        die;
+//        if(Auth::check()){
+////            print_r($request->all());die;
+//            $userid = Auth::user()->id;
+//            $data['totalAmount'] = $request->totalamount;
+//            $data['getaddress'] = $request->getaddress;
+//            $data['discount_on_mrp'] = $request->discount_on_mrp;
+//            $data['coupon_discount_amount'] = $request->coupon_discount_amount;
+//            $data['couponDiscountType'] = $request->couponDiscountType;
+//            $data['coupon_code'] = $request->coupon_code;
+//            $data['getpointsValue'] = $request->getpointsValue;
+//            $data['deliveryAddress'] = DeliverAddress::where('addedby',Auth::user()->id)->where('id' , $request->getaddress)->first();
+//            $data['totalOrders'] = OrdersModel::where('user_id',Auth::user()->id)->count();
+//            return view('web.checkout',$data);
+//        }else{
+//            return redirect(route("frontendlogin"));
+//        }
+//
+//    }
 
     function paymentGatewayFunction(Request $request){
         $input = $request->all();
@@ -594,6 +599,101 @@ class CheckoutController extends Controller
             ->get();
         print_r($data);die;
         return view('web.thankyou',$data);
+    }
+
+    public function checkout_submit(Request $request)
+    {
+        print_r($request->all());die;
+        $order_id = uniqid();
+
+        $order = \App\Models\Order::create([
+            'order_id' => $order_id,
+            'first_name' => $request->input('first_name'),
+            'last_name' => $request->input('last_name'),
+            'country' => $request->input('country'),
+            'address_1' => $request->input('address_1'),
+            'address_2' => $request->input('address_2'),
+            'city' => $request->input('city'),
+            'state' => $request->input('state'),
+            'pincode' => $request->input('pincode'),
+            'phone' => $request->input('phone'),
+            'email' => $request->input('email'),
+            'final_amount' => $request->input('final_amount'),
+            'coupon_code' => $request->input('coupon_code'),
+        ]);
+
+        Session::put('order_details',$order);
+        Session::put('products_details',$request->all());
+
+        // Save the product details for the order
+        $productIds = $request->input('product_id');
+        $attributeIds = $request->input('attribute_id');
+        $quantities = $request->input('qty');
+        $prices = $request->input('price');
+        $sizes = $request->input('size');
+
+        if (
+            $productIds && $attributeIds && $quantities && $prices && $sizes &&
+            count($productIds) === count($attributeIds) &&
+            count($productIds) === count($quantities) &&
+            count($productIds) === count($prices) &&
+            count($productIds) === count($sizes)
+        ) {
+            for ($i = 0; $i < count($productIds); $i++) {
+                $order->products()->attach(
+                    $productIds[$i],
+                    [
+                        'attribute_id' => $attributeIds[$i],
+                        'quantity' => $quantities[$i],
+                        'price' => $prices[$i],
+                        'size' => $sizes[$i],
+                    ]
+                );
+            }
+        } else {
+        }
+
+//        die;
+
+        // After successful submission, you can clear the cart or perform any other actions as needed
+
+        // Redirect the user to a success page or thank-you page
+        return redirect()->route('checkout.payment');
+    }
+
+    function stripe_integrate(){
+        return view('web.payment');
+    }
+
+
+    function stripe_submit(Request $request){
+        Stripe::setApiKey('sk_test_51IC66sKDGzpYlWQ2lmnGC7G9G5YFfRXe6oAWJf6mY54ho57zyixhSZV6kteU0148DrLS2wQR7spWezca0byNk7js00UC4sZleI');
+
+        $stripe = new \Stripe\StripeClient('sk_test_51IC66sKDGzpYlWQ2lmnGC7G9G5YFfRXe6oAWJf6mY54ho57zyixhSZV6kteU0148DrLS2wQR7spWezca0byNk7js00UC4sZleI');
+
+
+        $method = \Stripe\PaymentMethod::create([
+            'type' => 'card',
+            'card' => [
+                'number' => $request->card_no,
+                'exp_month' => $request->exp_month,
+                'exp_year' => $request->exp_year,
+                'cvc' => $request->cvc,
+            ],
+        ]);
+//        print_r($method);die;
+
+        $data = $stripe->paymentIntents->create(
+            [
+                'amount' =>1000 * 100,
+                'currency' => 'INR',
+                'description' => 'Mumbai moments payment',
+                'payment_method_types' => ['card'],
+                'payment_method' => $method->id,
+                'confirm'=> true
+            ]
+        );
+        print_r($data);die;
     }
 
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CommonController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OfferController;
@@ -53,20 +54,23 @@ Route::get('privacy-policy', function (){
 });
 
 
-Route::post('/addToCart', [App\Http\Controllers\CartController::class,'addToCart'])->name('addToCart');
-
 Route::get('products/{url}', [HomeController::class, 'products_details']);
 Route::get('offers/{url}', [HomeController::class, 'sustainability_overview']);
 Route::get('social-impact/{url}', [HomeController::class, 'social_impact']);
 //Route::get('offers/stewardship', [HomeController::class, 'sustainability_stewardship']);
 Route::get('service/{url}', [HomeController::class, 'get_service']);
 Route::get('/checkout/cart', [App\Http\Controllers\CartController::class,'getAllCartsProducts'])->name('checkout.cart');
+Route::get('/checkout', [App\Http\Controllers\CartController::class,'checkout']);
 
 Route::post('/addToWishlist', [App\Http\Controllers\WishlistController::class,'addToWishlist'])->name('addToWishlist');
-Route::post('/addToCart', [App\Http\Controllers\CartsController::class,'addToCart'])->name('addToCart');
-Route::post('/updateSizeCart', [App\Http\Controllers\CartsController::class,'updateSizeCart'])->name('updateSizeCart');
-Route::post('/updateQtyCart', [App\Http\Controllers\CartsController::class,'updateQtyCart'])->name('updateQtyCart');
+Route::post('/addToCart', [App\Http\Controllers\CartController::class,'addToCart'])->name('addToCart');
+Route::post('/updateSizeCart', [App\Http\Controllers\CartController::class,'updateSizeCart'])->name('updateSizeCart');
+Route::post('/updateQtyCart', [App\Http\Controllers\CartController::class,'updateQtyCart'])->name('updateQtyCart');
 
+Route::post('/checkout/submit', [CheckoutController::class, 'checkout_submit'])->name('checkout.submit');
+Route::get('/checkout/payment', [CheckoutController::class, 'stripe_integrate'])
+    ->name('checkout.payment');
+Route::post('/stripe/submit', [CheckoutController::class, 'stripe_submit'])->name('stripe.post');
 
 Route::post('updateCart', [App\Http\Controllers\CartController::class,'updateCart']);
 //Route::post('checkCoupon', [App\Http\Controllers\CartController::class,'checkCoupon']);

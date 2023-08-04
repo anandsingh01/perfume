@@ -14,6 +14,7 @@
         "laravel/tinker": "^2.7",
         "laravel/ui": "4.2",
         "razorpay/razorpay": "^2.8",
+        "stripe/stripe-php": "^10.20",
         "unisharp/laravel-filemanager": "^2.5"
     },
     "require-dev": {

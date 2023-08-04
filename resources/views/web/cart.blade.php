@@ -107,22 +107,6 @@ session_start();
                         </div><!-- End .col-lg-9 -->
                         <aside class="col-lg-3">
                             <div class="summary summary-cart">
-                                <div class="cart-bottom">
-                                    <div class="cart-discount">
-                                        <form id="applyCouponForm" action="#">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" required="" placeholder="coupon code" id="couponCode">
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-outline-primary-2" type="button" id="applyCouponBtn"><i class="icon-long-arrow-right"></i></button>
-                                                </div><!-- .End .input-group-append -->
-                                            </div><!-- End .input-group -->
-                                        </form>
-                                    </div><!-- End .cart-discount -->
-
-                                    {{--                                <a href="#" class="btn btn-outline-dark-2"><span>UPDATE CART</span><i class="icon-refresh"></i></a>--}}
-                                </div><!-- End .cart-bottom -->
-
-
                                 <h3 class="summary-title">Cart Total</h3><!-- End .summary-title -->
 
                                 <table class="table table-summary">
@@ -151,54 +135,22 @@ session_start();
                                         <td>{{Session::get('applied_coupon')}}</td>
                                     </tr><!-- End .summary-subtotal -->
                                     @endif
-                                    <tr class="summary-shipping">
-                                        <td>Shipping:</td>
-                                        <td>&nbsp;</td>
-                                    </tr>
-
-                                    <tr class="summary-shipping-row">
-                                        <td>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="free-shipping" name="shipping" class="custom-control-input">
-                                                <label class="custom-control-label" for="free-shipping">Free Shipping</label>
-                                            </div><!-- End .custom-control -->
-                                        </td>
-                                        <td>$0.00</td>
-                                    </tr><!-- End .summary-shipping-row -->
-
-                                    <tr class="summary-shipping-row">
-                                        <td>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="standart-shipping" name="shipping" class="custom-control-input">
-                                                <label class="custom-control-label" for="standart-shipping">Standart:</label>
-                                            </div><!-- End .custom-control -->
-                                        </td>
-                                        <td>$10.00</td>
-                                    </tr><!-- End .summary-shipping-row -->
-
-                                    <tr class="summary-shipping-row">
-                                        <td>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="express-shipping" name="shipping" class="custom-control-input">
-                                                <label class="custom-control-label" for="express-shipping">Express:</label>
-                                            </div><!-- End .custom-control -->
-                                        </td>
-                                        <td>$20.00</td>
-                                    </tr><!-- End .summary-shipping-row -->
-
-                                    <tr class="summary-shipping-estimate">
-                                        <td>Estimate for Your Country<br> <a href="dashboard.html">Change address</a></td>
-                                        <td>&nbsp;</td>
-                                    </tr><!-- End .summary-shipping-estimate -->
 
                                     <tr class="summary-total">
                                         <td>Total:</td>
-                                        <td>$ {{number_format($get_count->cartTotal,2) ?? '0'}}</td>
+                                        <td>
+                                            @if(Session::has('discounted_total'))
+                                                $  {{number_format(Session::get('discounted_total'),2) ?? '0'}}
+
+                                            @else
+                                                {{number_format($get_count->cartTotal,2) ?? '0'}}
+                                            @endif
+                                        </td>
                                     </tr><!-- End .summary-total -->
                                     </tbody>
                                 </table><!-- End .table table-summary -->
 
-                                <a href="{{url('')}}" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
+                                <a href="{{url('checkout')}}" class="btn btn-outline-primary-2 btn-order btn-block">PROCEED TO CHECKOUT</a>
                             </div><!-- End .summary -->
                         </aside><!-- End .col-lg-3 -->
                     </div><!-- End .row -->

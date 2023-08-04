@@ -129,30 +129,6 @@
                                     <img id="productImage" src="{{asset($product->getPrices[0]->image)}}"
                                          data-zoom-image="{{asset($product->getPrices[0]->image)}}" alt="{{$product->title}}">
                                 </div>
-
-{{--                                <figure class="product-main-image">--}}
-{{--                                    <img id="product-zoom" src="{{asset($product->photo)}}" data-zoom-image="{{asset($product->photo)}}" alt="{{$product->title}}">--}}
-{{--                                    <a href="#" id="btn-product-gallery" class="btn-product-gallery">--}}
-{{--                                        <i class="icon-arrows"></i>--}}
-{{--                                    </a>--}}
-{{--                                </figure>--}}
-                                <!-- End .product-main-image -->
-{{--                                <div id="product-zoom-gallery" class="product-image-gallery">--}}
-{{--                                    <a class="product-gallery-item active" href="#" data-image="{{asset($product->photo)}}" data-zoom-image="{{asset($product->photo)}}">--}}
-{{--                                        <img src="{{asset($product->photo)}}" alt="{{$product->title}}">--}}
-{{--                                    </a>--}}
-
-{{--                                    @forelse($product->getGallery as $key => $gallery)--}}
-{{--                                        <a class="product-gallery-item" href="#" data-image="{{asset($gallery->image)}}" data-zoom-image="{{asset($gallery->image)}}">--}}
-{{--                                            <img src="{{asset($gallery->image)}}" alt="{{$product->title}}">--}}
-{{--                                        </a>--}}
-{{--                                    @empty--}}
-{{--                                        <!-- Show a default image or a message if the gallery is empty -->--}}
-{{--                                        <a class="product-gallery-item" href="#">--}}
-{{--                                            <img src="{{asset($product->photo)}}" alt="{{$product->title}}">--}}
-{{--                                        </a>--}}
-{{--                                    @endforelse--}}
-{{--                                </div>--}}
                             </div>
                         </div><!-- End .col-md-6 -->
 
@@ -185,11 +161,12 @@
                                         @forelse($product->getPrices as $key => $variations)
                                             <a href="javascript:void(0)"
                                                data-size="{{ $variations->size }}"
-                                            data-price="{{ $variations->price }}"
-                                            data-qty="{{ $variations->qty }}"
-                                            data-msp="{{ $variations->msp }}"
-                                            data-image="{{ $variations->image }}"
-                                            data-variation_product_id="{{ $variations->product_id }}"
+                                               data-attribute_id="{{ $variations->id }}"
+                                                data-price="{{ $variations->price }}"
+                                                data-qty="{{ $variations->qty }}"
+                                                data-msp="{{ $variations->msp }}"
+                                                data-image="{{ $variations->image }}"
+                                                data-variation_product_id="{{ $variations->product_id }}"
                                             title="{{ $variations->size }}" class="size-option @if($loop->first) active @endif">{{ $variations->size }}</a>
                                         @empty
                                         @endforelse
@@ -554,6 +531,7 @@
             let selectedPrice = sizeOptions.first().data('price');
             let selectedQty = sizeOptions.first().data('qty');
             let variation_product_id = sizeOptions.first().data('variation_product_id');
+            let attribute_id = sizeOptions.first().data('attribute_id');
             let msp = sizeOptions.first().data('msp');
 
             // Update selectedSize, selectedPrice, and selectedQty when a size is clicked
@@ -564,6 +542,7 @@
                 selectedPrice = $selectedOption.data('price');
                 selectedQty = $selectedOption.data('qty');
                 variation_product_id = $selectedOption.data('variation_product_id');
+                attribute_id = $selectedOption.data('attribute_id');
                 msp = $selectedOption.data('msp');
 
                 // Set the new max quantity
@@ -599,6 +578,7 @@
                             product_id: $('#product_id').val(),
                             msp: msp,
                             variation_product_id: variation_product_id,
+                            attribute_id: attribute_id,
                             section_id: $('#section_id').val(),
                             brands_id: $('#brands_id').val(),
                             // Add other cart data fields as needed
