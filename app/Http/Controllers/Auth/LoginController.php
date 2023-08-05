@@ -103,7 +103,7 @@ class LoginController extends Controller
                 break;
 
             default:
-                return '/';
+                return '/home';
                 break;
         }
     }
@@ -120,8 +120,8 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        print_r($request->all());die;
-        $username = $request->email; //the input field has name='username' in form
+//        print_r($request->all());die;
+        $username = $request->username; //the input field has name='username' in form
         $password = $request->password;
 
         if(filter_var($username, FILTER_VALIDATE_EMAIL)) {
@@ -130,7 +130,6 @@ class LoginController extends Controller
             Auth::attempt(['email' => $username, 'password' => $password]);
         } else {
             echo 'n';
-            die;
             //they sent their username instead
             Auth::attempt(['username' => $username, 'password' => $password]);
         }
@@ -144,16 +143,22 @@ class LoginController extends Controller
 
     public function check_login(Request $request)
     {
-
-        $username = $request->email;
+//        print_r($request->all());die;
+        $username = $request->email; //the input field has name='username' in form
         $password = $request->password;
 
         if(filter_var($username, FILTER_VALIDATE_EMAIL)) {
+            //user sent their email
+//            echo 'e';
             Auth::attempt(['email' => $username, 'password' => $password]);
         } else {
-            Auth::attempt(['username' => $username, 'password' => $password]);
+//            echo 'n';
+//            die;
+            //they sent their username instead
+            Auth::attempt(['email' => $username, 'password' => $password]);
         }
         if ( Auth::check() ) {
+//            echo "yes";
             if(Auth::user()->role == 2){
                 return redirect(url('user/dashboard'));
             }else{
@@ -161,6 +166,8 @@ class LoginController extends Controller
             }
 
         }else{
+//            echo "np";
+
             return redirect(url('login'));
         }
 

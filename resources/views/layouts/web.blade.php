@@ -44,7 +44,7 @@ $get_brands = get_brands();
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
-        body, h1,h2,h3,h4,h5,h6,p,div, span,a, label{
+        body, h1,h2,h3,h4,h5,h6,p,div, span,a, label, h1.page-title{
             font-family: 'Playfair Display', serif;
             font-weight: 400;
         }
@@ -90,9 +90,9 @@ $get_brands = get_brands();
     @yield('css')
 </head>
 
-<body>
-<div class="page-wrapper">
-    <header class="header header-6">
+<body >
+<div class="page-wrapper" id="body-id">
+    <header class="header header-6" id="">
         <div class="header-top">
             <div class="container">
                 <div class="header-left">
@@ -126,13 +126,17 @@ $get_brands = get_brands();
                 <div class="header-left">
                     <div class="header-search header-search-extended header-search-visible d-none d-lg-block">
                         <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                        <form action="#" method="get">
+                        <form id="search-form" action="#" method="get">
                             <div class="header-search-wrapper search-wrapper-wide">
                                 <label for="q" class="sr-only">Search</label>
                                 <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
-                                <input type="search" class="form-control" name="q" id="q" placeholder="Search product ..." required>
-                            </div><!-- End .header-search-wrapper -->
+                                <input type="search" class="form-control" name="q" id="searchInput" placeholder="Search product ..." required>
+
+                            </div>
                         </form>
+
+                        <div id="searchResults" style="display: none;"></div>
+
                     </div><!-- End .header-search -->
                 </div><!--End .header-left-->
 
@@ -156,7 +160,7 @@ $get_brands = get_brands();
                             <span class="cart-count">{{$get_count->count ?? '0'}}</span>
                             <span class="cart-txt font-weight-semibold">$ {{number_format($get_count->cartTotal,2) ?? '0'}}</span>
                         </a><!--End .dropdown-toggle-->
-
+                        @if($get_count->count != 0)
                         <div class="dropdown-menu dropdown-menu-right">
                             <div class="dropdown-cart-products">
                                 @forelse($getAllCart as $key => $getAllCarts)
@@ -180,7 +184,12 @@ $get_brands = get_brands();
                                         </a>
                                     </figure><!--End .product-image-container-->
 
-                                    <a href="#" class="btn-remove" title="Remove Product"><i class="icon-close"></i></a>
+                                    <a href="#" class="btn-remove"  onclick="deleteConfirmation({{$getAllCarts->id}})" data-cartid="{{$getAllCarts->id}}"
+                                       title="Remove Product">
+                                        <i class="icon-close"></i></a>
+{{--                                    <a class="btn btn-danger text-white" >--}}
+{{--                                        <i class="icon-close"></i> Remove--}}
+{{--                                    </a>--}}
                                 </div><!-- End .product -->
                                 @empty
                                 @endforelse
@@ -192,11 +201,14 @@ $get_brands = get_brands();
                                 <span class="cart-total-price">${{number_format($get_count->cartTotal,2) ?? '0'}}</span>
                             </div><!-- End .dropdown-cart-total -->
 
+
                             <div class="dropdown-cart-action">
                                 <a href="{{route('checkout.cart')}}" class="btn btn-primary">View Cart</a>
                                 <a href="{{url('/checkout')}}" class="btn btn-outline-primary-2"><span>Checkout</span><i class="icon-long-arrow-right"></i></a>
                             </div><!-- End .dropdown-cart-action -->
+
                         </div><!-- End .dropdown-menu -->
+                        @endif
                     </div><!-- End .cart-dropdown -->
                 </div><!--End .header-right-->
             </div><!-- End .container -->
@@ -699,38 +711,6 @@ $get_brands = get_brands();
     </div><!-- End .modal-dialog -->
 </div><!-- End .modal -->
 
-{{--<!-- Sign in / Register Modal -->--}}
-{{--<div class="container newsletter-popup-container mfp-hide" id="newsletter-popup-form">--}}
-{{--    <div class="row justify-content-center">--}}
-{{--        <div class="col-10">--}}
-{{--            <div class="row no-gutters bg-white newsletter-popup-content">--}}
-{{--                <div class="col-xl-3-5col col-lg-7 banner-content-wrap">--}}
-{{--                    <div class="banner-content text-center">--}}
-{{--                        <img src="{{asset('assets/web/')}}/assets/images/popup/newsletter/logo.png" class="logo" alt="logo" width="60" height="15">--}}
-{{--                        <h2 class="banner-title">get <span>25<light>%</light></span> off</h2>--}}
-{{--                        <p>Subscribe to the Lifragrances eCommerce newsletter to receive timely updates from your favorite products.</p>--}}
-{{--                        <form action="#">--}}
-{{--                            <div class="input-group input-group-round">--}}
-{{--                                <input type="email" class="form-control form-control-white" placeholder="Your Email Address" aria-label="Email Adress" required>--}}
-{{--                                <div class="input-group-append">--}}
-{{--                                    <button class="btn" type="submit"><span>go</span></button>--}}
-{{--                                </div><!-- .End .input-group-append -->--}}
-{{--                            </div><!-- .End .input-group -->--}}
-{{--                        </form>--}}
-{{--                        <div class="custom-control custom-checkbox">--}}
-{{--                            <input type="checkbox" class="custom-control-input" id="register-policy-2" required>--}}
-{{--                            <label class="custom-control-label" for="register-policy-2">Do not show this popup again</label>--}}
-{{--                        </div><!-- End .custom-checkbox -->--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--                <div class="col-xl-2-5col col-lg-5 ">--}}
-{{--                    <img src="{{asset('assets/web/')}}/assets/images/popup/newsletter/img-1.jpg" class="newsletter-img" alt="newsletter">--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </div>--}}
-{{--</div>--}}
-
 <!-- Plugins JS File -->
 <script src="{{asset('assets/web/')}}/assets/js/jquery.min.js"></script>
 <script src="{{asset('assets/web/')}}/assets/js/bootstrap.bundle.min.js"></script>
@@ -747,6 +727,155 @@ $get_brands = get_brands();
 <!-- Main JS File -->
 <script src="{{asset('assets/web/')}}/assets/js/demos/demo-29.js"></script>
 <script src="{{asset('assets/web/')}}/assets/js/main.js"></script>
+
+<script>
+
+    function deleteConfirmation(id) {
+        swal({
+            title: "Delete?",
+            text: "Please ensure and then confirm!",
+            type: "warning",
+            showCancelButton: !0,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!",
+            reverseButtons: !0
+        }).then(function (e) {
+
+            if (e.value === true) {
+                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+
+
+                $.ajax({
+                    type: 'get',
+                    url: "{{url('/delete-from-cart')}}/" + id,
+                    data: {_token: CSRF_TOKEN},
+                    dataType: 'JSON',
+                    success: function (results) {
+
+                        if (results.success === true) {
+                            swal("Done!", results.message, "success");
+                            location.reload();
+                        } else {
+                            swal("Error!", results.message, "error");
+                            location.reload();
+                        }
+                    }
+                });
+
+            } else {
+                e.dismiss;
+            }
+
+        }, function (dismiss) {
+            return false;
+        })
+    }
+
+</script>
+<style>
+
+    #searchResults {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #fff;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        margin-top: 0px;
+        position: absolute;
+        width: 100%;
+        z-index: 5;
+        left: 0;
+    }
+
+
+    /* Style for the list of search results */
+    #searchResults ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    /* Style for each search result item */
+    #searchResults li {
+        padding: 5px 0;
+    }
+
+    /* Style for the links within search result items */
+    #searchResults a {
+        text-decoration: none;
+        color: #333;
+        text-align: left;
+        padding-left: 0em;
+        display: block;
+        font-size: 18px;
+    }
+
+    /* Hover effect for search result links */
+    #searchResults a:hover {
+        color: #007bff;
+    }
+
+</style>
+<script>
+    $(document).ready(function() {
+        $('#searchInput').on('input', function() {
+            var query = $(this).val();
+            if (query.length >= 3) {
+                fetchProducts(query);
+            } else {
+                $('#searchResults').empty();
+            }
+        });
+    });
+
+    function fetchProducts(query) {
+        $.ajax({
+            url: '{{url("search")}}', // Change this to your Laravel route for searching products
+            method: 'GET',
+            data: { query: query },
+            success: function(response) {
+                console.log(response);
+
+                displayResults(response);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    }
+    function displayResults(products) {
+        var resultsContainer = $('#searchResults');
+        resultsContainer.empty();
+
+        if (Object.keys(products).length > 0) {
+            var resultList = $('<ul>');
+
+            for (var key in products) {
+                if (products.hasOwnProperty(key)) {
+                    var listItem = $('<li>', {
+                        class: 'search-result-item'
+                    });
+                    var link = $('<a>', {
+                        href: '/products/' + products[key],
+                        text: key,
+                        class: 'search-result-link'
+                    });
+
+                    listItem.append(link);
+                    resultList.append(listItem);
+                }
+            }
+
+            resultsContainer.empty().append(resultList); // Clear and add the list
+            resultsContainer.show(); // Show the results container
+        } else {
+            resultsContainer.hide(); // Hide the results container
+        }
+    }
+
+</script>
 @yield('js')
 @yield('script')
 </body>

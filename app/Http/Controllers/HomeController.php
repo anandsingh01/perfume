@@ -202,4 +202,50 @@ class HomeController extends Controller
             ->first();
         return view('web.product-details',$data);
     }
+
+    public function searchTitle(Request $request)
+    {
+//        print_r($request->all());die;
+        $query = $request->input('query');
+
+//        print_r($query);die;
+
+        // Query the products table for titles matching the query
+        $products = Product::where('title', 'like', '%' . $query . '%')->get()->pluck('title', 'slug');
+
+        return $products;
+    }
+
+    public function filter(Request $request) {
+//        $selectedCategories = $request->input('categories', []);
+//        $selectedBrands = $request->input('brands', []);
+//
+//        $filteredProducts = Product::whereIn('section_id', $selectedCategories)
+//            ->whereIn('brands_id', $selectedBrands)
+//            ->get();
+//
+//        if ($request->ajax()) {
+//            return view('web.filtered_products', ['get_products' => $filteredProducts]);
+//        }
+
+        $selectedCategories = $request->input('categories', []);
+        $selectedBrands = $request->input('brands', []);
+
+        $query = Product::query();
+
+        if (!empty($selectedCategories)) {
+            $query->whereIn('section_id', $selectedCategories);
+        }
+
+        if (!empty($selectedBrands)) {
+            $query->whereIn('brands_id', $selectedBrands);
+        }
+
+        $filteredProducts = $query->get();
+
+        if ($request->ajax()) {
+            return view('web.filtered_products', ['get_products' => $filteredProducts]);
+        }
+
+    }
 }

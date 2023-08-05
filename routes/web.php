@@ -57,6 +57,8 @@ Route::get('privacy-policy', function (){
 
 
 Route::get('products/{url}', [HomeController::class, 'products_details']);
+Route::get('/search', [HomeController::class, 'searchTitle']);
+Route::get('/filter', [HomeController::class, 'filter']);
 Route::get('offers/{url}', [HomeController::class, 'sustainability_overview']);
 Route::get('social-impact/{url}', [HomeController::class, 'social_impact']);
 //Route::get('offers/stewardship', [HomeController::class, 'sustainability_stewardship']);

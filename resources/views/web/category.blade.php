@@ -65,7 +65,7 @@ $get_brands = get_brands();
                         </div><!-- End .toolbox -->
 
                         <div class="products mb-3">
-                            <div class="row justify-content-center">
+                            <div class="row justify-content-center" id="filteredProducts">
                                 @forelse($get_products as $key => $get_product)
                                 <div class="col-6 col-md-4 col-lg-4">
                                     <div class="product product-7 text-center">
@@ -74,26 +74,25 @@ $get_brands = get_brands();
                                                 <img src="{{asset($get_product->photo)}}" alt="{{$get_product->title}}"
                                                      class="product-image">
                                             </a>
-                                        </figure><!-- End .product-media -->
+                                        </figure>
 
                                         <div class="product-body">
                                             <div class="product-cat">
                                                 <a href="{{url('products/'.$get_product->slug)}}">{{$get_product->get_brands->category_name ?? ''}}</a>
                                             </div>
-                                            <!-- End .product-cat -->
                                             <h3 class="product-title"><a href="{{url('products/'.$get_product->slug)}}">{{$get_product->title}}</a></h3>
-                                            <!-- End .product-title -->
+
                                             <div class="product-price">
                                                 $ {{number_format($get_product->product_actual_price,2)}}
                                             </div>
 
-                                        </div><!-- End .product-body -->
-                                    </div><!-- End .product -->
-                                </div><!-- End .col-sm-6 col-lg-4 -->
+                                        </div>
+                                    </div>
+                                </div>
                                 @empty
                                 @endforelse
-                            </div><!-- End .row -->
-                        </div><!-- End .products -->
+                            </div>
+                        </div>
 
                     </div><!-- End .col-lg-9 -->
                     <aside class="col-lg-3 order-lg-first">
@@ -117,7 +116,7 @@ $get_brands = get_brands();
                                             @forelse($get_category as $get_categories)
                                                 <div class="filter-item">
                                                     <div class="custom-control custom-checkbox">
-                                                        <input type="checkbox" class="custom-control-input" id="cat-{{$get_categories->id}}">
+                                                        <input type="checkbox" class="custom-control-input category-checkbox" id="cat-{{$get_categories->id}}">
                                                         <label class="custom-control-label" for="cat-{{$get_categories->id}}">{{$get_categories->category_name}}</label>
                                                     </div>
                                                 </div>
@@ -142,7 +141,7 @@ $get_brands = get_brands();
                                             @forelse($get_brands as $get_brandss)
                                                 <div class="filter-item">
                                                     <div class="custom-control custom-checkbox">
-                                                        <input type="checkbox" class="custom-control-input" id="brand-{{$get_brandss->id}}">
+                                                        <input type="checkbox" class="custom-control-input brand-checkbox" id="brand-{{$get_brandss->id}}">
                                                         <label class="custom-control-label" for="brand-{{$get_brandss->id}}">{{$get_brandss->category_name}}</label>
                                                     </div>
                                                 </div>
@@ -184,5 +183,41 @@ $get_brands = get_brands();
 
 @stop
 @section('js')
+    <!-- Add this script tag within your HTML body or in a separate JavaScript file -->
+    <script>
+        $(document).ready(function() {
+            $('.category-checkbox, .brand-checkbox').change(function() {
+                updateFilteredProducts();
+            });
+
+            function updateFilteredProducts() {
+                var selectedCategories = $('.category-checkbox:checked')
+                    .map(function() {
+                        return $(this).attr('id').replace('cat-', '');
+                    })
+                    .get();
+
+                var selectedBrands = $('.brand-checkbox:checked')
+                    .map(function() {
+                        return $(this).attr('id').replace('brand-', '');
+                    })
+                    .get();
+
+                $.ajax({
+                    url: '/filter', // Change this to your Laravel route for filtering
+                    method: 'GET',
+                    data: { categories: selectedCategories, brands: selectedBrands },
+                    success: function(response) {
+                        $('#filteredProducts').html(response); // Update the content of the container
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            }
+        });
+
+
+    </script>
 
 @stop

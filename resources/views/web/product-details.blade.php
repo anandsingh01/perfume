@@ -585,8 +585,11 @@
                         },
                         success: function(response) {
                             // Hide loader
+
                             loader.hide();
 
+                            $('#body-id').load(' #body-id');
+                            alert('Reloaded');
                             // Handle success response
                             if (response.code === 300) {
                                 // Product added to cart
@@ -601,6 +604,14 @@
                                 $('.cart-count').text(response.cartCount);
                                 $('.cart-total-price').text(`$${response.cartSubtotal.toFixed(2)}`);
                             } else if (response.code === 301) {
+                                // Product already in cart, quantity updated
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: response.status,
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                });
+                            }else if (response.code === 200) {
                                 // Product already in cart, quantity updated
                                 Swal.fire({
                                     icon: 'info',
@@ -628,6 +639,10 @@
                     maxLimitMsg.show();
                 }
             });
+
+
+
+
         });
     </script>
 
