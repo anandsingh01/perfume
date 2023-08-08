@@ -51,36 +51,13 @@ class ProductsController extends Controller
     function addProductSizeOptions($id){
         $data['product_details'] =  Product::where('id',$id)->first();
         $data['page_heading'] = 'Add Attribute To : '.$data['product_details']->title;
-        $data['defaultProductAttrList'] = ProductAttribut::select('product_attributes.*',
-            'attributes.title as attr_title',
-            'attributes_values.attribute_value as attr_val'
-        )
-            ->leftJoin('attributes','attributes.id','product_attributes.attribute_id')
-            ->leftJoin('attributes_values','attributes_values.id','product_attributes.attribute_value')
-            ->where('product_attributes.product_id',$id)->where('product_attributes.is_default','yes')->get();
-
-        $data['addtionalProductAttrList'] = ProductAttribut::select('product_attributes.*',
-            'attributes.title as attr_title',
-            'attributes_values.attribute_value as attr_val'
-        )
-            ->leftJoin('attributes','attributes.id','product_attributes.attribute_id')
-            ->leftJoin('attributes_values','attributes_values.id','product_attributes.attribute_value')
-            ->where('product_attributes.product_id',$id)->where('product_attributes.is_default','no')->get();
-
-        $data['getAttributes'] = Attribute::where('category_id',$data['product_details']->parent_id)->get();
-        return view('admin.products.addAttribute',$data);
-    }
-
-    function addProductAttrOptions($id){
-        $data['product_details'] =  Product::where('id',$id)->first();
-        $data['page_heading'] = 'Add Attribute To : '.$data['product_details']->title;
-        $data['defaultProductAttrList'] = ProductAttribut::select('product_attributes.*',
-            'attributes.title as attr_title',
-            'attributes_values.attribute_value as attr_val'
-        )
-            ->leftJoin('attributes','attributes.id','product_attributes.attribute_id')
-            ->leftJoin('attributes_values','attributes_values.id','product_attributes.attribute_value')
-            ->where('product_attributes.product_id',$id)->where('product_attributes.is_default','yes')->get();
+//        $data['defaultProductAttrList'] = ProductAttribut::select('product_attributes.*',
+//            'attributes.title as attr_title',
+//            'attributes_values.attribute_value as attr_val'
+//        )
+//            ->leftJoin('attributes','attributes.id','product_attributes.attribute_id')
+//            ->leftJoin('attributes_values','attributes_values.id','product_attributes.attribute_value')
+//            ->where('product_attributes.product_id',$id)->where('product_attributes.is_default','yes')->get();
 
         $data['addtionalProductAttrList'] = ProductAttribut::select('product_attributes.*',
             'attributes.title as attr_title',
@@ -89,7 +66,33 @@ class ProductsController extends Controller
             ->leftJoin('attributes','attributes.id','product_attributes.attribute_id')
             ->leftJoin('attributes_values','attributes_values.id','product_attributes.attribute_value')
             ->where('product_attributes.product_id',$id)
-            ->where('product_attributes.is_default','no')->get();
+//            ->where('product_attributes.is_default','no')
+            ->get();
+
+        $data['getAttributes'] = Attribute::where('category_id',$data['product_details']->parent_id)->get();
+        return view('admin.products.addAttribute',$data);
+    }
+
+    function addProductAttrOptions($id){
+        $data['product_details'] =  Product::where('id',$id)->first();
+        $data['page_heading'] = 'Add Attribute To : '.$data['product_details']->title;
+//        $data['defaultProductAttrList'] = ProductAttribut::select('product_attributes.*',
+//            'attributes.title as attr_title',
+//            'attributes_values.attribute_value as attr_val'
+//        )
+//            ->leftJoin('attributes','attributes.id','product_attributes.attribute_id')
+//            ->leftJoin('attributes_values','attributes_values.id','product_attributes.attribute_value')
+//            ->where('product_attributes.product_id',$id)->where('product_attributes.is_default','yes')->get();
+
+        $data['addtionalProductAttrList'] = ProductAttribut::select('product_attributes.*',
+            'attributes.title as attr_title',
+            'attributes_values.attribute_value as attr_val'
+        )
+            ->leftJoin('attributes','attributes.id','product_attributes.attribute_id')
+            ->leftJoin('attributes_values','attributes_values.id','product_attributes.attribute_value')
+            ->where('product_attributes.product_id',$id)
+//            ->where('product_attributes.is_default','no')
+            ->get();
         $data['productsize'] = Product_size::where('product_id',$id)->get();
         $data['getAttributes'] = Attribute::where('category_id',$data['product_details']->parent_id)->get();
         return view('admin.products.addAttribute',$data);
@@ -104,6 +107,14 @@ class ProductsController extends Controller
         $sql->price = $request->price;
         $sql->msp = $request->msp;
         $sql->qty = $request->qty;
+        $sql->flash_sale = $request->flash_sale;
+        $sql->flash_price = $request->flash_price;
+
+        $sql->length = $request->length;
+        $sql->width = $request->width;
+        $sql->height = $request->height;
+
+
         $discountPrcnt = '';
         if(!empty($request->msp)){
             $discountPrcnt = (ceil(($request->msp - $request->price)/$request->msp*100));
@@ -174,6 +185,12 @@ class ProductsController extends Controller
         $sql->size = $request->size;
         $sql->price = $request->price;
         $sql->msp = $request->msp;
+        $sql->length = $request->length;
+        $sql->width = $request->width;
+        $sql->height = $request->height;
+
+        $sql->flash_sale = $request->flash_sale;
+        $sql->flash_price = $request->flash_price;
 
         // Check if the image file was uploaded
         if ($request->hasFile('image')) {
@@ -833,4 +850,21 @@ class ProductsController extends Controller
 
         return response()->json(['success' => false]);
     }
+
+    function highlight_status(Request $request){
+//        print_r($request->all());die;
+        $category = Product::find($request->id);
+
+        if($request->status == '1'){
+            $category->highlights = '1';
+        }
+        if($request->status == '0'){
+            $category->highlights = '0';
+        }
+        $category->save();
+        return response()->json(['success'=>' status change successfully.']);
+
+    }
+
+
 }

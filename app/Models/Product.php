@@ -61,4 +61,15 @@ class Product extends Model
     {
         return $this->belongsToMany(Order::class);
     }
+
+//    public function sizeAttributes()
+//    {
+//        return $this->belongsToMany(Product_size::class)
+//            ->withPivot('image', 'size'); // Assuming these columns exist in the pivot table
+//    }
+    public function sizeAttributes()
+    {
+        return $this->hasMany(Product_size::class);
+    }
+
 }

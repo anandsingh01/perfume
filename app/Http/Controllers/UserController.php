@@ -37,6 +37,7 @@ class UserController extends Controller
             $data['orders'] = Order::orderBy('id','DESC')
                 ->where('user_id',Auth::user()->id)
                 ->orWhere('ip_address',$_SERVER['REMOTE_ADDR'])
+                ->where('status','!=','0')
                 ->get();
 //            print_r($data);die;
             return view('web.users.dashboard',$data);
@@ -64,5 +65,21 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'Profile updated successfully.');
+    }
+
+    function view_order($id){
+        $data['page_heading'] = 'View Order';
+        $data['orders'] = Order::with('get_order_products')->find($id);
+        return view('web.users.view-order',$data);
+    }
+
+    function my_orders(){
+        $data['orders'] = Order::orderBy('id','DESC')
+            ->where('user_id',Auth::user()->id)
+            ->orWhere('ip_address',$_SERVER['REMOTE_ADDR'])
+            ->where('status','!=','0')
+            ->get();
+//            print_r($data);die;
+        return view('web.users.my-order',$data);
     }
 }

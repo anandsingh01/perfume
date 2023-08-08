@@ -88,6 +88,7 @@
                                     <th>Photo</th>
                                     <th>Section</th>
                                     <th>Status</th>
+                                    <th>Show Highlight </th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -98,6 +99,7 @@
                                     <th>Photo</th>
                                     <th>Section</th>
                                     <th>Status</th>
+                                    <th>Show Highlight </th>
                                     <th>Action</th>
                                 </tr>
                                 </tfoot>
@@ -115,6 +117,24 @@
 
                                         <td>
                                             <input data-id="{{$product->id}}" class="toggle-class" type="checkbox" data-onstyle="success" data-offstyle="danger" data-toggle="toggle" data-on="Active" data-off="Inactive"{{ $product->status == 'active' ? 'checked' : '' }}>
+                                        </td>
+                                        <td>
+                                            @if($product->highlights == 1)
+                                                <span class="badge badge-info text-white" >Current status : Active</span><br>
+                                                <span class="badge badge-danger">
+                                                <a href="javascript:void(0)" data-id="{{$product->id}}" data-status="0" class="status">
+                                                    Change to : Inactive
+                                                </a>
+                                            </span>
+                                            @else
+                                                <span class="badge badge-danger">Current status : Inactive</span><br>
+                                                <span class="badge badge-info">
+                                                <a href="javascript:void(0)" data-id="{{$product->id}}" data-status="1" class="text-white status">
+                                                    Change to : Active
+                                                </a>
+                                            </span>
+                                            @endif
+
                                         </td>
                                         <td class="" style="">
                                             <a href="{{url('admin/edit-products/'.$product->id)}}" class="btn btn-primary waves-effect waves-float btn-sm waves-green"><i class="zmdi zmdi-edit"></i> Edit Product</a> <br>
@@ -164,18 +184,21 @@
         });
 
         $(function() {
-            $('.toggle-class').change(function() {
-                var status = $(this).prop('checked') == true ? 'active' : 'inactive';
-                var product_id = $(this).data('id');
-
-                // alert(status);return false;
+            $('.status').click(function() {
+                var status = $(this).data('status');
+                var id = $(this).data('id');
+                var table = 'categories';
                 $.ajax({
                     type: "GET",
                     dataType: "json",
-                    url: '{{url("admin/update-products-Status")}}',
-                    data: {'status': status, 'product_id': product_id},
+                    url: '{{url("admin/highlight-status")}}',
+                    data: {'status': status, 'id': id,'table' : table},
                     success: function(data){
-                        console.log(data.success)
+                        console.log(data);
+                        // location.reload();
+                        // swal("Status Changed!");
+                        // location.reload();
+                        // console.log(data.success)
                     }
                 });
             })

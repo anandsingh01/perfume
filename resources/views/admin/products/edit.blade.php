@@ -208,49 +208,51 @@
             </div>
 
 
+{{--            <div class="row clearfix">--}}
+{{--                <div class="col-md-12">--}}
+{{--                    <div class="card">--}}
+{{--                        <div class="body">--}}
+{{--                            <div class="row">--}}
+{{--                                <div class="col-md-6">--}}
+{{--                                    <label class="">Product Acutal Price</label>--}}
+{{--                                    <input type="number" class="form-control" name="product_actual_price"--}}
+{{--                                           value="{{$product_details->product_actual_price}}"/>--}}
+{{--                                </div>--}}
+
+{{--                                <div class="col-md-6">--}}
+{{--                                    <label class="">Max Selling Price</label>--}}
+{{--                                    <input type="number" class="form-control" name="product_max_selling_price"--}}
+{{--                                           value="{{$product_details->product_max_selling_price}}"/>--}}
+{{--                                </div>--}}
+
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+
+{{--            <div class="row clearfix">--}}
+{{--                <div class="col-md-12">--}}
+{{--                    <div class="card">--}}
+{{--                        <div class="body">--}}
+{{--                            <div class="row">--}}
+
+{{--                                <div class="col-md-6">--}}
+{{--                                    <label class="">Min Order</label>--}}
+{{--                                    <input type="number" class="form-control" value="{{$product_details->product_min_order}}" name="product_min_order" placeholder="Min Order"/>--}}
+{{--                                </div>--}}
+
+{{--                                <div class="col-md-6">--}}
+{{--                                    <label class="">Max Order</label>--}}
+{{--                                    <input type="number" class="form-control" value="{{$product_details->product_max_order}}" name="product_max_order" placeholder="Max Order"/>--}}
+{{--                                </div>--}}
+
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+
             <div class="row clearfix">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="">Product Acutal Price</label>
-                                    <input type="number" class="form-control" name="product_actual_price"
-                                           value="{{$product_details->product_actual_price}}"/>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="">Max Selling Price</label>
-                                    <input type="number" class="form-control" name="product_max_selling_price"
-                                           value="{{$product_details->product_max_selling_price}}"/>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            <div class="row clearfix">
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="body">
-                            <div class="row">
-
-                                <div class="col-md-6">
-                                    <label class="">Min Order</label>
-                                    <input type="number" class="form-control" value="{{$product_details->product_min_order}}" name="product_min_order" placeholder="Min Order"/>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="">Max Order</label>
-                                    <input type="number" class="form-control" value="{{$product_details->product_max_order}}" name="product_max_order" placeholder="Max Order"/>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="col-lg-6 col-md-6 col-sm-6">
                     <div class="card">
                         <div class="body">
@@ -267,30 +269,31 @@
 
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-6 col-sm-6">
-                    <div class="card">
-                        <div class="body">
-                            <div class="container">
-                                <div class="form-group mtb-10">
-                                    <label class="control-label" for="password">Product Photo (Drag & Drop into the box)</label>
-                                    <input type="file" id="product-gallery" name="productgallery[]" class="form-control" multiple>
-                                </div>
-                                <div class="preview-images-zone">
-                                    <div class="preview-image-container">
-                                        <?php
-                                        $product_gallery = \App\Models\Gallery::where('product_id',$product_details->id)->get();
-                                        ?>
-                                        @foreach($product_gallery as $productGallery)
-                                            <img src="{{ asset($productGallery->image) }}" style="width: 80px;" class="img-thumbnail m-1">
-                                            <button type="button" class="btn btn-danger btn-sm m-1 remove-preview-btn"
-                                                    data-id="{{$productGallery->id}}">Remove</button>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            </div>
+{{--                <div class="col-lg-6 col-md-6 col-sm-6">--}}
+{{--                    <div class="card">--}}
+{{--                        <div class="body">--}}
+{{--                            <div class="container">--}}
+{{--                                <div class="form-group mtb-10">--}}
+{{--                                    <label class="control-label" for="password">Product Photo (Drag & Drop into the box)</label>--}}
+{{--                                    <input type="file" id="product-gallery" name="productgallery[]" class="form-control" multiple>--}}
+{{--                                </div>--}}
+{{--                                <div class="preview-images-zone">--}}
+{{--                                    <div class="preview-image-container">--}}
+{{--                                        <?php--}}
+{{--                                        $product_gallery = \App\Models\Gallery::where('product_id',$product_details->id)->get();--}}
+{{--                                        ?>--}}
+{{--                                        @foreach($product_gallery as $productGallery)--}}
+{{--                                            <img src="{{ asset($productGallery->image) }}" style="width: 80px;" class="img-thumbnail m-1">--}}
+{{--                                            <button type="button" class="btn btn-danger btn-sm m-1 remove-preview-btn"--}}
+{{--                                                    data-id="{{$productGallery->id}}">Remove</button>--}}
+{{--                                        @endforeach--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
 
 
 {{--                <div class="col-md-12">--}}
@@ -378,7 +381,7 @@
 {{--                        </div>--}}
 {{--                    </div>--}}
 {{--                </div>--}}
-            </div>
+{{--            </div>--}}
 
             <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12">
@@ -408,76 +411,76 @@
                 </div>
             </div>
 
-            <div class="row clearfix">
-                <div class="col-lg-12 col-md-12 col-sm-12">
-                    <div class="card">
-                        <div class="header">
-                            <h2><strong>Product</strong> Additional Details</h2>
-                        </div>
-                        <div class="body">
+{{--            <div class="row clearfix">--}}
+{{--                <div class="col-lg-12 col-md-12 col-sm-12">--}}
+{{--                    <div class="card">--}}
+{{--                        <div class="header">--}}
+{{--                            <h2><strong>Product</strong> Additional Details</h2>--}}
+{{--                        </div>--}}
+{{--                        <div class="body">--}}
 
-                            <div class="panel-group" id="accordion_1" role="tablist" aria-multiselectable="true">
-                                <div class="panel panel-primary">
-                                    <div class="panel-heading" role="tab" id="headingThree_1">
-                                        <h4 class="panel-title">
-                                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion_1" href="#collapseThree_1" aria-expanded="false"
-                                               aria-controls="collapseThree_1"> Additional Details <span class="text-right">+</span>
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapseThree_1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree_1">
-                                        <div class="panel-body">
-                                            <div class="row">
+{{--                            <div class="panel-group" id="accordion_1" role="tablist" aria-multiselectable="true">--}}
+{{--                                <div class="panel panel-primary">--}}
+{{--                                    <div class="panel-heading" role="tab" id="headingThree_1">--}}
+{{--                                        <h4 class="panel-title">--}}
+{{--                                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion_1" href="#collapseThree_1" aria-expanded="false"--}}
+{{--                                               aria-controls="collapseThree_1"> Additional Details <span class="text-right">+</span>--}}
+{{--                                            </a>--}}
+{{--                                        </h4>--}}
+{{--                                    </div>--}}
+{{--                                    <div id="collapseThree_1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree_1">--}}
+{{--                                        <div class="panel-body">--}}
+{{--                                            <div class="row">--}}
 
-                                                <div class="col-lg-6 col-md-6 mtb-10">
-                                                    <label class="control-label " for="password">Pay On Delivery </label>
-                                                    <select class="form-control" name="additional_pay_on_delivery">
-                                                        <option value="yes" {{$product_details->additional_pay_on_delivery == 'yes' ? 'selected' : ''}}>Yes</option>
-                                                        <option value="no" {{$product_details->additional_pay_on_delivery == 'no' ? 'selected' : ''}}>No</option>
-                                                    </select>
-                                                </div>
-                                                <hr>
+{{--                                                <div class="col-lg-6 col-md-6 mtb-10">--}}
+{{--                                                    <label class="control-label " for="password">Pay On Delivery </label>--}}
+{{--                                                    <select class="form-control" name="additional_pay_on_delivery">--}}
+{{--                                                        <option value="yes" {{$product_details->additional_pay_on_delivery == 'yes' ? 'selected' : ''}}>Yes</option>--}}
+{{--                                                        <option value="no" {{$product_details->additional_pay_on_delivery == 'no' ? 'selected' : ''}}>No</option>--}}
+{{--                                                    </select>--}}
+{{--                                                </div>--}}
+{{--                                                <hr>--}}
 
-                                                <div class="col-lg-6 col-md-6 mtb-10">
-                                                    <label class="control-label " for="password">Return Within :</label>
-                                                    <select class="form-control" name="additional_return_within">
-                                                        <option value="0" {{$product_details->additional_return_within == '0' ? 'selected' : ''}}>No Return</option>
-                                                        <option value="1" {{$product_details->additional_return_within == '1' ? 'selected' : ''}}>3 Days</option>
-                                                        <option value="2" {{$product_details->additional_return_within == '2' ? 'selected' : ''}}>7 Days</option>
-                                                        <option value="3" {{$product_details->additional_return_within == '3' ? 'selected' : ''}}>10 Days</option>
-                                                        <option value="4" {{$product_details->additional_return_within == '4' ? 'selected' : ''}}>15 Days</option>
-                                                        <option value="5" {{$product_details->additional_return_within == '5' ? 'selected' : ''}}>20 Days</option>
-                                                        <option value="6" {{$product_details->additional_return_within == '6' ? 'selected' : ''}}>30 Days</option>
-                                                        <option value="7" {{$product_details->additional_return_within == '7' ? 'selected' : ''}}>30 Days</option>
-                                                    </select>
-                                                </div>
+{{--                                                <div class="col-lg-6 col-md-6 mtb-10">--}}
+{{--                                                    <label class="control-label " for="password">Return Within :</label>--}}
+{{--                                                    <select class="form-control" name="additional_return_within">--}}
+{{--                                                        <option value="0" {{$product_details->additional_return_within == '0' ? 'selected' : ''}}>No Return</option>--}}
+{{--                                                        <option value="1" {{$product_details->additional_return_within == '1' ? 'selected' : ''}}>3 Days</option>--}}
+{{--                                                        <option value="2" {{$product_details->additional_return_within == '2' ? 'selected' : ''}}>7 Days</option>--}}
+{{--                                                        <option value="3" {{$product_details->additional_return_within == '3' ? 'selected' : ''}}>10 Days</option>--}}
+{{--                                                        <option value="4" {{$product_details->additional_return_within == '4' ? 'selected' : ''}}>15 Days</option>--}}
+{{--                                                        <option value="5" {{$product_details->additional_return_within == '5' ? 'selected' : ''}}>20 Days</option>--}}
+{{--                                                        <option value="6" {{$product_details->additional_return_within == '6' ? 'selected' : ''}}>30 Days</option>--}}
+{{--                                                        <option value="7" {{$product_details->additional_return_within == '7' ? 'selected' : ''}}>30 Days</option>--}}
+{{--                                                    </select>--}}
+{{--                                                </div>--}}
 
-                                                <div class="col-lg-6 col-md-6 mtb-10">
-                                                    <label class="control-label " for="password"> Delivery Within Days:  </label>
-                                                    <input type="number" name="addtional_delivery_within" class="form-control">
-                                                </div>
+{{--                                                <div class="col-lg-6 col-md-6 mtb-10">--}}
+{{--                                                    <label class="control-label " for="password"> Delivery Within Days:  </label>--}}
+{{--                                                    <input type="number" name="addtional_delivery_within" class="form-control">--}}
+{{--                                                </div>--}}
 
-                                                <div class="col-lg-6 col-md-6 mtb-10">
-                                                    <label class="control-label " for="password"> Size & Fit  </label>
-                                                    <textarea type="number" name="addtional_size_and_fit" class="form-control"></textarea>
-                                                </div>
+{{--                                                <div class="col-lg-6 col-md-6 mtb-10">--}}
+{{--                                                    <label class="control-label " for="password"> Size & Fit  </label>--}}
+{{--                                                    <textarea type="number" name="addtional_size_and_fit" class="form-control"></textarea>--}}
+{{--                                                </div>--}}
 
-                                                <div class="col-lg-6 col-md-6 mtb-10">
-                                                    <label class="control-label " for="password"> Material & Care  </label>
-                                                    <textarea type="number" name="addtional_material_care" class="form-control"></textarea>
-                                                </div>
+{{--                                                <div class="col-lg-6 col-md-6 mtb-10">--}}
+{{--                                                    <label class="control-label " for="password"> Material & Care  </label>--}}
+{{--                                                    <textarea type="number" name="addtional_material_care" class="form-control"></textarea>--}}
+{{--                                                </div>--}}
 
 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+{{--                                            </div>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
 
-                        </div>
-                    </div>
-                </div>
-            </div>
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
 
             <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12">

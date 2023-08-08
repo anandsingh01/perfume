@@ -167,14 +167,14 @@
                 @forelse($category_on_home as $categories_on_home)
                     <div class="col-md-6">
                         <div class="banner banner-1 banner-overlay">
-                            <a href="#">
+                            <a href="{{url('for/'.$categories_on_home->slug)}}">
                                 <img src="{{asset($categories_on_home->image)}}" alt="Banner" width="688" height="400" style="background-color: #f9c8c8;">
                             </a>
                             <div class="banner-content banner-content-center">
                                 <h4 class="banner-subtitle text-white">{{$categories_on_home->category_name}}</h4>
                                 <!-- End .banner-subtitle -->
                                 <h5 class="text-white mt-2 mb-2">{{$categories_on_home->meta_tag_description}}</h5>
-                                <a href="{{url($categories_on_home->slug)}}" class="btn btn-outline-white banner-link">Shop Now<i class="icon-long-arrow-right"></i></a>
+                                <a href="{{url('for/'.$categories_on_home->slug)}}" class="btn btn-outline-white banner-link">Shop Now<i class="icon-long-arrow-right"></i></a>
                             </div>
                             <!-- End .banner-content -->
                         </div>
@@ -334,20 +334,12 @@
                }
                }
                }'>
-                        @forelse($get_product_favorites as $key => $get_favorites)
+                        @forelse($get_recent_product as $key => $get_favorites)
                             <div class="product product-2">
                                 <figure class="product-media">
                                     <a href="{{url($get_favorites->slug)}}">
                                         <img src="{{asset($get_favorites->photo)}}" alt="{{$get_favorites->title}}" class="product-image">
                                     </a>
-                                    <div class="product-action-vertical">
-                                        <a href="#" class="btn-product-icon btn-wishlist btn-expandable" title="Add to wishlist"><span>add to wishlist</span></a>
-                                    </div>
-                                    <!-- End .product-action -->
-                                    <div class="product-action product-action-transparent">
-                                        <a href="#" class="btn-product btn-cart"><span>add to cart</span></a>
-                                    </div>
-                                    <!-- End .product-action -->
                                 </figure>
                                 <!-- End .product-media -->
                                 <div class="product-body">

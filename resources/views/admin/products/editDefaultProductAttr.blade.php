@@ -77,7 +77,7 @@
 {{--                                </div>--}}
                                 <div class="col-lg-6 col-md-12 mtb-10">
                                     <label class="control-label" for="Status">Size</label>
-                                    <input type="text" value="{{$attr_details->size}}" name="size" placeholder="eg.10Ml , 20ML" class="form-control"/>
+                                    <input type="text" value="{{$attr_details->size}}" name="size" placeholder="eg.10oz , 20oz" class="form-control"/>
                                 </div>
                                 <div class="col-lg-6 col-md-4 mtb-10">
                                     <label class="">Qty (in pcs)</label>
@@ -101,6 +101,36 @@
                                         @endif
                                 </div>
 
+                                <div class="col-lg-6 col-md-4 mtb-10">
+                                    <label class="">Flash</label>
+                                    <select name="flash_sale" class="form-control ms">
+                                        <option value="no" {{$attr_details->flash_sale == 'no' ? 'selected' : ''}}>No</option>
+                                        <option value="yes" {{$attr_details->flash_sale == 'yes' ? 'selected' : ''}}>Yes</option>
+                                    </select>
+                                </div>
+
+
+                                <div class="col-lg-6 col-md-4 mtb-10">
+                                    <label class="">Flash Price</label>
+                                    <input type="text" value="{{$attr_details->flash_price}}" name="flash_price" placeholder="eg. 1000, 1200 , 1500" class="form-control"/>
+                                </div>
+
+
+
+                                <div class="col-lg-4 col-md-4 mtb-10">
+                                    <label class="">Length</label>
+                                    <input type="text" value="{{$attr_details->length}}" name="length" placeholder="10,20" class="form-control"/>
+                                </div>
+
+                                <div class="col-lg-4 col-md-4 mtb-10">
+                                    <label class="">Width</label>
+                                    <input type="text" value="{{$attr_details->width}}" name="width"  placeholder="10,20"  class="form-control"/>
+                                </div>
+
+                                <div class="col-lg-4 col-md-4 mtb-10">
+                                    <label class="">Height</label>
+                                    <input type="text" value="{{$attr_details->height}}" name="height"  placeholder="10,20" class="form-control"/>
+                                </div>
                             </div>
 
                             <div class="modal-footer">
@@ -138,7 +168,7 @@
 
                     $('#attribute_value').append(response);
                     // // Without parent div of select2 , don't change
-                    // $('.parent_cat_div #select2-chosen-2').html('Please Select An Option');
+                    // $('.parent_cat_div #select2-chosen-2').htoz('Please Select An Option');
                     //
                     // $.each(response, function(key, value) {
                     //     console.log(value.title);

@@ -39,6 +39,10 @@ $get_brands = get_brands();
     <link rel="stylesheet" href="{{asset('assets/web/')}}/assets/css/demos/demo-29.css">
     <link rel="stylesheet" href="{{asset('assets/web/')}}/assets/css/plugins/nouislider/nouislider.css">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.2.0/sweetalert2.all.min.js"></script>
+
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
@@ -83,6 +87,9 @@ $get_brands = get_brands();
             visibility: hidden;
             transition: all 0.4s ease;
         }
+        i.icon-user {
+            font-size: 20px;
+        }
     </style>
 
 
@@ -117,11 +124,12 @@ $get_brands = get_brands();
                         </ul><!--End ul-->
                     </li>
                 </ul>
+                @else
                 @endif
             </div><!--End .container-->
         </div><!--End .header-top-->
 
-        <div class="header-middle">
+        <div class="header-middle" id="header-middle">
             <div class="container">
                 <div class="header-left">
                     <div class="header-search header-search-extended header-search-visible d-none d-lg-block">
@@ -154,13 +162,13 @@ $get_brands = get_brands();
                     $get_count = json_decode($get_cart);
                     $getAllCart = getCartProducts();
                     ?>
-                    <div class="dropdown cart-dropdown">
+                    <div class="dropdown cart-dropdown"  >
                         <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                             <i class="icon-shopping-cart"></i>
                             <span class="cart-count">{{$get_count->count ?? '0'}}</span>
                             <span class="cart-txt font-weight-semibold">$ {{number_format($get_count->cartTotal,2) ?? '0'}}</span>
                         </a><!--End .dropdown-toggle-->
-                        @if($get_count->count != 0)
+
                         <div class="dropdown-menu dropdown-menu-right">
                             <div class="dropdown-cart-products">
                                 @forelse($getAllCart as $key => $getAllCarts)
@@ -208,8 +216,40 @@ $get_brands = get_brands();
                             </div><!-- End .dropdown-cart-action -->
 
                         </div><!-- End .dropdown-menu -->
-                        @endif
                     </div><!-- End .cart-dropdown -->
+
+                    @if(Auth::check() && Auth::user()->role == 2)
+
+                        <style>
+                            .profile_icon{
+                                list-style: none;
+                            }
+                        </style>
+                        <nav class="">
+                            <ul class="menu sf-arrows">
+                        <li class="profile_icon">
+                            <a href="#" class="sf-with-ul"><i class="icon-user"></i></a>
+
+                            <ul style="display: none;">
+                                <li><a href="{{url('my-profile')}}">My Profile</a></li>
+                                <li><a href="{{url('my-orders')}}">My Order</a></li>
+                                <li>
+
+                                    <a href="{{ route('logout') }}"  onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();"
+                                       class="" title="Sign Out">
+                                        Logout
+                                    </a>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+
+                            </ul>
+                        </nav>
+                    @endif
                 </div><!--End .header-right-->
             </div><!-- End .container -->
         </div><!-- End .header-middle -->
@@ -223,12 +263,19 @@ $get_brands = get_brands();
                                 <a href="{{url('/')}}">Home</a>
                             </li>
 
-                            @forelse($get_category as $get_categories)
-                            <li>
-                                <a href="{{url('for/'.$get_categories->slug)}}">{{$get_categories->category_name}}</a>
+                            <li class="">
+                                <a href="#" class="sf-with-ul">Shop</a>
+
+                                <ul style="display: none;">
+                                    @forelse($get_category as $get_categories)
+                                        <li>
+                                            <a href="{{url('for/'.$get_categories->slug)}}">{{$get_categories->category_name}}</a>
+                                        </li>
+                                    @empty
+                                    @endforelse
+                                </ul>
                             </li>
-                            @empty
-                            @endforelse
+
 
                             <li>
                                 <a href="{{url('/')}}" class="sf-with-ul">Brands</a>
@@ -255,39 +302,17 @@ $get_brands = get_brands();
                                                 </div><!-- End .row -->
 
 
-
-
-
-
                                             </div><!-- End .menu-col -->
                                         </div><!-- End .col-md-8 -->
                                     </div><!-- End .row -->
                                 </div><!-- End .megamenu megamenu-md -->
                             </li>
 
-                            @if(Auth::check() && Auth::user()->role == 2)
-                                <li class="">
-                                    <a href="#" class="sf-with-ul">My Account</a>
+                            <li class="">
+                                <a href="{{url('/')}}">Blogs</a>
+                            </li>
 
-                                    <ul style="display: none;">
-                                        <li><a href="{{url('my-orders')}}">My Order</a></li>
-                                        <li><a href="{{url('my-orders')}}">Change email</a></li>
-                                        <li><a href="{{url('change-password')}}">Change password</a></li>
 
-                                        <li>
-
-                                            <a href="{{ route('logout') }}"  onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();"
-                                               class="" title="Sign Out">
-                                                Logout
-                                            </a>
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                                @csrf
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </li>
-                            @endif
                         </ul><!-- End .menu -->
                     </nav><!-- End .main-nav -->
 
@@ -414,171 +439,66 @@ $get_brands = get_brands();
         <span class="mobile-menu-close"><i class="icon-close"></i></span>
 
         <form action="#" method="get" class="mobile-search">
+            <style>
+                .mobile-search{
+                    position:relative;
+                }
+                div#searchResults2 {
+                    position: absolute;
+                    top: 40px;
+                    background: #fff;
+                    width: 85%;
+                    z-index: 9;
+                }
+            </style>
             <label for="mobile-search" class="sr-only">Search</label>
             <input type="search" class="form-control" name="mobile-search" id="mobile-search" placeholder="Search in..." required>
             <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
+
+            <div id="searchResults2" style="display: none;"></div>
         </form>
 
         <nav class="mobile-nav">
             <ul class="mobile-menu">
                 <li class="active">
                     <a href="{{url('/')}}">Home</a>
+                </li>
+                <li class="">
+                    <a href="#" class="sf-with-ul">Shop</a>
 
-                    <ul>
-                        <li><a href="index-1.html">01 - furniture store</a></li>
-                        <li><a href="index-2.html">02 - furniture store</a></li>
-                        <li><a href="index-3.html">03 - electronic store</a></li>
-                        <li><a href="index-4.html">04 - electronic store</a></li>
-                        <li><a href="index-5.html">05 - fashion store</a></li>
-                        <li><a href="index-6.html">06 - fashion store</a></li>
-                        <li><a href="index-7.html">07 - fashion store</a></li>
-                        <li><a href="index-8.html">08 - fashion store</a></li>
-                        <li><a href="index-9.html">09 - fashion store</a></li>
-                        <li><a href="index-10.html">10 - shoes store</a></li>
-                        <li><a href="index-11.html">11 - furniture simple store</a></li>
-                        <li><a href="index-12.html">12 - fashion simple store</a></li>
-                        <li><a href="index-13.html">13 - market</a></li>
-                        <li><a href="index-14.html">14 - market fullwidth</a></li>
-                        <li><a href="index-15.html">15 - lookbook 1</a></li>
-                        <li><a href="index-16.html">16 - lookbook 2</a></li>
-                        <li><a href="index-17.html">17 - fashion store</a></li>
-                        <li><a href="index-18.html">18 - fashion store (with sidebar)</a></li>
-                        <li><a href="index-19.html">19 - games store</a></li>
-                        <li><a href="index-20.html">20 - book store</a></li>
-                        <li><a href="index-21.html">21 - sport store</a></li>
-                        <li><a href="index-22.html">22 - tools store</a></li>
-                        <li><a href="index-23.html">23 - fashion left navigation store</a></li>
-                        <li><a href="index-24.html">24 - extreme sport store</a></li>
+                    <ul style="display: none;">
+                        @forelse($get_category as $get_categories)
+                            <li>
+                                <a href="{{url('for/'.$get_categories->slug)}}">{{$get_categories->category_name}}</a>
+                            </li>
+                        @empty
+                        @endforelse
                     </ul>
                 </li>
 
                 <li>
-                    <a href="{{url('/')}}">Shop</a>
+                    <a href="{{url('/')}}" class="sf-with-ul">Brands</a>
+
                     <ul>
-                        <li><a href="{{url('/')}}">Shop List</a></li>
-                        <li><a href="{{url('/')}}">Shop Grid 2 Columns</a></li>
-                        <li><a href="{{url('/')}}">Shop Grid 3 Columns</a></li>
-                        <li><a href="category-4cols.html">Shop Grid 4 Columns</a></li>
-                        <li><a href="{{url('/')}}"><span>Shop Boxed No Sidebar<span class="tip tip-hot">Hot</span></span></a></li>
-                        <li><a href="category-fullwidth.html">Shop Fullwidth No Sidebar</a></li>
-                        <li><a href="product-{{url('/')}}">Product Category Boxed</a></li>
-                        <li><a href="{{url('/')}}"><span>Product Category Fullwidth<span class="tip tip-new">New</span></span></a></li>
-                        <li><a href="{{url('/')}}">Cart</a></li>
-                        <li><a href="{{url('/')}}">Checkout</a></li>
-                        <li><a href="{{url('/')}}">Wishlist</a></li>
-                        <li><a href="#">Lookbook</a></li>
+                    @forelse($get_brands as $index => $get_brand)
+                            <li><a href="{{url('brands/'.$get_brand->slug)}}">{{$get_brand->category_name}}</a></li>
+                    @empty
+                        <!-- Handle no brands case -->
+                    @endforelse
                     </ul>
                 </li>
 
-                <li>
-                    <a href="product.html" class="sf-with-ul">Product</a>
-                    <ul>
-                        <li><a href="product.html">Default</a></li>
-                        <li><a href="product-centered.html">Centered</a></li>
-                        <li><a href="product-extended.html"><span>Extended Info<span class="tip tip-new">New</span></span></a></li>
-                        <li><a href="product-gallery.html">Gallery</a></li>
-                        <li><a href="product-sticky.html">Sticky Info</a></li>
-                        <li><a href="product-sidebar.html">Boxed With Sidebar</a></li>
-                        <li><a href="product-fullwidth.html">Full Width</a></li>
-                        <li><a href="product-masonry.html">Masonry Sticky Info</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="#">Pages</a>
-                    <ul>
-                        <li>
-                            <a href="about.html">About</a>
-
-                            <ul>
-                                <li><a href="about.html">About 01</a></li>
-                                <li><a href="about-2.html">About 02</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="contact.html">Contact</a>
-
-                            <ul>
-                                <li><a href="contact.html">Contact 01</a></li>
-                                <li><a href="contact-2.html">Contact 02</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="login.html">Login</a></li>
-                        <li><a href="faq.html">FAQs</a></li>
-                        <li><a href="404.html">Error 404</a></li>
-                        <li><a href="coming-soon.html">Coming Soon</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="blog.html">Blog</a>
-
-                    <ul>
-                        <li><a href="blog.html">Classic</a></li>
-                        <li><a href="blog-listing.html">Listing</a></li>
-                        <li>
-                            <a href="#">Grid</a>
-                            <ul>
-                                <li><a href="blog-grid-2cols.html">Grid 2 columns</a></li>
-                                <li><a href="blog-grid-3cols.html">Grid 3 columns</a></li>
-                                <li><a href="blog-grid-4cols.html">Grid 4 columns</a></li>
-                                <li><a href="blog-grid-sidebar.html">Grid sidebar</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">Masonry</a>
-                            <ul>
-                                <li><a href="blog-masonry-2cols.html">Masonry 2 columns</a></li>
-                                <li><a href="blog-masonry-3cols.html">Masonry 3 columns</a></li>
-                                <li><a href="blog-masonry-4cols.html">Masonry 4 columns</a></li>
-                                <li><a href="blog-masonry-sidebar.html">Masonry sidebar</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">Mask</a>
-                            <ul>
-                                <li><a href="blog-mask-grid.html">Blog mask grid</a></li>
-                                <li><a href="blog-mask-masonry.html">Blog mask masonry</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">Single Post</a>
-                            <ul>
-                                <li><a href="single.html">Default with sidebar</a></li>
-                                <li><a href="single-fullwidth.html">Fullwidth no sidebar</a></li>
-                                <li><a href="single-fullwidth-sidebar.html">Fullwidth with sidebar</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="elements-list.html">Elements</a>
-                    <ul>
-                        <li><a href="elements-products.html">Products</a></li>
-                        <li><a href="elements-typography.html">Typography</a></li>
-                        <li><a href="elements-titles.html">Titles</a></li>
-                        <li><a href="elements-banners.html">Banners</a></li>
-                        <li><a href="elements-product-{{url('/')}}">Product Category</a></li>
-                        <li><a href="elements-video-banners.html">Video Banners</a></li>
-                        <li><a href="elements-buttons.html">Buttons</a></li>
-                        <li><a href="elements-accordions.html">Accordions</a></li>
-                        <li><a href="elements-tabs.html">Tabs</a></li>
-                        <li><a href="elements-testimonials.html">Testimonials</a></li>
-                        <li><a href="elements-blog-posts.html">Blog Posts</a></li>
-                        <li><a href="elements-portfolio.html">Portfolio</a></li>
-                        <li><a href="elements-cta.html">Call to Action</a></li>
-                        <li><a href="elements-icon-boxes.html">Icon Boxes</a></li>
-                    </ul>
-                </li>
             </ul><!--End .mobile-menu-->
         </nav><!-- End .mobile-nav -->
 
         <div class="social-icons">
-            <a href="#" class="social-icon" target="_blank" title="Facebook"><i class="icon-facebook-f"></i></a>
-            <a href="#" class="social-icon" target="_blank" title="Twitter"><i class="icon-twitter"></i></a>
-            <a href="#" class="social-icon" target="_blank" title="Instagram"><i class="icon-instagram"></i></a>
-            <a href="#" class="social-icon" target="_blank" title="Youtube"><i class="icon-youtube"></i></a>
+            <a href="{{$getCommonSetting->facebook_url}}" class="social-icon" title="Facebook" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="{{$getCommonSetting->instagram_url}}" class="social-icon" title="Pinterest" target="_blank"><i class="fab fa-instagram"></i></a>
+
+    {{--            <a href="#" class="social-icon" target="_blank" title="Facebook"><i class="icon-facebook-f"></i></a>--}}
+    {{--            <a href="#" class="social-icon" target="_blank" title="Twitter"><i class="icon-twitter"></i></a>--}}
+    {{--            <a href="#" class="social-icon" target="_blank" title="Instagram"><i class="icon-instagram"></i></a>--}}
+    {{--            <a href="#" class="social-icon" target="_blank" title="Youtube"><i class="icon-youtube"></i></a>--}}
         </div><!-- End .social-icons -->
     </div><!-- End .mobile-menu-wrapper -->
 </div><!-- End .mobile-menu-container -->
@@ -728,50 +648,6 @@ $get_brands = get_brands();
 <script src="{{asset('assets/web/')}}/assets/js/demos/demo-29.js"></script>
 <script src="{{asset('assets/web/')}}/assets/js/main.js"></script>
 
-<script>
-
-    function deleteConfirmation(id) {
-        swal({
-            title: "Delete?",
-            text: "Please ensure and then confirm!",
-            type: "warning",
-            showCancelButton: !0,
-            confirmButtonText: "Yes, delete it!",
-            cancelButtonText: "No, cancel!",
-            reverseButtons: !0
-        }).then(function (e) {
-
-            if (e.value === true) {
-                var CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
-
-
-                $.ajax({
-                    type: 'get',
-                    url: "{{url('/delete-from-cart')}}/" + id,
-                    data: {_token: CSRF_TOKEN},
-                    dataType: 'JSON',
-                    success: function (results) {
-
-                        if (results.success === true) {
-                            swal("Done!", results.message, "success");
-                            location.reload();
-                        } else {
-                            swal("Error!", results.message, "error");
-                            location.reload();
-                        }
-                    }
-                });
-
-            } else {
-                e.dismiss;
-            }
-
-        }, function (dismiss) {
-            return false;
-        })
-    }
-
-</script>
 <style>
 
     #searchResults {
@@ -819,6 +695,71 @@ $get_brands = get_brands();
 
 </style>
 <script>
+
+    $(document).ready(function() {
+        $('#mobile-search').on('input', function() {
+            var query = $(this).val();
+            if (query.length >= 3) {
+                fetchProductsMobiles(query);
+            } else {
+                $('#searchResults2').empty();
+            }
+        });
+    });
+
+    function fetchProductsMobiles(query) {
+        $.ajax({
+            url: '{{url("search")}}', // Change this to your Laravel route for searching products
+            method: 'GET',
+            data: { query: query },
+            success: function(response) {
+                console.log(response);
+
+                displayResultsmobile(response);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    }
+
+    function displayResultsmobile(products) {
+        var resultsContainer = $('#searchResults2');
+        resultsContainer.empty();
+
+        if (Object.keys(products).length > 0) {
+            var resultList = $('<ul>');
+
+            for (var slug in products) {
+                if (products.hasOwnProperty(slug)) {
+                    var productName = products[slug];
+
+                    var listItem = $('<li>', {
+                        class: 'search-result-item'
+                    });
+                    var link = $('<a>', {
+                        href: '/products/' + slug,
+                        text: productName,
+                        class: 'search-result-link'
+                    });
+
+                    listItem.append(link);
+                    resultList.append(listItem);
+                }
+            }
+
+            resultsContainer.empty().append(resultList); // Clear and add the list
+            resultsContainer.show(); // Show the results container
+        } else {
+            resultsContainer.hide(); // Hide the results container
+        }
+    }
+
+
+
+
+
+
     $(document).ready(function() {
         $('#searchInput').on('input', function() {
             var query = $(this).val();
@@ -829,6 +770,7 @@ $get_brands = get_brands();
             }
         });
     });
+
 
     function fetchProducts(query) {
         $.ajax({
@@ -852,14 +794,16 @@ $get_brands = get_brands();
         if (Object.keys(products).length > 0) {
             var resultList = $('<ul>');
 
-            for (var key in products) {
-                if (products.hasOwnProperty(key)) {
+            for (var slug in products) {
+                if (products.hasOwnProperty(slug)) {
+                    var productName = products[slug];
+
                     var listItem = $('<li>', {
                         class: 'search-result-item'
                     });
                     var link = $('<a>', {
-                        href: '/products/' + products[key],
-                        text: key,
+                        href: '/products/' + slug,
+                        text: productName,
                         class: 'search-result-link'
                     });
 
@@ -873,6 +817,31 @@ $get_brands = get_brands();
         } else {
             resultsContainer.hide(); // Hide the results container
         }
+    }
+
+
+
+</script>
+
+<script>
+
+    function deleteConfirmation(id) {
+        $.ajax({
+            type: 'get',
+            url: "{{url('/delete-from-cart')}}/" + id,
+            dataType: 'JSON',
+            success: function (results) {
+
+                if (results.success === true) {
+                    swal("Done!", results.message, "success");
+                    // location.reload();
+                    $('#header-middle').load('#header-middle');
+                } else {
+                    swal("Error!", results.message, "error");
+                    // location.reload();
+                }
+            }
+        });
     }
 
 </script>

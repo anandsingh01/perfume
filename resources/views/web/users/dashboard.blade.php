@@ -48,137 +48,52 @@ session_start();
 
         <div class="page-content">
             <div class="container">
-                <div class="col-md-12 text-right">
-                    <a href="{{ route('logout') }}"  onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();"
-                       class="btn btn-danger pt-2 pb-2 pull-right text-right" title="Sign Out">
-                        Logout
-                    </a>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
-                </div>
+
                 <h3 class="text-center">Welcome {{Auth::user()->name}}</h3>
                 <div class="row">
                     <div class="col-md-1"></div>
                     <div class="col-md-10">
-                        <div class="tabs-vertical">
-                            <ul class="nav nav-tabs nav-tabs-bg flex-column" id="tabs-7" role="tablist">
-                                <li class="nav-item active">
-                                    <a class="nav-link" id="tab-25-tab" data-toggle="tab" href="#tab-25" role="tab" aria-controls="tab-25" aria-selected="false">My Profile</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="tab-26-tab" data-toggle="tab" href="#tab-26" role="tab" aria-controls="tab-26" aria-selected="false">My Orders</a>
-                                </li>
-{{--                                <li class="nav-item">--}}
-{{--                                    <a class="nav-link" id="tab-27-tab" data-toggle="tab" href="#tab-27" role="tab" aria-controls="tab-27" aria-selected="false">Logout</a>--}}
-{{--                                </li>--}}
-                            </ul>
-                            <div class="tab-content tab-content-border" id="tab-content-7">
-                                <div class="tab-pane active" id="tab-25" role="tabpanel" aria-labelledby="tab-25-tab">
-                                    @if(session('success'))
-                                        <div class="alert alert-success">{{ session('success') }}</div>
-                                    @endif
+                        @if(session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
 
-                                    <form action="{{ url('update-profile') }}" method="post">
+                        <form action="{{ url('update-profile') }}" method="post">
 
-                                        @csrf
+                            @csrf
 
-                                        <div class="form-group">
-                                            <label for="register-name">Name  *</label>
-                                            <input type="text" class="form-control" id="register-name"
-                                                   name="name" value="{{Auth::user()->name}}" required>
-                                        </div>
+                            <div class="form-group">
+                                <label for="register-name">Name  *</label>
+                                <input type="text" class="form-control" id="register-name"
+                                       name="name" value="{{Auth::user()->name}}" required>
+                            </div>
 
-                                        <div class="form-group">
-                                            <label for="register-email">Your email address *</label>
-                                            <input type="email" class="form-control" id="register-email"
-                                                   name="email" value="{{Auth::user()->email}}" required>
-                                        </div>
+                            <div class="form-group">
+                                <label for="register-email">Your email address *</label>
+                                <input type="email" class="form-control" id="register-email"
+                                       name="email" value="{{Auth::user()->email}}" required>
+                            </div>
 
 
-                                        <div class="form-group">
-                                            <label for="register-password">Password *</label>
-                                            <input type="password" class="form-control" id="register-password"
-                                                   name="password" required>
-                                        </div>
+                            <div class="form-group">
+                                <label for="register-password">Password *</label>
+                                <input type="password" class="form-control" id="register-password"
+                                       name="password" required>
+                            </div>
 
-                                        <div class="form-group">
-                                            <label for="register-confirm-password">Confirm Password *</label>
-                                            <input type="password" class="form-control" id="register-confirm-password" name="register-confirm-password" required>
-                                            <span id="password-match-message"></span>
-                                        </div>
-
-
-                                        <div class="form-footer">
-                                            <button type="submit" class="btn btn-outline-primary-2">
-                                                <span>Update</span>
-                                                <i class="icon-long-arrow-right"></i>
-                                            </button>
-                                        </div>
-                                    </form>
-
-                                </div><!-- .End .tab-pane -->
-                                <div class="tab-pane fade" id="tab-26" role="tabpanel" aria-labelledby="tab-26-tab">
-
-                                    <table id="example" class="table table-bordered" cellspacing="0" width="100%">
-                                        <thead>
-                                        <tr>
-                                            <th>No.</th>
-                                            <th>Order Id</th>
-                                            <th>User</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-
-                                        @if(!empty($orders))
-                                            @foreach($orders as $key =>  $order)
-                                                <tr>
-                                                    <td>{{$key+1}}</td>
-                                                    <td>Order Id -  {{$order->order_id}}</td>
-                                                    <td>
-                                                        Name - {{$order->first_name}}, {{$order->last_name}} <br>
-                                                        Address - {{$order->address_1}}, {{$order->address_2}},
-                                                        {{$order->city}}, {{$order->state}}, {{$order->pincode}},<br>
-                                                        Phone - {{$order->phone}}<br>
-                                                        Email - {{$order->email}}
-                                                    </td>
-                                                    <td>
-                                                        @if($order->status == 0)
-                                                            <span class="badge badge-warning">New </span>
-                                                        @endif
+                            <div class="form-group">
+                                <label for="register-confirm-password">Confirm Password *</label>
+                                <input type="password" class="form-control" id="register-confirm-password" name="register-confirm-password" required>
+                                <span id="password-match-message"></span>
+                            </div>
 
 
-                                                        @if($order->status == 1)
-                                                            <p class="badge badge-success">Paid </p>
-                                                        @endif
-
-
-                                                        @if($order->status == 2)
-                                                            <span class="badge badge-danger">Cancelled </span>
-                                                        @endif
-                                                    </td>
-                                                    <td class="" style="">
-                                                        <a href="{{url('view-orders/'.$order->id)}}"
-                                                           class="btn btn-primary waves-effect waves-float btn-sm waves-green">
-                                                            View</a> <br>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                        </tbody>
-                                    </table>
-
-
-                                </div><!-- .End .tab-pane -->
-                                <div class="tab-pane fade" id="tab-27" role="tabpanel" aria-labelledby="tab-27-tab">
-                                    <p>Perspiciatis quis nobis, adipisci quae aspernatur, nulla suscipit eum. Dolorum, earum. Consectetur pariatur repellat distinctio atque alias excepturi aspernatur nisi accusamus sed molestias ipsa numquam eius, iusto, aliquid, quis aut.</p>
-                                </div><!-- .End .tab-pane -->
-
-                            </div><!-- End .tab-content -->
-                        </div><!-- End .tabs-vertical -->
+                            <div class="form-footer">
+                                <button type="submit" class="btn btn-outline-primary-2">
+                                    <span>Update</span>
+                                    <i class="icon-long-arrow-right"></i>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                     <div class="col-md-1"></div>
                 </div>

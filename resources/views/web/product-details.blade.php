@@ -87,6 +87,14 @@
             padding: 0 2rem 0.9rem;
             justify-content: center;
         }
+        div#product-cut-price {
+            font-size: 20px;
+            color: hotpink;
+            font-weight: 600;
+        }
+        /*.price_div {*/
+        /*    display: inline-flex;*/
+        /*}*/
     </style>
 @stop
 @section('body')
@@ -143,9 +151,29 @@
                                     <a class="ratings-text" href="#product-review-link" id="review-link">( 2 Reviews )</a>
                                 </div><!-- End .rating-container -->
 
-                                <div class="product-price text-left">
-                                    $ {{number_format($product->getPrices[0]->price,2)}}
-                                </div><!-- End .product-price -->
+{{--                                <div class="product-price text-left">--}}
+{{--                                    $ {{number_format($product->getPrices[0]->price,2)}}--}}
+{{--                                </div><!-- End .product-price -->--}}
+
+                                <div class="price_div row">
+                                    <div class="product-price text-left col-md-3">
+                                        @if ($product->getPrices[0]->flash_sale === 'yes')
+                                            <div id="product-flash-price" class="flash-price">
+                                                $ {{ number_format($product->getPrices[0]->flash_price, 2) }}
+                                            </div>
+
+                                        @else
+                                            $ {{ number_format($product->getPrices[0]->price, 2) }}
+                                        @endif
+                                    </div><!-- End .product-price -->
+
+                                    <div class="col-md-4">
+                                    <del>
+                                        <div id="product-cut-price" class="cut-price"></div>
+                                    </del>
+                                    </div>
+
+                                </div>
 
                                 <div class="product-content">
                                     <p><?php echo $product->product_short_desc;?></p>
@@ -167,6 +195,8 @@
                                                 data-msp="{{ $variations->msp }}"
                                                 data-image="{{ $variations->image }}"
                                                 data-variation_product_id="{{ $variations->product_id }}"
+                                                data-flash_sale="{{ $variations->flash_sale }}"
+                                                data-flash_price="{{ $variations->flash_price }}"
                                             title="{{ $variations->size }}" class="size-option @if($loop->first) active @endif">{{ $variations->size }}</a>
                                         @empty
                                         @endforelse
@@ -309,15 +339,6 @@
                         </div><!-- End .reviews -->
                     </div><!-- .End .tab-pane -->
 
-{{--                    <div class="tab-pane fade" id="product-shipping-tab" role="tabpanel" aria-labelledby="product-shipping-link">--}}
-{{--                        <div class="product-desc-content">--}}
-{{--                            <div class="container">--}}
-{{--                                <h3>Delivery & returns</h3>--}}
-{{--                                <p>We deliver to over 100 countries around the world. For full details of the delivery options we offer, please view our <a href="#">Delivery information</a><br>--}}
-{{--                                    We hope you’ll love every purchase, but if you ever need to return an item you can do so within a month of receipt. For full details of how to make a return, please view our <a href="#">Returns information</a></p>--}}
-{{--                            </div><!-- End .container -->--}}
-{{--                        </div><!-- End .product-desc-content -->--}}
-{{--                    </div><!-- .End .tab-pane -->--}}
 
                 </div><!-- End .tab-content -->
             </div><!-- End .product-details-tab -->
@@ -372,7 +393,7 @@
                                     <!-- End .product-cat -->
                                     <h3 class="product-title"><a href="{{url('products/'.$get_favorites->slug)}}">{{$get_favorites->title}}</a></h3>
                                     <!-- End .product-title -->
-                                    <div class="product-price">
+                                    <div class="product-price2">
                                         $ {{number_format($get_favorites->product_actual_price,2)}}
                                     </div>
 
@@ -405,31 +426,52 @@
                 event.preventDefault();
                 const $selectedOption = $(this);
 
+
+                // alert('abc');return false;
                 // Remove 'active' class from all size options
                 $('.size-option').removeClass('active');
 
-                // Add 'active' class to the clicked size option
+// Add 'active' class to the clicked size option
                 $selectedOption.addClass('active');
 
-                // Get the price and image from the data attributes of the selected size option
+// Get the price and image from the data attributes of the selected size option
                 const newPrice = parseFloat($selectedOption.data('price')).toFixed(2);
                 const newQty = $selectedOption.data('qty');
                 const newImageFilename = $selectedOption.data('image');
+                const flash_sale = $selectedOption.data('flash_sale');
+                const flash_price = parseFloat($selectedOption.data('flash_price')).toFixed(2);
 
-                // Get the current image URL
+// Check if flash_sale is set to 'yes'
+                if (flash_sale === 'yes') {
+                    console.log(flash_price);
+                    // Display flash_price and cut price
+                    productPriceElement.text('$ ' + flash_price);
+                    $('#product-cut-price').text('$ ' + newPrice);
+                    $('#product-cut-price').show();
+                    $('#product-flash-price').show();
+                } else {
+                    // Hide flash_price and cut price
+
+                    productPriceElement.text('$ ' + newPrice);
+
+
+                    $('#product-cut-price').hide();
+                    $('#product-flash-price').hide();
+                }
+
+// Get the current image URL
                 const currentImageUrl = productImage.attr('src');
 
-                // Create a new URL object with the current image URL
+// Create a new URL object with the current image URL
                 const currentUrl = new URL(currentImageUrl);
 
-                // Get the base URL
+// Get the base URL
                 const baseUrl = currentUrl.origin;
 
-                // Construct the new image URL
-                const newImageUrl = baseUrl + '/' + newImageFilename;
+// Construct the new image URL
+                const newImageUrl = "{{url('/')}}" + newImageFilename;
 
-                // Update the product price and image
-                productPriceElement.text('$ ' + newPrice);
+// Update the product price and image
                 $('#qty').attr('max', newQty);
                 productImage.attr('src', newImageUrl);
                 productImage.attr('data-zoom-image', newImageUrl);
@@ -470,56 +512,6 @@
         });
     </script>
 
-{{-- Below is add to cart start both are working    --}}
-
-    <script>
-        $(document).ready(function() {
-            const sizeOptions = $('.size-option');
-            const qtyInput = $('#qty');
-            const maxLimitMsg = $('#maxLimitMsg');
-            let selectedQty = sizeOptions.first().data('qty');
-
-            // Update selectedQty when a size is clicked
-            sizeOptions.on('click', function(event) {
-                event.preventDefault();
-                const $selectedOption = $(this);
-                selectedQty = $selectedOption.data('qty');
-
-                // Set the new max quantity
-                qtyInput.attr('max', selectedQty);
-
-                // Toggle active class for size options
-                sizeOptions.removeClass('active');
-                $selectedOption.addClass('active');
-            });
-
-            // Add to Cart button click event
-            $('.btn-cart').on('click', function(event) {
-                event.preventDefault();
-
-                // Get the selected quantity
-                const quantity = parseInt(qtyInput.val());
-
-                // Check if the selected quantity is within the available quantity limit
-                if (quantity <= selectedQty) {
-                    // Add the product to the cart with the selected quantity
-                    // Replace the code below with your actual logic to add the product to the cart
-                    console.log('Product added to cart:');
-                    console.log('Quantity:', quantity);
-                } else {
-                    // Display the max limit message
-                    maxLimitMsg.show();
-                }
-            });
-        });
-
-    </script>
-
-    {{-- Below is add to cart start both are working    --}}
-
-    <!-- Add SweetAlert library -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-
     <script>
         $(document).ready(function() {
             const addToCartButton = $('.btn-cart');
@@ -533,6 +525,8 @@
             let variation_product_id = sizeOptions.first().data('variation_product_id');
             let attribute_id = sizeOptions.first().data('attribute_id');
             let msp = sizeOptions.first().data('msp');
+            const flash_sale = sizeOptions.data('flash_sale');
+            const flash_price = parseFloat(sizeOptions.data('flash_price')).toFixed(2);
 
             // Update selectedSize, selectedPrice, and selectedQty when a size is clicked
             sizeOptions.on('click', function(event) {
@@ -544,7 +538,6 @@
                 variation_product_id = $selectedOption.data('variation_product_id');
                 attribute_id = $selectedOption.data('attribute_id');
                 msp = $selectedOption.data('msp');
-
                 // Set the new max quantity
                 qtyInput.attr('max', selectedQty);
 
@@ -557,6 +550,21 @@
             addToCartButton.on('click', function(event) {
                 event.preventDefault();
 
+                const $selectedOption = $('.size-option.active');
+                const flash_sale = $selectedOption.data('flash_sale');
+                const flash_price = parseFloat($selectedOption.data('flash_price')).toFixed(2);
+
+
+                // if (flash_sale === 'yes') {
+                //     console.log(flash_price);
+                //     // Display flash_price and cut price
+                //     productPriceElement.text('$ ' + flash_price);
+                //     // ...
+                // } else {
+                //     // Hide flash_price and cut price
+                //     productPriceElement.text('$ ' + newPrice);
+                //     // ...
+                // }
                 // Get the selected quantity
                 const quantity = parseInt(qtyInput.val());
 
@@ -571,9 +579,12 @@
                         method: 'POST',
                         data: {
                             size: selectedSize,
-                            price: selectedPrice,
+                            // price: selectedPrice,
+                            price: (flash_sale === 'yes') ? flash_price : selectedPrice,
+                            flash_price: flash_price, // Add flash_price to the data object
+                            flash_sale: flash_sale, // Add flash_ to the data object
                             quantity: quantity,
-                            subtotal: selectedPrice * quantity,
+                            subtotal: (flash_sale === 'yes') ? flash_price : selectedPrice * quantity,
                             product_name: $('#product_name').val(),
                             product_id: $('#product_id').val(),
                             msp: msp,
@@ -588,8 +599,8 @@
 
                             loader.hide();
 
-                            $('#body-id').load(' #body-id');
-                            alert('Reloaded');
+                            $('#body-id').load('#body-id');
+                            // alert('Reloaded');
                             // Handle success response
                             if (response.code === 300) {
                                 // Product added to cart
@@ -645,7 +656,6 @@
 
         });
     </script>
-
 
 
 

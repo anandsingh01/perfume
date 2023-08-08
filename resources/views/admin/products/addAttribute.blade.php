@@ -208,7 +208,7 @@
 {{--                            </div>--}}
                             <div class="col-lg-6 col-md-12 mtb-10">
                                 <label class="control-label" for="Status">Size</label>
-                                <input type="text" name="size" placeholder="eg. 5ML, 10ML " class="form-control"/>
+                                <input type="text" name="size" placeholder="eg. 5oz, 10oz " class="form-control"/>
                             </div>
                             <div class="col-lg-6 col-md-4 mtb-10">
                                 <label class="">Qty (in pcs)</label>
@@ -219,6 +219,9 @@
                                 <label class="">Price</label>
                                 <input type="text" name="price" placeholder="eg. 1000, 1200 , 1500" class="form-control"/>
                             </div>
+
+
+
 {{--                            <div class="col-lg-6 col-md-4 mtb-10">--}}
 {{--                                <label class="">Max Selling Price</label>--}}
 {{--                                <input type="text" name="msp" placeholder="eg. 1000, 1200 , 1500" class="form-control"/>--}}
@@ -230,6 +233,35 @@
                                 <input type="file" name="image" placeholder="" class="form-control"/>
                             </div>
 
+                            <div class="col-lg-6 col-md-4 mtb-10">
+                                <label class="">Flash</label>
+                                <select name="flash_sale" class="form-control ms">
+                                    <option value="no">No</option>
+                                    <option value="yes">Yes</option>
+                                </select>
+                            </div>
+
+
+                            <div class="col-lg-6 col-md-4 mtb-10">
+                                <label class="">Flash Price</label>
+                                <input type="text" name="flash_price" placeholder="eg. 1000, 1200 , 1500" class="form-control"/>
+                            </div>
+
+
+                            <div class="col-lg-4 col-md-4 mtb-10">
+                                <label class="">Length</label>
+                                <input type="text" name="length" placeholder="10,20" class="form-control"/>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 mtb-10">
+                                <label class="">Width</label>
+                                <input type="text" name="width"  placeholder="10,20"  class="form-control"/>
+                            </div>
+
+                            <div class="col-lg-4 col-md-4 mtb-10">
+                                <label class="">Height</label>
+                                <input type="text" name="height"  placeholder="10,20" class="form-control"/>
+                            </div>
 
                         </div>
 
@@ -305,7 +337,7 @@
                     if(file1){
                         var file_size = $(this).get(0).files[i].size;
                         if(file_size > 2000000){
-                            $('#error-message').html("File upload size is larger than 2MB");
+                            $('#error-message').htoz("File upload size is larger than 2MB");
                             $('#error-message').css("display","block");
                             $('#error-message').css("color","red");
                         }else{
@@ -365,7 +397,7 @@
 
                     $('#additional_attribute_value').append(response);
                     // // Without parent div of select2 , don't change
-                    // $('.parent_cat_div #select2-chosen-2').html('Please Select An Option');
+                    // $('.parent_cat_div #select2-chosen-2').htoz('Please Select An Option');
                     //
                     // $.each(response, function(key, value) {
                     //     console.log(value.title);

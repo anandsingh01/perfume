@@ -4,8 +4,65 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ff5dbfeb196eb6aacfba426cd3b47300",
+    "content-hash": "cc707427b0c2cd26ba5a3882daafeb15",
     "packages": [
+        {
+            "name": "adhocore/jwt",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/adhocore/php-jwt.git",
+                "reference": "6c434af7170090bb7a8880d2bc220a2254ba7899"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/adhocore/php-jwt/zipball/6c434af7170090bb7a8880d2bc220a2254ba7899",
+                "reference": "6c434af7170090bb7a8880d2bc220a2254ba7899",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.5 || ^7.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ahc\\Jwt\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jitendra Adhikari",
+                    "email": "jiten.adhikary@gmail.com"
+                }
+            ],
+            "description": "Ultra lightweight JSON web token (JWT) library for PHP5.5+.",
+            "keywords": [
+                "auth",
+                "json-web-token",
+                "jwt",
+                "jwt-auth",
+                "jwt-php",
+                "token"
+            ],
+            "support": {
+                "issues": "https://github.com/adhocore/php-jwt/issues",
+                "source": "https://github.com/adhocore/php-jwt/tree/1.1.2"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/ji10",
+                    "type": "custom"
+                }
+            ],
+            "time": "2021-02-20T09:56:44+00:00"
+        },
         {
             "name": "asm89/stack-cors",
             "version": "v2.1.1",
@@ -1193,6 +1250,114 @@
                 }
             ],
             "time": "2022-05-21T17:30:32+00:00"
+        },
+        {
+            "name": "jrebs/easyship-laravel",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jrebs/easyship-laravel.git",
+                "reference": "3c86bc31f846e29a268800cc19e1614401bba4a2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jrebs/easyship-laravel/zipball/3c86bc31f846e29a268800cc19e1614401bba4a2",
+                "reference": "3c86bc31f846e29a268800cc19e1614401bba4a2",
+                "shasum": ""
+            },
+            "require": {
+                "jrebs/easyship-php": "*",
+                "laravel/framework": ">=7"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Easyship\\Providers\\EasyshipServiceProvider"
+                    ],
+                    "aliases": {
+                        "Easyship": "Easyship\\Facades\\Easyship"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Easyship\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Justin Rebelo",
+                    "homepage": "https://rebelo.dev/"
+                }
+            ],
+            "description": "A package to integrate easyship-php into Laravel applications",
+            "keywords": [
+                "api",
+                "easyship",
+                "laravel",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/jrebs/easyship-laravel/issues",
+                "source": "https://github.com/jrebs/easyship-laravel/tree/v1.0"
+            },
+            "time": "2021-04-25T03:22:45+00:00"
+        },
+        {
+            "name": "jrebs/easyship-php",
+            "version": "v1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jrebs/easyship-php.git",
+                "reference": "b3e8d0b03f2d9b2fc13c0d12866006de7b24e14f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jrebs/easyship-php/zipball/b3e8d0b03f2d9b2fc13c0d12866006de7b24e14f",
+                "reference": "b3e8d0b03f2d9b2fc13c0d12866006de7b24e14f",
+                "shasum": ""
+            },
+            "require": {
+                "adhocore/jwt": "^1.1",
+                "guzzlehttp/guzzle": "^7.3",
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "fakerphp/faker": "^1.14",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Easyship\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Justin Rebelo",
+                    "homepage": "https://rebelo.dev/"
+                }
+            ],
+            "description": "A PHP library to simplify integration with the Easyship API",
+            "keywords": [
+                "api",
+                "easyship",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/jrebs/easyship-php/issues",
+                "source": "https://github.com/jrebs/easyship-php/tree/v1.4"
+            },
+            "time": "2021-05-10T22:36:19+00:00"
         },
         {
             "name": "laravel/framework",

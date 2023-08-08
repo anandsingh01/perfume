@@ -204,7 +204,7 @@ $get_brands = get_brands();
                     .get();
 
                 $.ajax({
-                    url: '/filter', // Change this to your Laravel route for filtering
+                    url: "{{url('/filter')}}", // Change this to your Laravel route for filtering
                     method: 'GET',
                     data: { categories: selectedCategories, brands: selectedBrands },
                     success: function(response) {

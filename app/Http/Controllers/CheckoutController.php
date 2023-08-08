@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\User;
+use App\Models\UserAddress;
 use Bavix\Wallet\Models\Transaction;
 use DB;
 use Illuminate\Support\Facades\Redirect;
@@ -581,7 +582,121 @@ class CheckoutController extends Controller
 
     public function checkout_submit(Request $request)
     {
-//        print_r($request->all());die;
+
+        print_r($request->all());die;
+
+
+        $ch = curl_init();
+
+        $data = array(
+            "origin_address" => array(
+                "line_1" => "9 N Fordham Rd",
+                "state" => "New York",
+                "postal_code" => "11801",
+                "city" => "Hicksville",
+                "company_name" => "Long island Fragrances",
+                "contact_name" => "Long island Fragrances",
+                "contact_phone" => "5168141663",
+                "contact_email" => "lifragrancesny@gmail.com"
+            ),
+            "destination_address" => array(
+                "line_1" => $request->address_1,
+                "line_2" => $request->address_2,
+                "state" => $request->state,
+                "postal_code" => $request->pincode,
+                "city" => $request->city,
+                "country_alpha2" => "US",
+                "contact_name" => $request->first_name .' '. $request->last_name,
+                "contact_phone" => $request->phone,
+                "contact_email" => $request->email
+            ),
+            "incoterms" => "DDU",
+            "insurance" => array(
+                "is_insured" => false
+            ),
+            "courier_selection" => array(
+                "apply_shipping_rules" => true
+            ),
+            "shipping_settings" => array(
+                "units" => array(
+                    "weight" => "kg",
+                    "dimensions" => "cm"
+                )
+            ),
+            "parcels" => array(
+                array(
+                    "total_actual_weight" => "1",
+                    "box" => array(
+                        "slug" => "null",
+                        "length" => "10",
+                        "width" => "10",
+                        "height" => "10"
+                    ),
+                    "items" => array(
+                        array(
+                            "quantity" => "1",
+                            "dimensions" => array(
+                                "width" => "20",
+                                "length" => "20",
+                                "height" => "10"
+                            ),
+                            "category" => "health_beauty",
+                            "description" => "This is a nice product",
+                            "sku" => "PRD-123",
+                            "actual_weight" => "5",
+                            "declared_currency" => "USD",
+                            "declared_customs_value" => 1
+                        )
+                    )
+                )
+            )
+        );
+
+        $data_string = json_encode($data);
+
+        curl_setopt($ch, CURLOPT_URL, "https://api.easyship.com/2023-01/rates");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+            "Authorization: Bearer prod_Et5YFzWn5FA3co/3ddpC33pzqgjnzjM9CXUtTkPgbCM="
+        ));
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        if(!empty(json_decode($response))){
+            Session::put('shpping_rates',$response);
+        }
+
+
+        // Check if the save_address checkbox is checked
+        if ($request->has('save_address') && auth()->check()) {
+            // Save the address to the user's profile
+            $userAddress = new UserAddress();
+            $userAddress->user_id = auth()->user()->id;
+            $userAddress->first_name = $request->input('first_name');
+            $userAddress->last_name = $request->input('last_name');
+            $userAddress->company_name = $request->input('company_name');
+            $userAddress->country = $request->input('country');
+            $userAddress->address_1 = $request->input('address_1');
+            $userAddress->address_2 = $request->input('address_2');
+            $userAddress->city = $request->input('city');
+            $userAddress->state = $request->input('state');
+            $userAddress->pincode = $request->input('pincode');
+            $userAddress->phone = $request->input('phone');
+            $userAddress->email = $request->input('email');
+            $userAddress->save();
+        }
+
+//        die;
+
+
         $order_id = uniqid();
 
         $order = \App\Models\Order::create([
@@ -634,16 +749,19 @@ class CheckoutController extends Controller
         } else {
         }
 
-//        die;
-
-        // After successful submission, you can clear the cart or perform any other actions as needed
-
         // Redirect the user to a success page or thank-you page
         return redirect()->route('checkout.payment');
     }
 
     function stripe_integrate(){
-        $getOrderSession = Session::get('order_details');
+        if(Session::has('order_details')){
+            $getOrderSession = Session::get('order_details');
+        }
+        if(Session::has('shpping_rates')){
+            $shipping_rates = Session::get('shpping_rates');
+        }
+        $data['shipping_rate'] = json_decode($shipping_rates);
+
         $data['order_id'] = $getOrderSession->order_id;
         $data['order_primary_key'] = $getOrderSession->id;
         return view('web.payment',$data);

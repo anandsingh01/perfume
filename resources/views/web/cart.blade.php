@@ -17,6 +17,12 @@ session_start();
         h1{
             font-family: inherit;
         }
+        a.removebtn.text-black {
+            background: red;
+            color: #fff;
+            padding: 10px;
+            font-weight: 800;
+        }
     </style>
 @stop
 @section('body')
@@ -59,43 +65,43 @@ session_start();
 
                                 <tbody>
                                 @forelse($getAllCart as $getAllCarts)
-                                <tr>
-                                    <td class="product-col">
-                                        <div class="product">
-                                            <figure class="product-media">
-                                                <a href="{{url('products/'.$getAllCarts->getProducts->slug)}}">
-                                                    <img src="{{asset($getAllCarts->getProducts->photo)}}"
-                                                         alt="{{$getAllCarts->getProducts->title ?? ''}}">
-                                                </a>
-                                            </figure>
+                                    <tr>
+                                        <td class="product-col">
+                                            <div class="product">
+                                                <figure class="product-media">
+                                                    <a href="{{url('products/'.$getAllCarts->getProducts->slug)}}">
+                                                        <img src="{{asset($getAllCarts->getProducts->photo)}}"
+                                                             alt="{{$getAllCarts->getProducts->title ?? ''}}">
+                                                    </a>
+                                                </figure>
 
-                                            <h3 class="product-title">
-                                                <a href="{{url('products/'.$getAllCarts->getProducts->slug)}}">
-                                                    {{$getAllCarts->getProducts->title ?? ''}}</a>
-                                                <br>
-                                                <b>Size :</b> {{$getAllCarts->size}}
-                                                <br>
-                                                <b>Brands : </b> {{ $getAllCarts->getBrands->category_name ?? 'NA' }}
-                                                <br>
-                                                <b>Category : </b> {{ $getAllCarts->getSection->category_name ?? 'NA' }}
-                                            </h3><!-- End .product-title -->
-                                        </div><!-- End .product -->
-                                    </td>
-                                    <td class="price-col">${{$getAllCarts->price}}</td>
-                                    <td class="quantity-col">
-                                        <div class="cart-product-quantity">
-                                            <input type="number" class="form-control qty"
-                                                   data-cartid="{{$getAllCarts->id}}"
-                                                   value="{{$getAllCarts->cartqty}}" min="1" max="10" step="1" data-decimals="0" required>
-                                        </div><!-- End .cart-product-quantity -->
-                                    </td>
-                                    <td class="total-col">${{$getAllCarts->subtotal}}</td>
-                                    <td class="remove-col">
-                                        <a class="btn btn-danger text-white" onclick="deleteConfirmation({{$getAllCarts->id}})" data-cartid="{{$getAllCarts->id}}">
-                                            <i class="icon-close"></i>
-                                        </a>
-                                    </td>
-                                </tr>
+                                                <h3 class="product-title">
+                                                    <a href="{{url('products/'.$getAllCarts->getProducts->slug)}}">
+                                                        {{$getAllCarts->getProducts->title ?? ''}}</a>
+                                                    <br>
+                                                    <b>Size :</b> {{$getAllCarts->size}}
+                                                    <br>
+                                                    <b>Brands : </b> {{ $getAllCarts->getBrands->category_name ?? 'NA' }}
+                                                    <br>
+                                                    <b>Category : </b> {{ $getAllCarts->getSection->category_name ?? 'NA' }}
+                                                </h3><!-- End .product-title -->
+                                            </div><!-- End .product -->
+                                        </td>
+                                        <td class="price-col">${{$getAllCarts->price}}</td>
+                                        <td class="quantity-col">
+                                            <div class="cart-product-quantity">
+                                                <input type="number" class="form-control qty"
+                                                       data-cartid="{{$getAllCarts->id}}"
+                                                       value="{{$getAllCarts->cartqty}}" min="1" max="10" step="1" data-decimals="0" required>
+                                            </div><!-- End .cart-product-quantity -->
+                                        </td>
+                                        <td class="total-col">${{$getAllCarts->subtotal}}</td>
+                                        <td class="remove-col">
+                                            <a class="removebtn text-black" onclick="deleteConfirmation({{$getAllCarts->id}})" data-cartid="{{$getAllCarts->id}}">
+                                                <i class="icon-close"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
                                 @empty
                                 @endforelse
                                 </tbody>
@@ -114,11 +120,11 @@ session_start();
                                         <td>Subtotal:</td>
                                         <td>
                                             $
-                                        @if(Session::has('discounted_total'))
+                                            @if(Session::has('discounted_total'))
                                                 <p class="final_amount">
-                                                <strike>
-                                                    $   {{number_format($get_count->cartTotal,2) ?? '0'}}
-                                                </strike>
+                                                    <strike>
+                                                        $   {{number_format($get_count->cartTotal,2) ?? '0'}}
+                                                    </strike>
                                                 </p>
 
                                                 $  {{number_format(Session::get('discounted_total'),2) ?? '0'}}
@@ -130,17 +136,17 @@ session_start();
                                     </tr><!-- End .summary-subtotal -->
 
                                     @if(Session::has('discounted_total'))
-                                    <tr class="summary-subtotal">
-                                        <td>Coupon Applied:</td>
-                                        <td>{{Session::get('applied_coupon')}}</td>
-                                    </tr><!-- End .summary-subtotal -->
+                                        <tr class="summary-subtotal">
+                                            <td>Coupon Applied:</td>
+                                            <td>{{Session::get('applied_coupon')}}</td>
+                                        </tr><!-- End .summary-subtotal -->
                                     @endif
 
                                     <tr class="summary-total">
                                         <td>Total:</td>
                                         <td>
                                             $
-                                        @if(Session::has('discounted_total'))
+                                            @if(Session::has('discounted_total'))
                                                 $  {{number_format(Session::get('discounted_total'),2) ?? '0'}}
 
                                             @else
@@ -225,6 +231,7 @@ session_start();
                     },
                     success: function (response) {
                         $('#body-id').load('#body-id');
+                        $('#cart-div').load('#cart-div');
 
                         const updatedSubtotal = response.updatedSubtotal;
                         $(this).closest('tr').find('.total-col').text('$' + updatedSubtotal);

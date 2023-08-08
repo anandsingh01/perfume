@@ -160,7 +160,7 @@ class LoginController extends Controller
         if ( Auth::check() ) {
 //            echo "yes";
             if(Auth::user()->role == 2){
-                return redirect(url('user/dashboard'));
+                return redirect(url('/'));
             }else{
                 return redirect(url('/'));
             }

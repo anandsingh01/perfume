@@ -47,7 +47,25 @@ session_start();
                     <div class="row">
                         <form action="{{ route('checkout.submit') }}" method="post">
                             @csrf
-                            <div class="row">
+                            <?php
+                            if(Auth::check()) {
+                                $addresses = \App\Models\UserAddress::where('user_id', auth()->user()->id)->get();
+//                                print_r($users);
+                            ?>
+                            @forelse($addresses as $address)
+                                <label>
+                                    <input type="radio" name="selected_address" value="{{ $address->id }}">
+                                    {{ $address->first_name }} {{ $address->last_name }}, {{$address->phone}} <br>
+
+                                    {{$address->address_1}}, {{$address->address_2}}, {{$address->city}},
+                                    {{$address->state}}, {{$address->pincode}}
+                                </label>
+                                @empty
+                            @endforelse
+                            <?php
+                            }
+                            ?>
+                            <div class="row form-fields">
                                 <div class="col-lg-9">
                                     <h2 class="checkout-title">Billing Details</h2><!-- End .checkout-title -->
                                     <div class="row">
@@ -99,18 +117,12 @@ session_start();
                                     <label>Email address *</label>
                                     <input name="email" type="email" class="form-control" required>
 
-{{--                                    <div class="custom-control custom-checkbox">--}}
-{{--                                        <input type="checkbox" class="custom-control-input" id="checkout-create-acc">--}}
-{{--                                        <label class="custom-control-label" for="checkout-create-acc">Create an account?</label>--}}
-{{--                                    </div><!-- End .custom-checkbox -->--}}
 
-{{--                                    <div class="custom-control custom-checkbox">--}}
-{{--                                        <input type="checkbox" class="custom-control-input" id="checkout-diff-address">--}}
-{{--                                        <label class="custom-control-label" for="checkout-diff-address">Ship to a different address?</label>--}}
-{{--                                    </div><!-- End .custom-checkbox -->--}}
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="saveAddress" name="save_address">
+                                        <label class="custom-control-label" for="saveAddress">Save this address for future use</label>
+                                    </div>
 
-{{--                                    <label>Order notes (optional)</label>--}}
-{{--                                    <textarea class="form-control" cols="30" rows="4" placeholder="Notes about your order, e.g. special notes for delivery"></textarea>--}}
 
                                 </div><!-- End .col-lg-9 -->
 
@@ -203,10 +215,21 @@ session_start();
                                             </tbody>
                                         </table><!-- End .table table-summary -->
 
+
+                                        <h2 class="checkout-title">Select Shipping Method</h2>
+                                        <div class="form-group">
+                                            <label for="courier-select">Choose a Shipping Courier:</label>
+                                            <select class="form-control" id="courier-select" name="selected_courier">
+                                                <option value="" disabled selected>Select a courier</option>
+                                            </select>
+                                        </div>
+
+
+                                        <p id="shipping-price-placeholder">Shipping Price: Not available</p>
                                         <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block">PAY</button>
                                     </div><!-- End .summary -->
                                 </aside><!-- End .col-lg-3 -->
-                            </div><!-- End .row -->
+                            </div>
                         </form>
                     </div><!-- End .row -->
                 </div><!-- End .container -->
@@ -215,6 +238,149 @@ session_start();
     </main>
 @stop
 @section('js')
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            const isAuthenticated = {!! json_encode(Auth::check()) !!};
+            const addresses = @if(Auth::check()) {!! json_encode($addresses) !!} @else [] @endif;
+
+            const $addressRadioButtons = $('input[name="selected_address"]');
+            const $manualForm = $('.manual-form');
+            const $savedAddresses = $('.saved-addresses');
+
+            const $shippingOptions = $('#shipping-options');
+            const $selectedCourier = $('#courier-select');
+            const $pincodeInput = $('input[name="pincode"]');
+
+            function fetchShippingOptions(pincode) {
+                // Make an AJAX request to fetch shipping options
+                $.ajax({
+                    type: 'GET',
+                    url: '{{ url("get-shipping-options") }}',
+                    data: { pincode: pincode },
+                    dataType: 'json',
+                    success: function (response) {
+                        displayShippingOptions(response);
+                    },
+                    error: function (error) {
+                        console.error('Error fetching shipping options:', error);
+                    }
+                });
+            }
+
+            function displayShippingOptions(response) {
+                const rates = response.rates;
+                const $courierSelect = $('#courier-select');
+
+                // Sort rates array by total_charge in ascending order
+                rates.sort((a, b) => a.total_charge - b.total_charge);
+
+                $courierSelect.empty(); // Clear any existing options
+
+                rates.forEach(option => {
+                    const optionText = `${option.full_description} - $${option.total_charge}`;
+                    const optionValue = option.courier_name;
+                    const optionElement = new Option(optionText, optionValue);
+
+                    $courierSelect.append(optionElement);
+                });
+            }
+
+
+
+            $pincodeInput.on('keyup', function () {
+                const pincode = $(this).val();
+                fetchShippingOptions(pincode);
+            });
+
+
+
+
+            const $formFields = {
+                first_name: $('input[name="first_name"]'),
+                last_name: $('input[name="last_name"]'),
+                country: $('input[name="country"]'),
+                address_1: $('input[name="address_1"]'),
+                address_2: $('input[name="address_2"]'),
+                city: $('input[name="city"]'),
+                state: $('input[name="state"]'),
+                pincode: $('input[name="pincode"]'),
+                phone: $('input[name="phone"]'),
+                email: $('input[name="email"]')
+            };
+
+
+            function showSavedAddresses() {
+                $savedAddresses.show();
+                $manualForm.hide();
+            }
+
+            function showManualForm() {
+                $savedAddresses.hide();
+                $manualForm.show();
+            }
+
+            function populateAddressFields(address) {
+                $formFields.first_name.val(address.first_name);
+                $formFields.last_name.val(address.last_name);
+                $formFields.country.val(address.country);
+                $formFields.address_1.val(address.address_1);
+                $formFields.address_2.val(address.address_2);
+                $formFields.city.val(address.city);
+                $formFields.state.val(address.state);
+                $formFields.pincode.val(address.pincode);
+                $formFields.phone.val(address.phone);
+                $formFields.email.val(address.email);
+            }
+
+            function clearFormFields() {
+                for (const fieldName in $formFields) {
+                    $formFields[fieldName].val('');
+                }
+            }
+
+
+
+            $addressRadioButtons.on('change', function () {
+                const selectedAddressId = $(this).val();
+
+                if (selectedAddressId !== '') {
+                    const selectedAddress = addresses.find(address => address.id === parseInt(selectedAddressId));
+                    populateAddressFields(selectedAddress);
+
+                    // Fetch and display shipping options based on selected address
+                    fetchShippingOptions(selectedAddress.pincode);
+                } else {
+                    clearFormFields();
+                    $shippingOptions.empty();
+                    $selectedCourier.html('');
+                }
+            });
+
+            $pincodeInput.on('keyup', function () {
+                const pincode = $(this).val();
+                fetchShippingOptions(pincode);
+            });
+
+            // Handle the user's selection of shipping option
+            $('input[name="shipping_option"]').on('change', function () {
+                const selectedCourier = $(this).val();
+                $selectedCourier.html(`Selected Courier: ${selectedCourier}`);
+            });
+
+            // Initial form setup based on user authentication and saved addresses
+            if (isAuthenticated && addresses.length > 0) {
+                showSavedAddresses();
+            } else {
+                showManualForm();
+            }
+        });
+    </script>
+
+
 
 
     <script>

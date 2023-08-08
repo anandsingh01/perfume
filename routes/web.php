@@ -84,8 +84,87 @@ Route::post('/apply-coupon', [App\Http\Controllers\CartController::class,'checkC
 Route::get('/delete-from-cart/{id}', [App\Http\Controllers\CartController::class,'deleteFromCart']);
 
 Route::get('user/dashboard', [App\Http\Controllers\UserController::class,'dashboard']);
+Route::get('my-profile', [App\Http\Controllers\UserController::class,'dashboard']);
+Route::get('my-orders', [App\Http\Controllers\UserController::class,'my_orders']);
 Route::post('/update-profile', [App\Http\Controllers\UserController::class,'update'])->name('update-profile');
+Route::get('/view-orders/{id}', [App\Http\Controllers\UserController::class,'view_order']);
+Route::get('blogs', [App\Http\Controllers\HomeController::class,'blogs']);
+Route::get('/get-shipping-options', function (Request $request){
 
+    $data = array(
+        "origin_address" => array(
+            "line_1" => "9 N Fordham Rd",
+            "state" => "New York",
+            "postal_code" => "11801",
+            "city" => "Hicksville",
+            "company_name" => "Long island Fragrances",
+            "contact_name" => "Long island Fragrances",
+            "contact_phone" => "5168141663",
+            "contact_email" => "lifragrancesny@gmail.com"
+        ),
+        "destination_address" => array(
+            "line_1" => "192 Spadina Ave",
+            "state" => "Texas",
+            "postal_code" => "75022",
+            "city" => "Flower Mound",
+            "country_alpha2" => "CA",
+            "company_name" => "Test",
+            "contact_name" => "Test ",
+            "contact_phone" => "7574884",
+            "contact_email" => "test@gmail.com"
+        ),
+        "incoterms" => "DDU",
+        "insurance" => array(
+            "is_insured" => false
+        ),
+        "courier_selection" => array(
+            "apply_shipping_rules" => true
+        ),
+        "shipping_settings" => array(
+            "units" => array(
+                "weight" => "kg",
+                "dimensions" => "cm"
+            )
+        ),
+        "parcels" => array(
+            array(
+                "total_actual_weight" => "1",
+                "box" => array(
+                    "slug" => "null",
+                    "length" => "10",
+                    "width" => "10",
+                    "height" => "10"
+                ),
+                "items" => array(
+                    array(
+                        "quantity" => "1",
+                        "dimensions" => array(
+                            "width" => "20",
+                            "length" => "20",
+                            "height" => "10"
+                        ),
+                        "category" => "health_beauty",
+                        "description" => "This is a nice product",
+                        "sku" => "PRD-123",
+                        "actual_weight" => "5",
+                        "declared_currency" => "USD",
+                        "declared_customs_value" => 1
+                    )
+                )
+            )
+        )
+    );
+
+    $response = Http::withHeaders([
+        "Content-Type" => "application/json",
+        "Authorization" => "Bearer prod_Et5YFzWn5FA3co/3ddpC33pzqgjnzjM9CXUtTkPgbCM="
+    ])->post("https://api.easyship.com/2023-01/rates", $data);
+
+    return response()->json(json_decode($response->body()));
+});
+
+
+Route::get('ship',[HomeController::class,'ship']);
 
 
 Route::group(['prefix'=>'admin'], function(){
@@ -138,11 +217,6 @@ Route::group(['prefix'=>'admin'], function(){
 
     Route::get('delete/blog/{id}',[BlogController::class,'destroy']);
 
-    Route::get('add-polls',[\App\Http\Controllers\PollController::class,'create']);
-    Route::post('create-poll',[\App\Http\Controllers\PollController::class,'store']);
-    Route::get('all-polls',[\App\Http\Controllers\PollController::class,'index']);
-    Route::get('delete/polls/{id}',[\App\Http\Controllers\PollController::class,'destroy']);
-
     Route::get('common-settings',[CommonController::class,'common_settings']);
     Route::post('update-common',[CommonController::class,'update_common']);
 
@@ -164,40 +238,6 @@ Route::group(['prefix'=>'admin'], function(){
     Route::get('/delete-role/{id}', [App\Http\Controllers\RoleController::class, 'destroy']);
     Route::get('/edit-role/{id}', [App\Http\Controllers\RoleController::class, 'edit']);
     Route::post('/update-role/', [App\Http\Controllers\RoleController::class, 'update']);
-
-    Route::get('/all-metals', [App\Http\Controllers\MetalController::class, 'index']);
-    Route::get('/add-metals', [App\Http\Controllers\MetalController::class, 'add']);
-    Route::post('/save-metals', [App\Http\Controllers\MetalController::class, 'save']);
-    Route::get('/update-metals-Status', [App\Http\Controllers\MetalController::class, 'status']);
-    Route::get('/delete-metals/{id}', [App\Http\Controllers\MetalController::class, 'destroy']);
-    Route::get('/edit-metals/{id}', [App\Http\Controllers\MetalController::class, 'edit']);
-    Route::post('/update-metals/', [App\Http\Controllers\MetalController::class, 'update']);
-    Route::get('change-status-metals',[App\Http\Controllers\MetalController::class,'change_status']);
-    Route::get('change-status-show_on_homet',[App\Http\Controllers\MetalController::class,'show_on_homet_status']);
-
-
-    Route::get('/all-projects', [App\Http\Controllers\ProjectController::class, 'index']);
-    Route::get('/add-project', [App\Http\Controllers\ProjectController::class, 'add']);
-    Route::post('/save-project', [App\Http\Controllers\ProjectController::class, 'save']);
-    Route::get('/update-project-Status', [App\Http\Controllers\ProjectController::class, 'status']);
-    Route::get('/delete-project/{id}', [App\Http\Controllers\ProjectController::class, 'destroy']);
-    Route::get('/edit-project/{id}', [App\Http\Controllers\ProjectController::class, 'edit']);
-    Route::post('/update-project/', [App\Http\Controllers\ProjectController::class, 'update']);
-    Route::get('change-status-project',[App\Http\Controllers\ProjectController::class,'change_status']);
-    Route::get('change-status-show_on_homet',[App\Http\Controllers\ProjectController::class,'show_on_homet_status']);
-
-
-
-    Route::get('/all-projects-details', [App\Http\Controllers\ProjectDetailsController::class, 'index']);
-    Route::get('/add-project-details', [App\Http\Controllers\ProjectDetailsController::class, 'add']);
-    Route::post('/save-project-details', [App\Http\Controllers\ProjectDetailsController::class, 'save']);
-    Route::get('/update-project-Status-details', [App\Http\Controllers\ProjectDetailsController::class, 'status']);
-    Route::get('/delete-project-details/{id}', [App\Http\Controllers\ProjectDetailsController::class, 'destroy']);
-    Route::get('/edit-project-details/{id}', [App\Http\Controllers\ProjectDetailsController::class, 'edit']);
-    Route::post('/update-project-details/', [App\Http\Controllers\ProjectDetailsController::class, 'update']);
-    Route::get('change-status-project-details',[App\Http\Controllers\ProjectDetailsController::class,'change_status']);
-    Route::get('change-status-show_on_homet-details',[App\Http\Controllers\ProjectDetailsController::class,'show_on_homet_status']);
-
 
 
 
@@ -304,6 +344,9 @@ Route::group(['prefix'=>'admin'], function(){
     Route::get('/update-products-Status', [App\Http\Controllers\ProductsController::class,'changeProductStatus']);
     Route::get('/getcategoriesBySectionOnProduct', [App\Http\Controllers\ProductsController::class,'getcategoriesBySectionOnProduct']);
     Route::get('/getSubcategoriesByCategoriesOnProduct', [App\Http\Controllers\ProductsController::class,'getSubcategoriesByCategoriesOnProduct']);
+    Route::get('highlight-status',[App\Http\Controllers\ProductsController::class,'highlight_status']);
+
+
 
     Route::get('/products/add/attribute/display/{id}', [App\Http\Controllers\ProductsController::class,'addProductAttrOptions']);
     Route::get('/products/all/attribute/display/{id}', [App\Http\Controllers\ProductsController::class,'getAllProductAttrOptions']);
@@ -321,7 +364,7 @@ Route::group(['prefix'=>'admin'], function(){
 
     // Products # ADD, UPDATE ,DELETE...
     Route::get('/all-orders', [App\Http\Controllers\OrderController::class,'index']);
-    Route::get('/view-orders', [App\Http\Controllers\OrderController::class,'view_order'])->name('admin.view-orders');
+    Route::get('/view-orders/{id}', [App\Http\Controllers\OrderController::class,'view_order']);
     Route::get('/add-products', [App\Http\Controllers\ProductsController::class,'create']);
     Route::post('/save-products', [App\Http\Controllers\ProductsController::class,'storee']);
     Route::get('/edit-products/{id}', [App\Http\Controllers\ProductsController::class,'edit']);
