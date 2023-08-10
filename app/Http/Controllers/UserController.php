@@ -74,6 +74,7 @@ class UserController extends Controller
     }
 
     function my_orders(){
+        $data['page_heading'] = 'Order';
         $data['orders'] = Order::orderBy('id','DESC')
             ->where('user_id',Auth::user()->id)
             ->orWhere('ip_address',$_SERVER['REMOTE_ADDR'])
@@ -82,4 +83,11 @@ class UserController extends Controller
 //            print_r($data);die;
         return view('web.users.my-order',$data);
     }
+
+    function all_user(){
+        $data['page_heading'] = 'All Users';
+        $data['users'] = User::where('role','!=','1')->get();
+        return view('admin.users.all_users',$data);
+    }
+
 }

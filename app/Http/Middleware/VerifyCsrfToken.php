@@ -15,6 +15,7 @@ class VerifyCsrfToken extends Middleware
         'addToCart',
         'updateCart',
         'checkCoupon',
-        'apply-coupon'
+        'apply-coupon',
+        'calculate-tax'
     ];
 }

@@ -421,4 +421,171 @@ class HomeController extends Controller
 
 
     }
+
+    function save_review(Request $request){
+//        print_r($request->all());
+        if(Auth::check()){
+            $username = Auth::user()->name;
+        }else{
+            $username = 'Anonymous';
+        }
+
+        $review = new \App\Models\ReviewModel;
+        $review->username = $username ?? 'users';
+        $review->product_id = $request->product_id;
+        $review->rating = $request->rating;
+        $review->review = $request->review;
+        $review->status = 0;
+
+        if($review->save()){
+            return redirect()->back()->with('review_success','Review will update soon');
+        }
+    }
+
+//    create shipment
+
+//function creatE_shipment(Request $request){
+//    $items = [];
+//
+//    foreach ($request->product_name as $key => $value) {
+//        $item = [
+//            'description' => 'null',
+//            'category' => 'health_beauty', // Modify as needed
+//            'sku' => 'Prod_id'.$request->product_id[$key].'-'.$request->product_name[$key],
+//            'declared_currency' => 'USD', // Modify as needed
+//            'declared_customs_value' => (int)$request->price[$key],
+//            'quantity' => (int)$request->qty[$key],
+//        ];
+////            print_r($item);
+//
+//        $items[] = $item;
+//    }
+//
+//    $curl = curl_init();
+//
+//    curl_setopt_array($curl, [
+//        CURLOPT_URL => "https://api.easyship.com/2023-01/shipments",
+//        CURLOPT_RETURNTRANSFER => true,
+//        CURLOPT_ENCODING => "",
+//        CURLOPT_MAXREDIRS => 10,
+//        CURLOPT_TIMEOUT => 30,
+//        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+//        CURLOPT_CUSTOMREQUEST => "POST",
+//        CURLOPT_POSTFIELDS => json_encode([
+//            'origin_address' => [
+//                'line_1' => '9 N Fordham Rd',
+//                'state' => 'New York',
+//                'city' => 'Hicksville',
+//                'postal_code' => '11801',
+//                'country_alpha2' => 'US',
+//                'company_name' => 'Long island Fragrances',
+//                'contact_name' => 'Long island Fragrances',
+//                'contact_phone' => '5168141663',
+//                'contact_email' => 'lifragrancesny@gmail.com',
+//            ],
+//            'sender_address' => [
+//                'line_1' => '9 N Fordham Rd',
+//                'state' => 'New York',
+//                'city' => 'Hicksville',
+//                'postal_code' => '11801',
+//                'country_alpha2' => 'US',
+//                'company_name' => 'Long island Fragrances',
+//                'contact_name' => 'Long island Fragrances',
+//                'contact_phone' => '5168141663',
+//                'contact_email' => 'lifragrancesny@gmail.com',
+//            ],
+//            'return_address' => [
+//                'line_1' => '9 N Fordham Rd',
+//                'state' => 'New York',
+//                'city' => 'Hicksville',
+//                'postal_code' => '11801',
+//                'country_alpha2' => 'US',
+//                'company_name' => 'Long island Fragrances',
+//                'contact_name' => 'Long island Fragrances',
+//                'contact_phone' => '5168141663',
+//                'contact_email' => 'lifragrancesny@gmail.com',
+//            ],
+//            'destination_address' => [
+//                'line_1' => $request->address_1,
+//                'line_2' => $request->address_2,
+//                'state' => $request->state,
+//                'city' => $request->city,
+//                'postal_code' => $request->pincode,
+//                'country_alpha2' => 'US',
+//                'contact_name' => $request->first_name .' '. $request->last_name ,
+//                'contact_email' => $request->email,
+//                'contact_phone' => $request->phone
+//            ],
+//            'incoterms' => 'DDU',
+//            'insurance' => [
+//                'is_insured' => false,
+//            ],
+//            'order_data' => [
+//                'platform_name' => 'API',
+//                'platform_order_number' => rand(111111,999999),
+//                'order_tag_list' => [
+//                    null
+//                ],
+//                'seller_notes' => 'null',
+//                'buyer_notes' => 'null'
+//            ],
+//            'courier_selection' => [
+//                'allow_courier_fallback' => true,
+//                'apply_shipping_rules' => false,
+//                'selected_courier_id' => $request->selected_courier,
+//                'list_unavailable_couriers' => true
+//            ],
+//            'shipping_settings' => [
+//                'additional_services' => [
+//                    'qr_code' => 'none',
+//                    'delivery_confirmation' => 'ups_delivery_confirmation_verbal'
+//                ],
+//                'units' => [
+//                    'weight' => 'lb',
+//                    'dimensions' => 'cm'
+//                ],
+//                'buy_label' => false,
+//                'buy_label_synchronous' => false,
+//                'printing_options' => [
+//                    'format' => 'png',
+//                    'label' => '4x6',
+//                    'commercial_invoice' => 'A4',
+//                    'packing_slip' => '4x6'
+//                ]
+//            ],
+//            'parcels' => [
+//                [
+//                    'box' => [
+//                        'slug' => 'null',
+//                        'length' => $request->sum_length[0],
+//                        'width' => $request->sum_width[0],
+//                        'height' => $request->sum_height[0]
+//                    ],
+//                    'items' => $items,
+//                    'total_actual_weight' => 1
+//                ]
+//            ]
+//        ]),
+//        CURLOPT_HTTPHEADER => [
+//            "accept: application/json",
+//            "authorization: Bearer prod_Et5YFzWn5FA3co/3ddpC33pzqgjnzjM9CXUtTkPgbCM=",
+//            "content-type: application/json"
+//        ],
+//    ]);
+//
+//    $response = curl_exec($curl);
+//    $err = curl_error($curl);
+//
+//    curl_close($curl);
+//
+//    if ($err) {
+//        echo "cURL Error #:" . $err;
+//    } else {
+//        echo $response;
+//    }
+//
+//    if(!empty(json_decode($response))){
+//        Session::put('shpping_rates',$response);
+//    }
+//}
 }

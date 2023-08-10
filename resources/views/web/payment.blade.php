@@ -45,49 +45,81 @@ session_start();
             <div class="cart">
                 <div class="container">
                     <div class="row">
-                        <form role="form" action="{{ route('stripe.post') }}" method="post" class="require-validation"
-                              data-cc-on-file="false"
-                              data-stripe-publishable-key="pk_test_51NbLEHSBT80Q619YMYXCKzMcYcpPySG48uBI0yTCY7o7tAQso8QKMgq662suEl0f5rOYy5RsobAUiWfkoWfRvX6k00b6E9N1ui"
-                              id="payment-form">
-                            @csrf
 
-                            <input type="hidden" name="order_id" value="{{$order_id}}"/>
-                            <input type="hidden" name="order_primary_key" value="{{$order_primary_key}}"/>
-                            <div class='form-row row'>
-                                <div class='col-md-6 form-group required'>
-                                    <label class='control-label'>Name on Card</label>
-                                    <input class='form-control' size='4' name="name_on_card" type='text'>
+                        <div class="col-md-8">
+                            <form role="form" action="{{ route('stripe.post') }}" method="post" class="require-validation"
+                                  data-cc-on-file="false"
+                                  data-stripe-publishable-key="pk_test_51NbLEHSBT80Q619YMYXCKzMcYcpPySG48uBI0yTCY7o7tAQso8QKMgq662suEl0f5rOYy5RsobAUiWfkoWfRvX6k00b6E9N1ui"
+                                  id="payment-form">
+                                @csrf
+
+                                <input type="hidden" name="order_id" value="{{$order_id}}"/>
+                                <input type="hidden" name="order_primary_key" value="{{$order_primary_key}}"/>
+                                <div class='form-row row'>
+                                    <div class='col-md-6 form-group required'>
+                                        <label class='control-label'>Name on Card</label>
+                                        <input class='form-control' size='4' name="name_on_card" type='text'>
+                                    </div>
+
+                                    <div class='col-md-6 form-group required'>
+                                        <label class='control-label'>Card Number</label>
+                                        <input autocomplete='off' name="card_no"  class='form-control card-number' size='20' type='text'>
+                                    </div>
+
+                                    <div class='col-xs-6 col-md-4 form-group cvc required'>
+                                        <label class='control-label'>CVC</label>
+                                        <input autocomplete='off' name="cvc"  class='form-control card-cvc' placeholder='ex. 311' size='4' type='text'>
+                                    </div>
+
+                                    <div class='col-xs-12 col-md-4 form-group expiration required'>
+                                        <label class='control-label'>Expiration Month</label>
+                                        <input class='form-control card-expiry-month' name="exp_month"  placeholder='MM' size='2' type='text'>
+                                    </div>
+                                    <div class='col-xs-12 col-md-4 form-group expiration required'>
+                                        <label class='control-label'>Expiration Year</label>
+                                        <input class='form-control card-expiry-year' name="exp_year"  placeholder='YYYY' size='4' type='text'>
+                                    </div>
                                 </div>
 
-                                <div class='col-md-6 form-group required'>
-                                    <label class='control-label'>Card Number</label>
-                                    <input autocomplete='off' name="card_no"  class='form-control card-number' size='20' type='text'>
+                                *We do not save your data.
+
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <button class="btn btn-lg btn-success pb-2 pt-2" style="background: #bd0131;color:#fff" type="submit">Pay Now</button>
+                                    </div>
                                 </div>
 
-                                <div class='col-xs-6 col-md-4 form-group cvc required'>
-                                    <label class='control-label'>CVC</label>
-                                    <input autocomplete='off' name="cvc"  class='form-control card-cvc' placeholder='ex. 311' size='4' type='text'>
-                                </div>
+                            </form>
 
-                                <div class='col-xs-12 col-md-4 form-group expiration required'>
-                                    <label class='control-label'>Expiration Month</label>
-                                    <input class='form-control card-expiry-month' name="exp_month"  placeholder='MM' size='2' type='text'>
-                                </div>
-                                <div class='col-xs-12 col-md-4 form-group expiration required'>
-                                    <label class='control-label'>Expiration Year</label>
-                                    <input class='form-control card-expiry-year' name="exp_year"  placeholder='YYYY' size='4' type='text'>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            @if(Session::has('products_details'))
+                                <?php
+                                        $productDetailsSession = Session::get('products_details');
+                                    ?>
+                                @endif
 
-                            *We do not save your data.
+                                <table class="table table-summary">
+                                    <tr>
+                                        <td>Cart Amount :</td>
+                                        <td>$<?php echo $productDetailsSession['product_total'];?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Shipping Amount :</td>
+                                        <td><?php echo $productDetailsSession['shipping_price'];?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Subtotal :</td>
+                                        <td>$<?php echo $productDetailsSession['final_amount'];?></td>
+                                    </tr>
 
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <button class="btn btn-lg btn-success pb-2 pt-2" style="background: #bd0131;color:#fff" type="submit">Pay Now</button>
-                                </div>
-                            </div>
+                                    <tr class="summary-total">
+                                        <td>Total:</td>
+                                        <td>$<?php echo $productDetailsSession['final_amount'];?></td>
+                                    </tr><!-- End .summary-total -->
+                                </table>
+                        </div>
 
-                        </form>
                     </div><!-- End .row -->
                 </div><!-- End .container -->
             </div><!-- End .cart -->

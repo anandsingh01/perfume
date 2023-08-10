@@ -114,6 +114,7 @@
 
         {{--                <li><a href="{{url('admin/support-us')}}" class=" waves-effect waves-block"><i class="zmdi zmdi-book-image"></i><span>Support Us</span></a></li>--}}
         <li><a href="{{url('admin/common-settings')}}" class=" waves-effect waves-block"><i class="zmdi zmdi-book-image"></i><span>Common Settings</span></a></li>
+        <li><a href="{{url('admin/all-users')}}" class=" waves-effect waves-block"><i class="zmdi zmdi-book-image"></i><span>Users</span></a></li>
 
     </ul>
 </div>

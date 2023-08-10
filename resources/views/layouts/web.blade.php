@@ -166,7 +166,7 @@ $get_brands = get_brands();
                         <a href="#" class="dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-display="static">
                             <i class="icon-shopping-cart"></i>
                             <span class="cart-count">{{$get_count->count ?? '0'}}</span>
-                            <span class="cart-txt font-weight-semibold">$ {{number_format($get_count->cartTotal,2) ?? '0'}}</span>
+                            <span class="cart-txt font-weight-semibold"> {{number_format($get_count->cartTotal,2) ?? '0'}}</span>
                         </a><!--End .dropdown-toggle-->
 
                         <div class="dropdown-menu dropdown-menu-right">
@@ -309,7 +309,7 @@ $get_brands = get_brands();
                             </li>
 
                             <li class="">
-                                <a href="{{url('/')}}">Blogs</a>
+                                <a href="https://lifragrances.com/enquiry.php">Enquiry Form</a>
                             </li>
 
 

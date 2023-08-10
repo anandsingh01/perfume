@@ -7,6 +7,7 @@ use App\Http\Controllers\CommonController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\SubcategoryController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -89,83 +90,13 @@ Route::get('my-orders', [App\Http\Controllers\UserController::class,'my_orders']
 Route::post('/update-profile', [App\Http\Controllers\UserController::class,'update'])->name('update-profile');
 Route::get('/view-orders/{id}', [App\Http\Controllers\UserController::class,'view_order']);
 Route::get('blogs', [App\Http\Controllers\HomeController::class,'blogs']);
-Route::get('/get-shipping-options', function (Request $request){
-
-    $data = array(
-        "origin_address" => array(
-            "line_1" => "9 N Fordham Rd",
-            "state" => "New York",
-            "postal_code" => "11801",
-            "city" => "Hicksville",
-            "company_name" => "Long island Fragrances",
-            "contact_name" => "Long island Fragrances",
-            "contact_phone" => "5168141663",
-            "contact_email" => "lifragrancesny@gmail.com"
-        ),
-        "destination_address" => array(
-            "line_1" => "192 Spadina Ave",
-            "state" => "Texas",
-            "postal_code" => "75022",
-            "city" => "Flower Mound",
-            "country_alpha2" => "CA",
-            "company_name" => "Test",
-            "contact_name" => "Test ",
-            "contact_phone" => "7574884",
-            "contact_email" => "test@gmail.com"
-        ),
-        "incoterms" => "DDU",
-        "insurance" => array(
-            "is_insured" => false
-        ),
-        "courier_selection" => array(
-            "apply_shipping_rules" => true
-        ),
-        "shipping_settings" => array(
-            "units" => array(
-                "weight" => "kg",
-                "dimensions" => "cm"
-            )
-        ),
-        "parcels" => array(
-            array(
-                "total_actual_weight" => "1",
-                "box" => array(
-                    "slug" => "null",
-                    "length" => "10",
-                    "width" => "10",
-                    "height" => "10"
-                ),
-                "items" => array(
-                    array(
-                        "quantity" => "1",
-                        "dimensions" => array(
-                            "width" => "20",
-                            "length" => "20",
-                            "height" => "10"
-                        ),
-                        "category" => "health_beauty",
-                        "description" => "This is a nice product",
-                        "sku" => "PRD-123",
-                        "actual_weight" => "5",
-                        "declared_currency" => "USD",
-                        "declared_customs_value" => 1
-                    )
-                )
-            )
-        )
-    );
-
-    $response = Http::withHeaders([
-        "Content-Type" => "application/json",
-        "Authorization" => "Bearer prod_Et5YFzWn5FA3co/3ddpC33pzqgjnzjM9CXUtTkPgbCM="
-    ])->post("https://api.easyship.com/2023-01/rates", $data);
-
-    return response()->json(json_decode($response->body()));
-});
+Route::get('/get-shipping-options', [CheckoutController::class,'get_shipping_details']);
 
 
 Route::get('ship',[HomeController::class,'ship']);
 
+Route::post('/calculate-tax', [CheckoutController::class,'calculateTax']);
+Route::post('/save-review', [HomeController::class,'save_review']);
 
 Route::group(['prefix'=>'admin'], function(){
 
@@ -375,5 +306,23 @@ Route::group(['prefix'=>'admin'], function(){
     Route::get('/getcategoriesBySectionOnProduct', [App\Http\Controllers\ProductsController::class,'getcategoriesBySectionOnProduct']);
     Route::get('/getSubcategoriesByCategoriesOnProduct', [App\Http\Controllers\ProductsController::class,'getSubcategoriesByCategoriesOnProduct']);
 
+
+    Route::get('/fetch-order-data', [App\Http\Controllers\AdminController::class,'salesReport'])->name('fetch-order-data');
+    Route::get('/sales-report', [App\Http\Controllers\AdminController::class,'salesReport'])->name('sales.report');
+
+ // Products # ADD, UPDATE ,DELETE...
+    Route::get('/all-users', [App\Http\Controllers\UserController::class,'all_user']);
+    Route::get('/view-orders/{id}', [App\Http\Controllers\OrderController::class,'view_order']);
+    Route::get('/add-products', [App\Http\Controllers\ProductsController::class,'create']);
+    Route::post('/save-products', [App\Http\Controllers\ProductsController::class,'storee']);
+    Route::get('/edit-products/{id}', [App\Http\Controllers\ProductsController::class,'edit']);
+    Route::post('/update-products/{id}', [App\Http\Controllers\ProductsController::class,'update']);
+    Route::get('/update-products-Status', [App\Http\Controllers\ProductsController::class,'changeProductstatus']);
+    Route::get('/delete-products/{id}', [App\Http\Controllers\ProductsController::class,'destroy']);
+    Route::get('/update-products-Status', [App\Http\Controllers\ProductsController::class,'changeProductStatus']);
+    Route::get('/getcategoriesBySectionOnProduct', [App\Http\Controllers\ProductsController::class,'getcategoriesBySectionOnProduct']);
+    Route::get('/getSubcategoriesByCategoriesOnProduct', [App\Http\Controllers\ProductsController::class,'getSubcategoriesByCategoriesOnProduct']);
+
+//    Route::get('/sales-report', 'ReportController@salesReport')->name('sales.report');
 
 });

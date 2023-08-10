@@ -72,4 +72,9 @@ class Product extends Model
         return $this->hasMany(Product_size::class);
     }
 
+    public function orderss()
+    {
+        return $this->belongsToMany(Order::class, 'order_product')->withPivot('order_product');
+    }
+
 }

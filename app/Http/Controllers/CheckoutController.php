@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UserAddress;
 use Bavix\Wallet\Models\Transaction;
 use DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Intervention\Image\Point;
@@ -30,6 +31,8 @@ use Exception;
 use Stripe;
 
 use Stripe\Error\Card;
+use Stripe\StripeClient;
+
 class CheckoutController extends Controller
 {
     function getUserIP()
@@ -306,265 +309,6 @@ class CheckoutController extends Controller
         }
     }
 
-    function paymentGatewayFunction(Request $request){
-        $input = $request->all();
-//        print_r($input); die;
-        $order_id = uniqid().rand(1111, 9999);
-        $userid = Auth::user()->id;
-        $getDeliverAddress = DeliverAddress::find($request->deliveryAddress);
-        if(!empty($getDeliverAddress)){
-            $order = new \App\Models\OrdersModel;
-            $order->user_id = Auth::user()->id;
-            $order->name = $getDeliverAddress->name;
-            $order->address_one = $getDeliverAddress->address_one;
-            $order->address_two = $getDeliverAddress->address_two;
-            $order->city = $getDeliverAddress->city;
-            $order->state = $getDeliverAddress->state;
-            $order->landmark = $getDeliverAddress->landmark;
-            $order->pincode = $getDeliverAddress->pincode;
-            $order->email = $request->email;
-            $order->order_status = 'active';
-            $order->used_points = $request->getpointsValue;
-            $order->coupon_code = $request->coupon_code;
-            $order->coupon_discount_type = $request->couponDiscountType;
-            $order->coupon_id = $request->coupon_id;
-            $order->coupon_amount = $request->coupon_discount_amount;
-            $order->payment_method = $request->payment_type;
-            $order->payment_gateway = 'razorpay';
-            $order->grand_total = $request->totalAmount;
-            $order->order_id = $order_id;
-            $order->order_status = 'new';
-            $order->save();
-
-            if(isset($request->getpointsValue)){
-                $points = new Points;
-                $points->points_debit = $request->getpointsValue;
-                $points->user_id = Auth::user()->id;
-                $points->order_id = $order_id;
-                $points->points_by = 'shopping';
-                $points->save();
-            }
-
-
-            $data['cart'] = Cart::select('carts.*',
-                'product_size_attributes.size as sizeName',
-                'product_size_attributes.msp as productMspFromsizeAttr',
-                'product_size_attributes.flash_price as flash_price',
-                'product_size_attributes.discount_pecent as discount_pecent',
-                'product_size_attributes.qty as productInventoryFromSizeAttr',
-                'product_size_attributes.price as productSizePrice'
-
-            )
-                ->leftJoin("product_size_attributes",'carts.size','product_size_attributes.id')
-                ->where('carts.status','yes')
-                ->where('carts.ip_address',$this->getUserIP())
-                ->orWhere('carts.user_id',$userid)
-                ->with(['getProducts','getBrands','getSections','getVendorDetails'])
-                ->get();
-
-            $data['cart_count'] = $data['cart']->count();
-            $data['cart_price'] = $data['cart']->sum('subtotal');
-            $data['cart_msp'] = $data['cart']->sum('msp');
-            $data['sumof_msp'] = '';
-
-            $amountToVendor = 0;
-
-            foreach($data['cart'] as $cartsvalue){
-                $user = User::find($cartsvalue->product_added_by);
-
-                $insertInOrderDetails = new OrderDetails;
-                $insertInOrderDetails->ip_address = $cartsvalue->ip_address;
-                $insertInOrderDetails->user_id = $cartsvalue->user_id == '' ? '' : Auth::user()->id;
-                $insertInOrderDetails->product_id = $cartsvalue->product_id;
-                $insertInOrderDetails->category_id = $cartsvalue->category_id;
-                $insertInOrderDetails->subcategory_id = $cartsvalue->subcategory_id;
-                $insertInOrderDetails->product_name = $cartsvalue->product_name;
-                $insertInOrderDetails->product_size = $cartsvalue->size;
-                $insertInOrderDetails->product_pricev = $cartsvalue->price;
-                $insertInOrderDetails->product_qty = $cartsvalue->cartqty;
-                $insertInOrderDetails->product_added_by = $cartsvalue->product_added_by;
-                $insertInOrderDetails->subtotal = $cartsvalue->cartqty * $cartsvalue->price;
-                $insertInOrderDetails->order_id = $order_id;
-                $insertInOrderDetails->save();
-
-                $getCategorycomission = ComissionModel::where('category_id',$cartsvalue->subcategory_id)
-                    ->orderBy('id','DESC')
-                    ->first();
-                $getFixedCommission = ComissionModel::where('commission_type','fixed')->orderBy('id','DESC')->first();
-                $getCollectionCommission = ComissionModel::where('commission_type','collection')->orderBy('id','DESC')->first();
-
-                $is_premium_vendor = $cartsvalue->getVendorDetails->is_premium_member;
-                if($is_premium_vendor == 'no') {
-                    if ($cartsvalue->price > 500) {
-                        $commissionPrct = $getCategorycomission->np_commissions_above_five;
-                        $fixedcommissionPrct = $getFixedCommission->fixed;
-                        $collectioncommissionPrct = $getCollectionCommission->fixed;
-
-                        $getCategorycomissionindot = $commissionPrct / 100;
-                        $getfixecommissionindot = $fixedcommissionPrct / 100;
-                        $getcollectionommissionindot = $collectioncommissionPrct / 100;
-
-                        $getindot = $getCategorycomissionindot+$getfixecommissionindot+$getcollectionommissionindot;
-
-                        $getin = $getindot * $cartsvalue->subtotal;
-
-                        $amountToAdmin = $getin;
-                        $amountToVendorAfterCatCommission = $cartsvalue->subtotal - $amountToAdmin;
-
-
-                        $amountToVendor = $cartsvalue->subtotal - $amountToAdmin;
-//                        print_r($amountToVendor);
-//                        print_r($amountToVendorAfterCatCommission);
-//                        die;
-                        $checkifAddedToVendor = $user->deposit($amountToVendor);
-                        if($checkifAddedToVendor->confirmed == 1){
-                            $updateOrderIdToTransactionTable = Transaction::where('uuid',$checkifAddedToVendor->uuid)
-                                ->update(
-                                    [
-                                        'order_id'=>$order_id,
-                                        'product_id'=>$cartsvalue->product_id,
-                                        'commissionPrcnt'=>$commissionPrct,
-                                        'fixedCommissionPrcnt'=>$fixedcommissionPrct,
-                                        'collectionCommissionPrcnt'=>$collectioncommissionPrct,
-                                        'subtotal'=>$cartsvalue->subtotal,
-                                        'vendor_id'=>$cartsvalue->product_added_by
-                                    ]);
-
-                            $insertInCommissionDivided = new TransferCommission;
-                            $insertInCommissionDivided->order_id = $order_id;
-                            $insertInCommissionDivided->product_id = $cartsvalue->product_id;
-                            $insertInCommissionDivided->category_id = $cartsvalue->category_id;
-                            $insertInCommissionDivided->subcategory_id = $cartsvalue->subcategory_id;
-                            $insertInCommissionDivided->size = $cartsvalue->size;
-                            $insertInCommissionDivided->vendor_id = $cartsvalue->product_added_by;
-                            $insertInCommissionDivided->commission_cut = $amountToVendor;
-                            $insertInCommissionDivided->without_commission = $cartsvalue->cartqty * $cartsvalue->price;
-                            $insertInCommissionDivided->commissionPrct = $commissionPrct;
-                            $insertInCommissionDivided->fixedcommission = $fixedcommissionPrct;
-                            $insertInCommissionDivided->collectioncommission = $collectioncommissionPrct;
-                            $insertInCommissionDivided->uuid = $checkifAddedToVendor->uuid;
-
-                            $insertInCommissionDivided->save();
-                        }
-
-                    }
-                }
-            }
-
-
-            if($request->payment_type == 'razorpay'){
-
-                $api = new Api('rzp_test_R4vQZegHnmOzX4' , 'WWPoOwfqjDxs5OOzv7BRJymH');
-
-
-                $data['totalOrders'] = OrdersModel::where('user_id',Auth::user()->id)->count();
-
-                if(Auth::user()->is_premium_member == 'no'){
-                    $getPointsToNonPremiumUser = $request->totalAmount / 100;
-                    $points = new Points;
-                    $points->user_id = Auth::user()->id;
-                    $points->points_credit = (int)$getPointsToNonPremiumUser;
-                    $points->points_by = 'shopping';
-                    if($points->save()){
-                        $getpoints = Points::select('points_credit','points_debit')->where('user_id',$userid)->get();
-                        $sumOfPointsCredit = $getpoints->sum('points_credit');
-                        if($sumOfPointsCredit >= 50){
-                            $updateUserMembership = User::where('id',$userid)->update(['is_premium_member' => 'yes']);
-                        }
-                    }
-
-                }else{
-                    $getPointsToPremiumUser = $request->totalAmount / 100;
-                    $pointToPremiumUser = $getPointsToPremiumUser*2;
-                    $points = new Points;
-                    $points->user_id = Auth::user()->id;
-                    $points->points_credit = (int)$pointToPremiumUser;
-                    $points->points_by = 'shopping';
-                    $points->save();
-                }
-
-
-
-                $payment = $api->payment->fetch($input['razorpay_payment_id']);
-
-                if(count($input)  && !empty($input['razorpay_payment_id'])) {
-                    $order = OrdersModel::find($order->id);
-
-                    $order->payment_id = $payment->id;
-                    $order->amount = $payment->amount / 100;
-                    $order->unpaid_amount = $payment->amount - $request->totalAmount;
-                    $order->method = $payment->method;
-                    $order->description = $payment->description;
-                    $order->card_id = $payment->card_id;
-                    $order->bank = $payment->bank;
-                    $order->wallet = $payment->wallet;
-                    $order->vpa = $payment->vpa;
-                    $order->payer_email = $payment->email;
-                    $order->payer_contact = $payment->contact;
-                    $order->fee = $payment->fee;
-                    $order->tax = $payment->tax;
-                    $order->error_code = $payment->error_code;
-                    $order->error_description = $payment->error_description;
-                    $order->error_source = $payment->error_source;
-                    $order->error_step = $payment->error_step;
-                    $order->error_reason = $payment->error_reason;
-                    if(!empty($payment->vpa)){
-                        $order->rrn = $payment->acquirer_data['rrn'];
-                        $order->upi_transaction_id = $payment->acquirer_data['upi_transaction_id'];
-                    }
-
-                    if(!empty($payment->card_id)){
-                        $order->auth_code = $payment->acquirer_data['auth_code'];
-                    }
-
-                    $order->save();
-                }
-
-                return redirect(route('web.thankyou'));
-            }
-            elseif($request->payment_type == 'cod'){
-
-                if(Auth::user()->is_premium_member == 'no'){
-                    $getPointsToNonPremiumUser = $request->totalAmount / 100;
-                    $points = new Points;
-                    $points->user_id = Auth::user()->id;
-                    $points->points_credit = (int)$getPointsToNonPremiumUser;
-                    $points->points_by = 'shopping';
-                    if($points->save()){
-                        $getpoints = Points::select('points_credit','points_debit')->where('user_id',$userid)->get();
-                        $sumOfPointsCredit = $getpoints->sum('points_credit');
-                        if($sumOfPointsCredit >= 50){
-                            $updateUserMembership = User::where('id',$userid)->update(['is_premium_member' => 'yes']);
-                        }
-                    }
-
-                }else{
-                    $getPointsToPremiumUser = $request->totalAmount / 100;
-                    $pointToPremiumUser = $getPointsToPremiumUser*2;
-                    $points = new Points;
-                    $points->user_id = Auth::user()->id;
-                    $points->points_credit = (int)$pointToPremiumUser;
-                    $points->points_by = 'shopping';
-                    $points->save();
-                }
-
-                echo "this code";die;
-//                return redirect(route('web.thankyou'));
-
-            }
-            elseif($request->payment_type == 'wallet'){
-                echo "wallet";
-            }
-
-
-        }
-
-
-
-        return redirect()->back();
-
-    }
-
     function thankyou(){
         $data['title'] = 'Thankyou';
         $data['order'] = OrdersModel::where('user_id',Auth::user()->id)->orderBy('id','DESC')->first();
@@ -583,96 +327,18 @@ class CheckoutController extends Controller
     public function checkout_submit(Request $request)
     {
 
-        print_r($request->all());die;
+         Session::put('products_details',$request->all());
 
-
-        $ch = curl_init();
-
-        $data = array(
-            "origin_address" => array(
-                "line_1" => "9 N Fordham Rd",
-                "state" => "New York",
-                "postal_code" => "11801",
-                "city" => "Hicksville",
-                "company_name" => "Long island Fragrances",
-                "contact_name" => "Long island Fragrances",
-                "contact_phone" => "5168141663",
-                "contact_email" => "lifragrancesny@gmail.com"
-            ),
-            "destination_address" => array(
-                "line_1" => $request->address_1,
-                "line_2" => $request->address_2,
-                "state" => $request->state,
-                "postal_code" => $request->pincode,
-                "city" => $request->city,
-                "country_alpha2" => "US",
-                "contact_name" => $request->first_name .' '. $request->last_name,
-                "contact_phone" => $request->phone,
-                "contact_email" => $request->email
-            ),
-            "incoterms" => "DDU",
-            "insurance" => array(
-                "is_insured" => false
-            ),
-            "courier_selection" => array(
-                "apply_shipping_rules" => true
-            ),
-            "shipping_settings" => array(
-                "units" => array(
-                    "weight" => "kg",
-                    "dimensions" => "cm"
-                )
-            ),
-            "parcels" => array(
-                array(
-                    "total_actual_weight" => "1",
-                    "box" => array(
-                        "slug" => "null",
-                        "length" => "10",
-                        "width" => "10",
-                        "height" => "10"
-                    ),
-                    "items" => array(
-                        array(
-                            "quantity" => "1",
-                            "dimensions" => array(
-                                "width" => "20",
-                                "length" => "20",
-                                "height" => "10"
-                            ),
-                            "category" => "health_beauty",
-                            "description" => "This is a nice product",
-                            "sku" => "PRD-123",
-                            "actual_weight" => "5",
-                            "declared_currency" => "USD",
-                            "declared_customs_value" => 1
-                        )
-                    )
-                )
-            )
-        );
-
-        $data_string = json_encode($data);
-
-        curl_setopt($ch, CURLOPT_URL, "https://api.easyship.com/2023-01/rates");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_HEADER, FALSE);
-
-        curl_setopt($ch, CURLOPT_POST, TRUE);
-
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            "Content-Type: application/json",
-            "Authorization: Bearer prod_Et5YFzWn5FA3co/3ddpC33pzqgjnzjM9CXUtTkPgbCM="
-        ));
-
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        if(!empty(json_decode($response))){
-            Session::put('shpping_rates',$response);
+//        $productDetailsSession = Session::get('products_details');
+//        print_r(Session::get('products_details'));
+//        die;
+        $removedollar = ltrim($request->shipping_price, $request->shipping_price[0]);
+//        print_r($removedollar);
+//        die;
+        if(!empty(($request->all()))){
+            Session::put('shpping_rates',$removedollar);
         }
+
 
 
         // Check if the save_address checkbox is checked
@@ -719,7 +385,7 @@ class CheckoutController extends Controller
         ]);
 
         Session::put('order_details',$order);
-        Session::put('products_details',$request->all());
+
 
         // Save the product details for the order
         $productIds = $request->input('product_id');
@@ -757,11 +423,18 @@ class CheckoutController extends Controller
         if(Session::has('order_details')){
             $getOrderSession = Session::get('order_details');
         }
+        if(Session::has('products_details')){
+            $products_details_session = Session::get('products_details');
+        }
+//        print_r($getOrderSession);die;
         if(Session::has('shpping_rates')){
             $shipping_rates = Session::get('shpping_rates');
         }
-        $data['shipping_rate'] = json_decode($shipping_rates);
 
+        $data['shipping_rate'] = $shipping_rates;
+
+//        print_r($data);
+//        die;
         $data['order_id'] = $getOrderSession->order_id;
         $data['order_primary_key'] = $getOrderSession->id;
         return view('web.payment',$data);
@@ -852,5 +525,114 @@ class CheckoutController extends Controller
 
     function payment_success(){
         return view('web.thankyou');
+    }
+
+    function get_shipping_details(Request $request){
+
+        $data = array(
+            "origin_address" => array(
+                "line_1" => "9 N Fordham Rd",
+                "state" => "New York",
+                "postal_code" => "11801",
+                "city" => "Hicksville",
+                "company_name" => "Long island Fragrances",
+                "contact_name" => "Long island Fragrances",
+                "contact_phone" => "5168141663",
+                "contact_email" => "lifragrancesny@gmail.com"
+            ),
+            "destination_address" => array(
+                "line_1" => "192 Spadina Ave",
+                "state" => "Texas",
+                "postal_code" => $request->pincode,
+                "city" => "Flower Mound",
+                "country_alpha2" => "CA",
+                "company_name" => "Test",
+                "contact_name" => "Test ",
+                "contact_phone" => "7574884",
+                "contact_email" => "test@gmail.com"
+            ),
+            "incoterms" => "DDU",
+            "insurance" => array(
+                "is_insured" => false
+            ),
+            "courier_selection" => array(
+                "apply_shipping_rules" => true
+            ),
+            "shipping_settings" => array(
+                "units" => array(
+                    "weight" => "lb",
+                    "dimensions" => "cm"
+                )
+            ),
+            "parcels" => array(
+                array(
+                    "total_actual_weight" => "1",
+                    "box" => array(
+                        "slug" => "null",
+                        "length" => $request->sum_length,
+                        "width" =>  $request->sum_width,
+                        "height" =>  $request->sum_height
+                    ),
+                    "items" => array(
+                        array(
+                            "quantity" => "1",
+                            "dimensions" => array(
+                                "length" => $request->sum_length,
+                                "width" =>  $request->sum_width,
+                                "height" =>  $request->sum_height
+                            ),
+                            "category" => "health_beauty",
+                            "description" => "This is a nice product",
+                            "sku" => "PRD-123",
+                            "actual_weight" => "5",
+                            "declared_currency" => "USD",
+                            "declared_customs_value" => 1
+                        )
+                    )
+                )
+            )
+        );
+
+        $response = \Http::withHeaders([
+            "Content-Type" => "application/json",
+            "Authorization" => "Bearer prod_Et5YFzWn5FA3co/3ddpC33pzqgjnzjM9CXUtTkPgbCM="
+        ])->post("https://api.easyship.com/2023-01/rates", $data);
+
+        return response()->json(json_decode($response->body()));
+    }
+
+    public function calculateTax(Request $request)
+    {
+        Stripe\Stripe::setApiKey('sk_test_51IC66sKDGzpYlWQ2lmnGC7G9G5YFfRXe6oAWJf6mY54ho57zyixhSZV6kteU0148DrLS2wQR7spWezca0byNk7js00UC4sZleI');
+
+        $stripe = new \Stripe\StripeClient('sk_test_51IC66sKDGzpYlWQ2lmnGC7G9G5YFfRXe6oAWJf6mY54ho57zyixhSZV6kteU0148DrLS2wQR7spWezca0byNk7js00UC4sZleI');
+
+        $response = $stripe->tax->calculations->create([
+            'currency' => 'usd',
+            'line_items' => [
+                [
+                    'amount' => 1000,
+                    'reference' => 'L1',
+                ],
+            ],
+            'customer_details' => [
+                'address' => [
+                    'line1' => '920 5th Ave',
+                    'city' => 'Seattle',
+                    'state' => 'WA',
+                    'postal_code' => $request->input('postal_code'),
+                    'country' => 'US',
+                ],
+                'address_source' => 'shipping',
+            ],
+            'expand' => ['line_items.data.tax_breakdown'],
+        ]);
+
+        $taxAmount = $response->line_items->data[0]->tax_amount;
+
+        return response()->json([
+            'taxAmount' => $taxAmount,
+            'totalAmount' => 1000 + $taxAmount, // Adjust this as needed based on your product total
+        ]);
     }
 }
